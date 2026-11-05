@@ -1,12 +1,25 @@
 # Rumo à Saúde Mental — projeto completo (frases + dinâmica)
 
-Documento para análise. Levantado direto do código (`index.html`) da **v4** (05/11/2026). As mudanças de cada versão estão na seção 0. Versões antigas seguem jogáveis em `/v2/` e `/v3/`.
-Jogo no ar: https://hyratecnologia.github.io/rumo-ao-bem-estar/
+Documento para análise. Levantado direto do código (`index.html`) da **v5** (05/11/2026). As mudanças de cada versão estão na seção 0. Versões antigas seguem jogáveis em `/v2/`, `/v3/` e `/v4/`.
+Jogo no ar: **https://hyratecnologia.com/rumo-a-saude-mental/** (também em https://hyratecnologia.github.io/rumo-ao-bem-estar/)
 Código: https://github.com/hyratecnologia/rumo-ao-bem-estar
 
 ---
 
 ## 0. Histórico de mudanças
+
+### v5 (05/11/2026)
+
+| # | O que mudou |
+|---|---|
+| 1 | **Tela do(a) psicólogo(a)** sem falar em vidas ou peso. Título: **"Você encontrou uma psicóloga/um psicólogo pelo caminho"**, e a lista virou o que o encontro oferece: pode falar, ser você mesma/mesmo, não ser julgada/julgado, ser escutada/escutado, no seu tempo |
+| 2 | **Barreiras sociais não repetem**: saem de um saquinho embaralhado (todas aparecem antes de repetir, nunca a mesma duas vezes seguidas), no máximo uma a cada ~10 s, e cada traço ganhou 3 barreiras novas |
+| 3 | **Sorteio**: deficiência sai **1 vez em 10** (perto dos ~9% da população brasileira, IBGE 2022) e **nunca em dois sorteios seguidos**. Antes era 50% |
+| 4 | **Plaquinha do(a) psicólogo(a) no chão, embaixo dos pés**, para não cobrir a personagem |
+| 5 | **Outdoors discretos**: só anúncios de consumo (carro, coach, roupa, celular, tênis, relógio, viagem, parcelamento) com um ícone, cores apagadas e sem "COMPRE AGORA" piscando. A placa "SAÚDE MENTAL" também ficou mais apagada |
+| 6 | **LARGAR também solta o que você ama** (hobbies e diversão), se estiver no topo da pilha |
+| 7 | **No final, ninguém carrega o que você ama**: os hobbies ficam com a personagem; os ajudantes pegam só as cargas |
+| — | O jogo também passou a ser publicado em **hyratecnologia.com/rumo-a-saude-mental** |
 
 ### v4 (05/11/2026)
 
@@ -102,7 +115,7 @@ Ao clicar em **nascer**, a escolha feita **não vale**:
 - O retrato e os traços giram rápido, como numa roleta (com "tic-tic"), e vão desacelerando por cerca de 3 s até parar num **personagem sorteado**. A legenda muda de "sorteando..." para **"você"**.
 - Aparecem os traços sorteados (ex.: *"mulher · negra · hétero · pobre"*) e a **dificuldade** em cor.
 - Frase: **"ninguém escolhe cor, gênero, classe ou corpo ao nascer."**
-- **Chances do sorteio:** cor, gênero, orientação e classe são cara ou coroa (50%). Deficiência sai **1 vez em 5 (20%)**: com 50% a cadeira de rodas aparecia em metade dos sorteios.
+- **Chances do sorteio:** cor, gênero, orientação e classe são cara ou coroa (50%). Deficiência sai **1 vez em 10 (10%)**, perto dos ~9% de brasileiros com deficiência (IBGE 2022), e **nunca em dois sorteios seguidos**. (Com 50%, a cadeira de rodas aparecia em metade dos sorteios.)
 - Depois de cerca de 3 s (ou com um toque na tela), a partida começa com o personagem sorteado. "Jogar de novo" repete o mesmo personagem; "trocar personagem" volta à escolha (que abre aleatória de novo).
 
 **Aparência da personagem conforme as escolhas:**
@@ -134,7 +147,7 @@ Ao clicar em **nascer**, a escolha feita **não vale**:
 - Canto direito: **"dificuldade"** e o nível (FÁCIL … EXTREMA+)
 - **Balões de fala acompanham quem fala**: os da personagem ficam acima da plaquinha "VOCÊ", os do(a) psicólogo(a) um pouco ao lado, e cada pessoa mostra no máximo 2 balões (o mais novo embaixo)
 - Plaquinha **"VOCÊ"** em cima da pilha da personagem
-- Plaquinha **"PSICÓLOGO"** ou **"PSICÓLOGA"** em cima do(a) psicólogo(a), quando ele(a) chega
+- Plaquinha **"PSICÓLOGO"** ou **"PSICÓLOGA"** **no chão, embaixo dos pés** do(a) psicólogo(a), quando ele(a) chega (assim não cobre a personagem)
 - Plaquinha **"MERCADO DE TRABALHO"** embaixo do chefão
 - Avisos numa faixa vermelha embaixo, sempre com ⚠ (lista na seção 9)
 
@@ -197,15 +210,16 @@ Itens com brilho azul que também caem e entram na pilha:
 | pipoca | IR AO CINEMA |
 
 - Eles **aliviam**: cada um reduz a "pressão" interna (ver 6.7).
-- **Não dá para largá-los de propósito.**
+- **Dá para largá-los de propósito** com LARGAR (ver 6.4): abrir mão do que se ama para dar conta também é uma escolha que as pessoas fazem.
 - **A pressão os tira de você:** sempre que cai uma carga fixa na pilha, ou quando a personagem bate numa barreira, ela **perde um item que ama**. Aparece **"VOCÊ LARGOU: [ITEM]"**. Isso não acontece com o(a) psicólogo(a) por perto.
 - Caem com frequência no começo (a cada 3,6–5 s) e ficam mais raros depois dos 35 s (a cada 7–9 s).
 
 ### 6.4 Largar
-- Ao apertar LARGAR, sai **a carga largável mais alta da pilha**, com um efeito verde.
+- Ao apertar LARGAR, sai **o item mais alto da pilha que pode sair**, com um efeito verde. Isso inclui **o que você ama** (hobbies e diversão).
+- Ao largar algo que ama: **"VOCÊ LARGOU: [ITEM]"** (azul). Conta em "coisas que você ama perdidas", não em "cargas largadas".
 - Ao largar a culpa: **"CULPA LARGADA"**. Ao largar o armário: **"ARMÁRIO LARGADO"**.
 - Se nada na pilha pode sair: a pilha treme e aparece **"NÃO SAI"**.
-- Com o(a) psicólogo(a) por perto, **o que pode ser largado brilha em verde**.
+- Com o(a) psicólogo(a) por perto, **as cargas que podem ser largadas brilham em verde** (o que você ama não brilha).
 
 ### 6.5 Barreiras no chão
 Começam depois de 4 s. Existem dois tipos, com regras diferentes.
@@ -300,7 +314,7 @@ Pessoas cinzentas e sem rosto ficam paradas nas calçadas. Elas **jogam cargas l
 Enquanto o chefão está em cena, a multidão **fica quieta** e não joga nada.
 
 ### 6.10 Chefão: MERCADO DE TRABALHO (a partir de 60 s)
-- **A cena abre espaço para ele:** os mascarados saem correndo e não aparecem mais; a multidão fica quieta; os outdoors param de piscar "COMPRE AGORA"; os pensamentos ficam mais espaçados. Ele é desenhado **na frente** de buracos, barreiras e figurantes, e as falas dele aparecem em **balões maiores**.
+- **A cena abre espaço para ele:** os mascarados saem correndo e não aparecem mais; a multidão fica quieta; os pensamentos ficam mais espaçados. Ele é desenhado **na frente** de buracos, barreiras e figurantes, e as falas dele aparecem em **balões maiores**.
 - Entra com um flash, uma faixa grande **"MERCADO DE TRABALHO"** e a legenda **"o chefão que cobra de todo mundo, e diz que a culpa é sua"**.
 - O visual: um executivo de terno e gravata vermelha, com um **monitor no lugar da cabeça** mostrando um gráfico subindo e olhos vermelhos. Carrega uma maleta.
 - **Ataques:**
@@ -310,8 +324,10 @@ Enquanto o chefão está em cena, a multidão **fica quieta** e não joga nada.
 - **Falas aleatórias** (a cada 3–5 s): "PELO BEM DA EMPRESA" · "VOCÊ DEVERIA AGRADECER" · "NÃO HÁ POBREZA QUE RESISTA A 14 HORAS DE TRABALHO" · "VISTA A CAMISA DA EMPRESA" · "PRODUZA!" · "TEM GENTE NA FILA" · "SEJA RESILIENTE"
 
 ### 6.11 Outdoors no fundo
-Ao longo da avenida aparecem outdoors. Os que vendem algo piscam **"COMPRE AGORA"** (menos durante o chefão):
-"CARRO DO ANO: SEJA FELIZ" · "CURSO: FELICIDADE JÁ" · "CELULAR NOVO, VIDA NOVA" · "LIVRO: AUTOCUIDADO" · "ROUPA DE MARCA = SUCESSO" · "FELICIDADE EM 12X" · "MÉTODO MENTE SÃ 3.0" · "MENTORIA: SEJA FELIZ" · "SEJA MAIS" · "#SUCESSO"
+Ao longo da avenida aparecem outdoors **discretos** (cores apagadas, sem brilho, sem piscar), só com anúncios de consumo, cada um com um ícone pequeno:
+CARRO DO ANO (carro) · COACH: VENÇA JÁ (pessoa falando) · ROUPA DE MARCA (camiseta) · CELULAR NOVO (celular) · TÊNIS EXCLUSIVO (tênis) · RELÓGIO DE LUXO (relógio) · VIAGEM DOS SONHOS (avião) · PARCELE EM 12X (cartão)
+
+A placa verde "SAÚDE MENTAL" do portal também ficou mais apagada, para não roubar a cena.
 
 ### 6.12 O(a) psicólogo(a)
 - **Quando chega:** depois de 50 s se você estiver com 2 corações ou menos; ou 35 s depois que o chefão aparece; ou quando o chefão está em cena e você fica com 1 coração. Na prática, chega em algum momento entre 50 e 95 s.
@@ -335,7 +351,7 @@ Ao longo da avenida aparecem outdoors. Os que vendem algo piscam **"COMPRE AGORA
   - você **não perde** o que ama
   - as crises ficam mais fracas e mais espaçadas
   - as máscaras dos outros aparecem levantadas
-- **Ele(a) NUNCA carrega cargas por você.** Só caminha junto, sempre um pouco atrás e ao lado.
+- **Ele(a) NUNCA carrega cargas por você.** Só caminha junto, sempre um pouco atrás e ao lado. A plaquinha com o nome fica no chão, embaixo dos pés.
 - **Falas:** a lista está **vazia de propósito**. O código diz: *"falas do(a) psicólogo(a): a definir com a equipe. Enquanto a lista estiver vazia, ele(a) só acompanha em silêncio."* O jogo já está preparado para ele(a) responder aos pensamentos da personagem: quando surge um pensamento perto dele(a), uma fala responderia em cerca de 1,3 s. **Esse é um ponto em aberto para a equipe definir.**
 
 ### 6.13 Como a partida termina
@@ -347,11 +363,11 @@ Ao longo da avenida aparecem outdoors. Os que vendem algo piscam **"COMPRE AGORA
 ## 7. Final animado (igual nos dois casos)
 
 1. Tudo para. **O chefão sai de cena**, os mascarados vão embora, e a multidão e os obstáculos somem aos poucos. **Só ficam as pessoas que ajudam.**
-2. A pilha **balança** e a personagem **cai de joelhos**. As cargas se espalham pelo chão: **no máximo 8**. Se havia mais, as outras somem.
+2. A pilha **balança** e a personagem **cai de joelhos**. As cargas se espalham pelo chão: **no máximo 8**. Se havia mais, as outras somem. **O que ela ama não cai**: guitarra, livro etc. continuam com ela.
 3. Se o(a) psicólogo(a) ainda não tinha chegado, ele(a) chega agora e fica **colado(a) ao lado da personagem, na frente**, com a plaquinha PSICÓLOGA/PSICÓLOGO visível. Ninguém o(a) cobre.
-4. **Quatro pessoas** (diversas: uma mulher negra de cabelo afro, uma ruiva, um homem negro com broche LGBT+ e outra pessoa) vêm correndo dos dois lados. **Cada uma pega coisas do chão e carrega na própria cabeça, no máximo 2 por pessoa.**
-5. O que ninguém conseguiu pegar some. A personagem **levanta livre, sem nada na cabeça**.
-6. Todos **caminham juntos** para a direita: a personagem, o(a) psicólogo(a) ao lado e os quatro ajudantes carregando as cargas.
+4. **Quatro pessoas** (diversas: uma mulher negra de cabelo afro, uma ruiva, um homem negro com broche LGBT+ e outra pessoa) vêm correndo dos dois lados. **Cada uma pega cargas do chão e carrega na própria cabeça, no máximo 2 por pessoa.** Ninguém carrega o que a personagem ama: isso é dela.
+5. O que ninguém conseguiu pegar some. A personagem **levanta sem nenhuma carga, só com o que ama**.
+6. Todos **caminham juntos** para a direita: a personagem (com seus hobbies), o(a) psicólogo(a) ao lado e os quatro ajudantes carregando as cargas.
 7. Uma caixa de texto digita, letra por letra:
    - **"Saúde mental não é linha de chegada."**
    - **"E ninguém caminha sozinho."** (em verde)
@@ -370,7 +386,7 @@ O psicólogo continua sem carregar nada no final. **Quem divide o peso é a rede
   - **[n] cargas carregadas** (todas as cargas que caíram na pilha, contando o boleto inicial)
   - **[n] cargas largadas**
   - **[n] tropeços** (barreiras comuns em que bateu)
-  - **[n] coisas que você ama perdidas**
+  - **[n] coisas que você ama perdidas** (tiradas pela pressão ou largadas por escolha)
   - **[n] barreiras sociais no caminho** (muros de identidade, que não dependem do jogador; aparece só se for maior que zero)
 - **"O psicólogo não carregou nada por você. Caminhou junto."** (ou "A psicóloga…")
 - **Quadro de ajuda** (em verde): **"PRECISA CONVERSAR? EXISTE AJUDA GRATUITA E PERTO DE VOCÊ"**
@@ -449,7 +465,7 @@ Pulo, aterrissagem, batida (perde coração), largar (som leve e brilhante), "n�
    - perfil jogado: *"você jogou como [mulher, negra, LGBT+, com deficiência, pobre] · dificuldade [nível]"*
    - lista do que foi perdido: *"Pelo caminho, a pressão tirou de você: [itens]."*
    - dica de controles no celular: *"arraste na tela para andar · toque rápido ou PULAR para pular · LARGAR solta uma carga · 5 corações"*
-4. **Nome:** o jogo se chama "Rumo à Saúde Mental", mas o endereço ainda é `rumo-ao-bem-estar` (nome antigo).
+4. **Nome:** o jogo se chama "Rumo à Saúde Mental" e está em **hyratecnologia.com/rumo-a-saude-mental**. O repositório e o endereço do GitHub ainda usam `rumo-ao-bem-estar` (nome antigo). A versão do domínio é uma cópia no repositório do site da Hyra e precisa ser atualizada junto.
 
 ---
 
@@ -461,7 +477,7 @@ Pulo, aterrissagem, batida (perde coração), largar (som leve e brilhante), "n�
 | Cargas fixas (boleto, trabalho, doença…) | pressões estruturais que não se resolvem com força de vontade |
 | Cargas largáveis (curtidas, padrão, ter mais…) | pressões sociais/culturais que dá para soltar |
 | Culpa e armário (só com o psi) | coisas que a terapia ajuda a soltar |
-| Itens que você ama que caem | a pressão faz a gente abandonar o que dá prazer; eles aliviam |
+| Itens que você ama que caem | a pressão faz a gente abandonar o que dá prazer (às vezes por escolha, com LARGAR); eles aliviam |
 | Barreiras sociais (muros que ocupam a rua) | racismo, machismo, LGBTfobia, pobreza, capacitismo: não dá para pular nem desviar, porque não dependem da habilidade de quem passa |
 | Dificuldade pelas escolhas | desigualdade de ponto de partida |
 | Sorteio "você não escolhe" | ninguém escolhe cor, gênero, classe ou corpo ao nascer |
@@ -470,7 +486,8 @@ Pulo, aterrissagem, batida (perde coração), largar (som leve e brilhante), "n�
 | Multidão sem rosto | cobranças da sociedade e da família |
 | Mercado de Trabalho | produtividade, vigilância, metas e culpabilização do indivíduo |
 | Chefão saindo de cena no final | quando a rede de apoio chega, a cobrança perde o palco |
-| Outdoors "compre agora" | a felicidade vendida como produto |
+| Outdoors de consumo (carro, coach, roupa…) | a felicidade vendida como produto, sempre ao fundo |
+| Hobbies que ficam com a personagem no final | o que você ama é seu: a rede divide o peso, não o prazer |
 | Crises (taquicardia, falta de ar…) | sintomas reais de ansiedade/pânico vividos na pele |
 | Colapso sem frase | a personagem simplesmente para; o jogo não narra o esgotamento como fim |
 | Psicólogo(a) que não carrega | a terapia não resolve por você, mas acompanha |

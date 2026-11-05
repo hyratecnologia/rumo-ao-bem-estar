@@ -2,7 +2,7 @@
 
 Joguinho em pixel art feito para a **Semana da Psicologia**, sobre saúde mental e cobranças.
 
-**Jogar:** https://hyratecnologia.github.io/rumo-ao-bem-estar/
+**Jogar:** https://hyratecnologia.com/rumo-a-saude-mental/ (também em https://hyratecnologia.github.io/rumo-ao-bem-estar/)
 
 ## A ideia
 
@@ -26,7 +26,8 @@ Antes de começar, você escolhe quem vai ser (cor, gênero, orientação, class
 
 ## Versões
 
-- **v4 (atual):** sorteio "você não escolhe", tela de bônus do psicólogo, chefão em foco, mascarados variados (selfie, patins, carro de luxo, jato), obstáculos animados, final com o psicólogo visível, capa com várias pessoas, partida mais longa, recursos de ajuda e aviso na tela de fim.
+- **v5 (atual):** tela do psicólogo sem falar em vidas ("você encontrou um psicólogo pelo caminho"), barreiras sociais sem repetir, deficiência 1 em 10 no sorteio, outdoors discretos, LARGAR também solta hobbies, e no final ninguém carrega o que você ama.
+- **v4:** sorteio "você não escolhe", tela de bônus do psicólogo, chefão em foco, mascarados variados (selfie, patins, carro de luxo, jato), obstáculos animados, final com o psicólogo visível, capa com várias pessoas, partida mais longa, recursos de ajuda e aviso na tela de fim. https://hyratecnologia.github.io/rumo-ao-bem-estar/v4/
 - **v3:** barreiras sociais como muros inevitáveis. https://hyratecnologia.github.io/rumo-ao-bem-estar/v3/
 - **v2:** capa nova em pixel art. https://hyratecnologia.github.io/rumo-ao-bem-estar/v2/
 
