@@ -135,6 +135,13 @@ h1 em { font-style: normal; color: var(--good); }
   .stats b { font-size: 14px; }
 }
 .select-foot { width: 100%; display: flex; align-items: flex-end; gap: 18px; }
+/* birth lottery */
+.draw-pv canvas { width: 112px; height: 182px; }
+.draw-traits { margin: 0; min-height: 1.6em; font-size: 13px; letter-spacing: .14em; color: var(--ink); text-transform: lowercase; }
+.draw-diff { margin: 0; min-height: 1.4em; font-family: var(--pix); font-size: 14px; letter-spacing: .14em; }
+#drawNote { visibility: hidden; }
+#drawNote.on { visibility: visible; }
+@media (max-height: 520px) { .draw-box { gap: 8px; } .draw-pv canvas { width: 64px; height: 104px; } .draw-pv { padding: 8px 14px; } }
 .select-foot .diff { flex: 1 1 auto; min-width: 0; }
 .select-foot .cta { flex: none; }
 .h-sel { font-size: clamp(16px, 3.6vw, 26px); }
@@ -216,6 +223,17 @@ h1 em { font-style: normal; color: var(--good); }
       </div>
       <button class="cta" id="bornBtn" type="button">nascer</button>
     </div>
+  </div>
+</div>
+
+<div class="ov" id="draw" hidden>
+  <div class="box draw-box">
+    <span class="eyebrow" id="drawEyebrow">mas na vida real...</span>
+    <h1 class="h-sel">VOCÊ NÃO ESCOLHE.</h1>
+    <div class="portrait draw-pv"><canvas id="drawPv" width="16" height="26"></canvas><span id="drawTag">sorteando...</span></div>
+    <p class="draw-traits" id="drawTraits">&nbsp;</p>
+    <p class="draw-diff" id="drawDiff">&nbsp;</p>
+    <p class="lead small" id="drawNote">ninguém escolhe cor, gênero, classe ou corpo ao nascer.</p>
   </div>
 </div>
 
@@ -1377,9 +1395,8 @@ h1 em { font-style: normal; color: var(--good); }
   $("mute").addEventListener("click", (e) => { e.stopPropagation(); toggleMute(); });
   $("mute").addEventListener("pointerdown", (e) => e.stopPropagation());
 
-  const pv = $("pv"), pvx = pv.getContext("2d"); let pvT = 0;
-  setInterval(() => {
-    pvT++; pvx.clearRect(0, 0, 16, 26); const lk = heroLook(sel);
+  function drawPortrait(pvx, s, pvT) {
+    pvx.clearRect(0, 0, 16, 26); const lk = heroLook(s);
     if (lk.wheel) {
       pvx.drawImage(personImg(lk, "idle"), 0, -2);
       pvx.fillStyle = "#14121e"; pvx.fillRect(2, 12, 11, 2); pvx.fillRect(1, 6, 2, 8);
@@ -1387,7 +1404,9 @@ h1 em { font-style: normal; color: var(--good); }
       pvx.strokeStyle = "#9aa3b8"; pvx.lineWidth = 0.8; pvx.beginPath(); pvx.arc(6, 19.5, 5, 0, Math.PI * 2); pvx.stroke();
       pvx.fillStyle = "#14121e"; pvx.fillRect(13, 22, 2, 2);
     } else pvx.drawImage(personImg(lk, "r" + (pvT % 4)), 0, 0);
-  }, 130);
+  }
+  const pvx0 = $("pv").getContext("2d"), dpx = $("drawPv").getContext("2d"); let pvT = 0;
+  setInterval(() => { pvT++; drawPortrait(pvx0, sel, pvT); if (!$("draw").hidden) drawPortrait(dpx, sel, pvT); }, 130);
   // ===== cover art: original, detailed pixel scene of a city street at dusk (480x270), pre-rendered in layers =====
   const CW = 480, CH = 270, VPX = 240, VPY = 186;
   // the scene is drawn at 480x270 and blown up on screen by a whole number, so every pixel stays square and sharp
@@ -1627,9 +1646,35 @@ h1 em { font-style: normal; color: var(--good); }
     $("diffLabel").textContent = DIFF[d]; $("diffLabel").style.color = DIFF_COL[d];
   }
   document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => { sel[b.parentElement.dataset.key] = b.dataset.v; renderSelect(); initAudio(); tone(440 + diffOf() * 80, 0.06, "square", 0.04); }));
-  function showSelect() { initAudio(); ["title", "end"].forEach((id) => ($(id).hidden = true)); $("select").hidden = false; renderSelect(); document.querySelector(".seg button").focus(); }
-  function start() { initAudio(); reset(); mode = "play"; ["title", "end", "select"].forEach((id) => ($(id).hidden = true)); }
-  $("bornBtn").addEventListener("click", start);
+  // every trait is a coin flip: the select screen opens on a random person, and birth is a lottery too
+  const TRAITS = { cor: ["branca", "negra"], genero: ["homem", "mulher"], orient: ["hetero", "lgbt"], classe: ["rica", "pobre"], pcd: ["nao", "sim"] };
+  const randomize = () => Object.keys(TRAITS).forEach((k) => { sel[k] = pick(TRAITS[k]); });
+  function traitsText(s) {
+    const f = s.genero === "mulher";
+    const n = [f ? "mulher" : "homem", s.cor === "negra" ? (f ? "negra" : "negro") : (f ? "branca" : "branco"), s.orient === "lgbt" ? "LGBT+" : "hétero", s.classe === "pobre" ? "pobre" : (f ? "rica" : "rico")];
+    if (s.pcd === "sim") n.push("com deficiência");
+    return n.join(" · ");
+  }
+  function showSelect() { initAudio(); randomize(); ["title", "end", "draw"].forEach((id) => ($(id).hidden = true)); $("select").hidden = false; renderSelect(); document.querySelector(".seg button").focus(); }
+  let drawing = null;
+  function showDraw() {
+    initAudio(); $("select").hidden = true; $("draw").hidden = false;
+    $("drawTraits").innerHTML = "&nbsp;"; $("drawDiff").innerHTML = "&nbsp;"; $("drawTag").textContent = "sorteando..."; $("drawNote").classList.remove("on");
+    let n = 0, delay = 50; const total = 22;
+    const spin = () => {
+      randomize(); n++; tone(520 + (n % 2) * 140, 0.04, "square", 0.035);
+      $("drawTraits").textContent = traitsText(sel);
+      if (n < total) { delay *= 1.08; drawing = setTimeout(spin, delay); return; }
+      const d = diffOf();
+      $("drawTag").textContent = "você"; $("drawDiff").textContent = "dificuldade: " + DIFF[d]; $("drawDiff").style.color = DIFF_COL[d];
+      $("drawNote").classList.add("on"); sfx.chime();
+      drawing = setTimeout(() => { drawing = null; start(); }, 3200);
+    };
+    spin();
+  }
+  $("draw").addEventListener("click", () => { if (drawing && $("drawTag").textContent === "você") { clearTimeout(drawing); drawing = null; start(); } });
+  function start() { initAudio(); reset(); mode = "play"; ["title", "end", "select", "draw"].forEach((id) => ($(id).hidden = true)); }
+  $("bornBtn").addEventListener("click", showDraw);
   function showEnd() {
     const f = sel.genero === "mulher";
     const names = [f ? "mulher" : "homem", sel.cor === "negra" ? (f ? "negra" : "negro") : (f ? "branca" : "branco")];
