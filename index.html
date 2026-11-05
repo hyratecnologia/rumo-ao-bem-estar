@@ -243,7 +243,7 @@ h1 em { font-style: normal; color: var(--good); }
     <span class="eyebrow">antes de nascer</span>
     <h1 class="h-sel">QUEM VOCÊ VAI SER?</h1>
     <div class="select">
-      <div class="portrait"><canvas id="pv" width="16" height="26"></canvas><span>você</span></div>
+      <div class="portrait"><canvas id="pv" width="32" height="52"></canvas><span>você</span></div>
       <div class="opts">
         <div class="opt-row"><span>cor</span><div class="seg" data-key="cor"><button type="button" data-v="branca">branca</button><button type="button" data-v="negra">negra</button></div></div>
         <div class="opt-row"><span>gênero</span><div class="seg" data-key="genero"><button type="button" data-v="homem">homem</button><button type="button" data-v="mulher">mulher</button></div></div>
@@ -266,7 +266,7 @@ h1 em { font-style: normal; color: var(--good); }
   <div class="box draw-box">
     <span class="eyebrow" id="drawEyebrow">mas na vida real...</span>
     <h1 class="h-sel">VOCÊ NÃO ESCOLHE.</h1>
-    <div class="portrait draw-pv"><canvas id="drawPv" width="16" height="26"></canvas><span id="drawTag">sorteando...</span></div>
+    <div class="portrait draw-pv"><canvas id="drawPv" width="32" height="52"></canvas><span id="drawTag">sorteando...</span></div>
     <p class="draw-traits" id="drawTraits">&nbsp;</p>
     <p class="draw-diff" id="drawDiff">&nbsp;</p>
     <p class="lead small" id="drawNote">ninguém escolhe cor, gênero, classe ou corpo ao nascer.</p>
@@ -278,7 +278,7 @@ h1 em { font-style: normal; color: var(--good); }
     <span class="eyebrow bonus-eyebrow">★ bônus ★</span>
     <h1 class="h-bonus" id="bonusTitle">Você encontrou uma psicóloga pelo caminho</h1>
     <div class="bonus-main">
-      <div class="portrait bonus-pv"><canvas id="bonusPv" width="16" height="26"></canvas><span id="bonusTag">psicóloga</span></div>
+      <div class="portrait bonus-pv"><canvas id="bonusPv" width="32" height="52"></canvas><span id="bonusTag">psicóloga</span></div>
       <ul class="perks" id="bonusPerks"></ul>
     </div>
     <p class="lead small bonus-note" id="bonusNote">Ela não carrega nada por você. Caminha junto.</p>
@@ -328,54 +328,186 @@ h1 em { font-style: normal; color: var(--good); }
   const shade = (c, f) => mix(c, "#000000", f);
   function hash(i) { const s = Math.sin(i * 127.1 + 311.7) * 43758.5453; return s - Math.floor(s); }
 
-  // ================= sprites =================
-  const LEGS = { idle: [[4, 16, 8], [7, 16, 8]], r0: [[2, 16, 8], [8, 16, 6]], r1: [[4, 16, 8], [6, 16, 7]], r2: [[8, 16, 8], [2, 16, 6]], r3: [[6, 16, 8], [4, 16, 7]], jump: [[3, 16, 6], [8, 16, 5]] };
-  const ARMS = { idle: [0, 0], r0: [-1, 1], r1: [0, 0], r2: [1, -1], r3: [0, 0], jump: [-2, -2], kneel: [1, 1] };
-  function drawPersonParts(c, o, frame) {
-    const px = (x, y, w, h, col) => { c.fillStyle = col; c.fillRect(x, y, w, h); };
-    const kneel = frame === "kneel";
-    const b = kneel ? 4 : (frame === "r1" || frame === "r3") ? -1 : 0;
-    const sk = o.skin, sh = o.shirt, pa = o.pants, shoe = "#24222c";
-    if (o.wheel) { px(3, 15, 8, 3, pa); px(9, 17, 3, 5, shade(pa, .15)); px(9, 22, 4, 1, shoe); }
-    else if (kneel) { px(3, 20, 8, 3, pa); px(2, 23, 4, 1, shoe); px(9, 23, 4, 1, shoe); }
-    else (LEGS[frame] || LEGS.idle).forEach(([x, y, h], i) => { px(x, y, 3, h - 1, i ? shade(pa, .18) : pa); px(x, y + h - 1, 4, 1, shoe); });
-    const [ab, af] = ARMS[frame] || ARMS.idle;
-    px(2 + ab, 10 + b, 2, 5, shade(sh, .25)); px(2 + ab, 15 + b, 2, 1, shade(sk, .15));
-    px(3, 9 + b, 8, 7, sh); px(9, 9 + b, 2, 7, shade(sh, .2));
-    if (o.blazer) { px(6, 9 + b, 2, 6, "#f4f1e8"); px(6, 10 + b, 1, 3, "#b0303a"); }
-    if (o.pin) ["#e74c3c", "#f39c12", "#f1c40f", "#2ecc71", "#3498db", "#9b59b6"].forEach((col, i) => px(4 + (i % 3), 10 + b + Math.floor(i / 3), 1, 1, col));
-    px(10 + af, 10 + b, 2, 5, sh); px(10 + af, 15 + b, 2, 1, sk);
-    px(3, 2 + b, 8, 7, sk); px(3, 8 + b, 8, 1, shade(sk, .12));
-    px(7, 5 + b, 1, 1, K); px(9, 5 + b, 1, 1, K); px(8, 7 + b, 2, 1, shade(sk, .3));
-    const hr = o.hair;
-    if (o.hairStyle === "afro") { px(2, 0 + b, 9, 1, hr); px(1, 1 + b, 11, 3, hr); px(1, 4 + b, 3, 4, hr); px(2, 1 + b, 3, 1, mix(hr, "#ffffff", .15)); }
-    else if (o.hairStyle === "long") { px(3, 1 + b, 8, 2, hr); px(2, 2 + b, 3, 9, hr); px(9, 3 + b, 2, 1, hr); px(3, 1 + b, 3, 1, mix(hr, "#ffffff", .18)); }
-    else if (o.hairStyle === "grey") { px(3, 1 + b, 8, 2, hr); px(3, 3 + b, 2, 3, hr); px(6, 4 + b, 5, 1, "#2b2b33"); px(7, 5 + b, 1, 1, "#bfe6ff"); px(9, 5 + b, 1, 1, "#bfe6ff"); }
-    else { px(3, 1 + b, 8, 2, hr); px(3, 3 + b, 2, 3, hr); px(4, 1 + b, 3, 1, mix(hr, "#ffffff", .15)); }
-    if (o.mask) {
-      const dy = o.lift ? -3 : 0;
-      px(4, 2 + b + dy, 7, 6, "#ffffff"); px(4, 7 + b + dy, 7, 1, "#cfcac0");
-      px(6, 4 + b + dy, 1, 1, K); px(9, 4 + b + dy, 1, 1, K);
-      px(5, 5 + b + dy, 1, 1, "#e2354c"); px(10, 5 + b + dy, 1, 1, "#e2354c"); px(6, 6 + b + dy, 4, 1, "#e2354c");
-      if (o.lift) { px(7, 6 + b, 1, 2, "#6fb6ff"); px(8, 8 + b, 2, 1, shade(sk, .45)); }
-    }
+  // ================= sprites (v6: detailed pixel art) =================
+  // Every sprite is drawn with 2x2 art pixels per world unit, so bodies keep their size on screen but carry 4x the detail.
+  // Colours come in 4-tone ramps (light leans warm, shadow leans cool purple) and the outline takes a darkened
+  // version of the colour it touches instead of flat black ("selout").
+  const INK = "#0b0816";
+  const rampOf = (c) => [mix(c, "#fff3d6", 0.3), c, mix(c, "#2b1f5c", 0.36), mix(c, "#150f30", 0.62)];
+  const skinRamp = (c) => [mix(c, "#ffe8d0", 0.28), c, mix(c, "#6a2c45", 0.3), mix(c, "#2e1220", 0.55)];
+  function mkCanvas(w, h) { const c = document.createElement("canvas"); c.width = w; c.height = h; return c; }
+  function pen(c) {
+    const x = c.getContext("2d");
+    const q = {
+      x,
+      r: (a, b, w, h, col) => { if (!col || w <= 0 || h <= 0) return; x.fillStyle = col; x.fillRect(Math.round(a), Math.round(b), Math.round(w), Math.round(h)); },
+      p: (a, b, col) => { x.fillStyle = col; x.fillRect(Math.round(a), Math.round(b), 1, 1); },
+      ell: (cx, cy, rx, ry, col) => { x.fillStyle = col; for (let yy = Math.floor(cy - ry); yy <= Math.ceil(cy + ry); yy++) for (let xx = Math.floor(cx - rx); xx <= Math.ceil(cx + rx); xx++) { const u = (xx + 0.5 - cx) / rx, v = (yy + 0.5 - cy) / ry; if (u * u + v * v <= 1) x.fillRect(xx, yy, 1, 1); } },
+      disc: (cx, cy, r, col) => q.ell(cx, cy, r, r, col),
+      ring: (cx, cy, r, w, col) => { x.fillStyle = col; for (let yy = Math.floor(cy - r); yy <= Math.ceil(cy + r); yy++) for (let xx = Math.floor(cx - r); xx <= Math.ceil(cx + r); xx++) { const d = Math.hypot(xx + 0.5 - cx, yy + 0.5 - cy); if (d <= r && d > r - w) x.fillRect(xx, yy, 1, 1); } },
+      line: (x0, y0, x1, y1, col) => {
+        x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1); x.fillStyle = col;
+        const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1; let e = dx + dy;
+        for (;;) { x.fillRect(x0, y0, 1, 1); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } }
+      },
+      thick: (x0, y0, x1, y1, w, col) => { const n = Math.max(1, Math.ceil(Math.hypot(x1 - x0, y1 - y0) * 2)); x.fillStyle = col; for (let i = 0; i <= n; i++) { const t = i / n; x.fillRect(Math.round(x0 + (x1 - x0) * t - w / 2), Math.round(y0 + (y1 - y0) * t - w / 2), w, w); } },
+      // rows of characters mapped through a palette, for small hand-placed details
+      map: (ox, oy, rows, pal) => rows.forEach((row, yy) => { for (let i = 0; i < row.length; i++) { const col = pal[row[i]]; if (col) { x.fillStyle = col; x.fillRect(ox + i, oy + yy, 1, 1); } } })
+    };
+    return q;
   }
-  function outlined(base, w, h, line) {
-    const out = document.createElement("canvas"); out.width = w + 2; out.height = h + 2;
-    const oc = out.getContext("2d");
-    [[0, 1], [2, 1], [1, 0], [1, 2]].forEach(([x, y]) => oc.drawImage(base, x, y));
-    oc.globalCompositeOperation = "source-in"; oc.fillStyle = line || K; oc.fillRect(0, 0, w + 2, h + 2);
-    oc.globalCompositeOperation = "source-over"; oc.drawImage(base, 1, 1);
+  // coloured 1px outline around everything opaque; `line` forces one colour (the grey crowd uses it)
+  function outline(base, line) {
+    const w = base.width + 2, h = base.height + 2, out = mkCanvas(w, h), oc = out.getContext("2d");
+    oc.drawImage(base, 1, 1);
+    const id = oc.getImageData(0, 0, w, h), d = id.data, src = new Uint8ClampedArray(d), I = hex(INK), Lc = line ? hex(line) : null;
+    for (let y = 0; y < h; y++) for (let xx = 0; xx < w; xx++) {
+      const i = (y * w + xx) * 4; if (src[i + 3] > 0) continue;
+      let j = -1;
+      for (const [dx, dy] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) { const a = xx + dx, b = y + dy; if (a < 0 || b < 0 || a >= w || b >= h) continue; const k = (b * w + a) * 4; if (src[k + 3] > 0) { j = k; break; } }
+      if (j < 0) continue;
+      if (Lc) { d[i] = Lc[0]; d[i + 1] = Lc[1]; d[i + 2] = Lc[2]; }
+      else for (let c = 0; c < 3; c++) d[i + c] = Math.round(src[j + c] + (I[c] - src[j + c]) * 0.74);
+      d[i + 3] = 255;
+    }
+    oc.putImageData(id, 0, 0);
     return out;
+  }
+
+  // poses: angles in degrees from straight down, positive = forward (the person faces right)
+  // run cycle in 6 frames: [near thigh, near shin, far thigh, far shin]
+  const RUN6 = [[28, 12, -22, -55], [10, 0, -8, -80], [-14, -20, 30, -10], [-22, -55, 28, 12], [-8, -80, 10, 0], [30, -10, -14, -20]];
+  const RUNBOB = [0, 1, -1, 0, 1, -1];
+  const RUNARM = [-30, -12, 16, 26, 10, -26];
+  const SHOE = rampOf("#3a3346");
+  // 30x50 art pixels before the outline; feet on row 49
+  function drawPersonArt(q, o, frame) {
+    const wheel = frame[0] === "w", kneel = frame === "kneel", jump = frame === "jump", run = frame[0] === "r";
+    const S = skinRamp(o.skin), C = rampOf(o.shirt), Pn = rampOf(o.pants), H = rampOf(o.hair);
+    let hipX = 15, hipY = 32, legs, arms, up = 0, lean = 0, drop = 0;
+    if (run) { const f = +frame.slice(1) % 6, L = RUN6[f]; legs = [[L[0], L[1]], [L[2], L[3]]]; up = RUNBOB[f]; lean = 1; arms = [[RUNARM[f], RUNARM[f] + 55], [-RUNARM[f], -RUNARM[f] + 55]]; }
+    else if (jump) { legs = [[55, -8], [-25, -50]]; up = -1; arms = [[150, 165], [130, 150]]; }
+    else if (kneel) { legs = [[40, -90], [12, -90]]; drop = 9; hipY = 41; arms = [[25, 50], [10, 40]]; }
+    else if (wheel) { legs = [[90, 0], [90, 4]]; hipX = 13; hipY = 33; drop = 1; arms = [[30, 75], [20, 65]]; }
+    else { legs = [[4, 0], [-3, 0]]; arms = [[6, 12], [-4, 6]]; if (frame === "idle1") up = 1; }
+    if (!kneel && !wheel) hipY += (frame === "idle1" ? 0 : up);
+    const tx = 10 + lean, ty = 17 + up + drop, hx = 9 + lean + (kneel ? 1 : 0), hy = 3 + up + drop;
+    const longSleeve = !!o.blazer;
+
+    // wheelchair frame behind the person
+    if (wheel) {
+      const FR = rampOf("#4a5670");
+      q.r(5, 17, 3, 2, "#2a2433"); q.r(6, 18, 2, 16, FR[1]); q.r(6, 18, 1, 16, FR[0]);
+      q.r(7, 33, 15, 2, FR[1]); q.r(8, 32, 12, 1, "#2a2f3e");
+      q.thick(20, 35, 23, 44, 1, FR[2]); q.r(19, 43, 7, 1, FR[1]);
+      q.disc(24, 47, 2.2, "#2a2433"); q.p(24, 47, "#8a94a8");
+    }
+    // back hair
+    if (o.hairStyle === "afro") {
+      q.disc(hx + 5, hy + 3, 11.5, H[1]);
+      for (let yy = -11; yy <= 11; yy++) for (let xx = -11; xx <= 11; xx++) { if (xx * xx + yy * yy > 118) continue; const r = hash(xx * 7.1 + yy * 13.3 + o.skin.length); if (r > 0.74) q.p(hx + 5 + xx, hy + 3 + yy, xx + yy < -3 ? H[0] : H[2]); }
+    }
+    if (o.hairStyle === "long") {
+      q.r(hx - 2, hy, 6, 17, H[1]); q.r(hx - 1, hy + 17, 4, 2, H[1]); q.p(hx, hy + 19, H[2]);
+      q.r(hx - 1, hy + 4, 1, 12, H[2]); q.r(hx + 2, hy + 7, 1, 10, H[2]); q.r(hx - 1, hy + 1, 1, 3, H[0]); q.r(hx + 1, hy + 2, 1, 3, H[0]);
+    }
+    // far arm and far leg in shadow tones
+    const arm = (a0, f0, near) => {
+      const a = a0 * Math.PI / 180, b = f0 * Math.PI / 180, sx = tx + 5, sy = ty + 3;
+      const ex = sx + Math.sin(a) * 6, ey = sy + Math.cos(a) * 6, wx = ex + Math.sin(b) * 5, wy = ey + Math.cos(b) * 5;
+      const sl = near ? C : [C[2], C[2], C[3], C[3]], sk = near ? S : [S[2], S[2], S[3], S[3]];
+      // the near arm gets a dark rim so it reads against the shirt
+      if (near) { q.thick(sx, sy + 1, ex, ey, 5, C[3]); q.thick(ex, ey, wx, wy, 5, C[3]); q.r(wx - 2, wy - 2, 5, 5, C[3]); }
+      q.thick(sx, sy, ex, ey, 3, sl[1]); q.thick(ex, ey, wx, wy, 3, longSleeve ? sl[1] : sk[1]);
+      if (near) { q.thick(sx - 1, sy, ex - 1, ey, 1, sl[0]); if (!longSleeve) q.thick(ex + 1, ey + 1, wx + 1, wy, 1, sk[2]); else q.thick(ex + 1, ey + 1, wx + 1, wy, 1, sl[2]); }
+      q.r(wx - 1, wy - 1, 3, 3, sk[1]); if (near) q.p(wx - 1, wy - 1, sk[0]);
+    };
+    const leg = (hx0, th, sh, near) => {
+      const a = th * Math.PI / 180, b = sh * Math.PI / 180, cols = near ? Pn : [Pn[2], Pn[2], Pn[3], Pn[3]], sc = near ? SHOE : [SHOE[2], SHOE[2], SHOE[3], SHOE[3]];
+      const kx = hx0 + Math.sin(a) * 7, ky = hipY + Math.cos(a) * 7, ax = kx + Math.sin(b) * 8, ay = ky + Math.cos(b) * 8;
+      q.thick(hx0, hipY, kx, ky, 4, cols[1]); q.thick(kx, ky, ax, ay, 3, cols[1]);
+      if (near) { q.thick(hx0 + 1.5, hipY + 1, kx + 1.5, ky, 1, cols[0]); q.thick(kx - 1, ky, ax - 1, ay - 1, 1, cols[2]); }
+      const back = Math.abs(sh) > 60; // shin pointing backwards: the sole faces up/back
+      q.r(ax - (back ? 3 : 2), ay, 5, 2, sc[1]); q.r(ax - (back ? 3 : 2), ay + 2, 5, 1, sc[3]); q.p(ax + (back ? -3 : 2), ay, sc[0]);
+    };
+    arm(arms[1][0], arms[1][1], false);
+    leg(hipX - 1, legs[1][0], legs[1][1], false);
+    leg(hipX, legs[0][0], legs[0][1], true);
+    // hips
+    q.r(tx + 1, hipY - 1, 9, 3, Pn[1]); q.r(tx + 1, hipY - 1, 9, 1, Pn[2]);
+    // torso with light from the upper left, a fold and a collar
+    const th = hipY - ty;
+    q.r(tx + 1, ty, 9, 1, C[1]); q.r(tx, ty + 1, 11, th - 1, C[1]);
+    q.r(tx, ty + 1, 1, th - 2, C[0]); q.r(tx + 1, ty, 4, 1, C[0]); q.r(tx + 1, ty + 1, 2, 1, C[0]);
+    q.r(tx + 9, ty + 2, 2, th - 3, C[2]); q.r(tx + 10, ty + 4, 1, th - 6, C[3]);
+    q.r(tx, hipY - 2, 11, 1, C[2]);
+    q.p(tx + 4, ty + 7, C[2]); q.p(tx + 5, ty + 8, C[2]); q.p(tx + 6, ty + 9, C[2]); q.p(tx + 3, ty + 10, C[2]);
+    q.r(tx, hipY - 1, 11, 1, Pn[3]); q.p(tx + 6, hipY - 1, "#c9b27a");
+    if (o.blazer) {
+      q.r(tx + 4, ty, 3, 6, "#f1efe6"); q.r(tx + 5, ty + 6, 1, 2, "#f1efe6"); q.p(tx + 4, ty + 5, C[1]); q.p(tx + 6, ty + 5, C[1]);
+      q.p(tx + 5, ty + 1, "#8e1d26"); q.r(tx + 5, ty + 2, 1, 5, "#c8323a"); q.p(tx + 5, ty + 7, "#8e1d26");
+      q.r(tx + 3, ty + 1, 1, 3, C[3]); q.r(tx + 7, ty + 1, 1, 3, C[3]); q.p(tx + 8, ty + 4, "#e8c04a"); q.p(tx + 7, ty + 9, "#e8c04a");
+    } else { q.r(tx + 4, ty, 3, 1, S[2]); q.p(tx + 5, ty + 1, S[2]); }
+    if (o.pin) ["#e74c3c", "#f39c12", "#f1c40f", "#2ecc71", "#3498db", "#9b59b6"].forEach((col, i) => q.r(tx + 2, ty + 3 + i, 3, 1, col));
+    // neck and head
+    q.r(hx + 5, hy + 12, 3, ty - hy - 11, S[2]);
+    q.r(hx + 1, hy, 11, 13, S[1]); q.r(hx, hy + 1, 13, 11, S[1]);
+    q.r(hx + 2, hy + 11, 9, 1, S[2]); q.r(hx + 3, hy + 12, 7, 1, S[2]); q.r(hx, hy + 3, 2, 8, S[2]);
+    q.r(hx + 6, hy + 2, 3, 1, S[0]); q.p(hx + 11, hy + 8, S[0]); q.p(hx + 10, hy + 9, S[0]);
+    q.r(hx + 2, hy + 6, 2, 3, S[1]); q.p(hx + 2, hy + 7, S[2]); q.p(hx + 3, hy + 6, S[0]);
+    q.p(hx + 13, hy + 7, S[1]); q.p(hx + 13, hy + 8, S[2]); q.p(hx + 12, hy + 9, S[2]);
+    const blink = frame === "idle1" && o.hairStyle !== "grey";
+    [hx + 7, hx + 10].forEach((ex) => { if (blink) q.r(ex, hy + 7, 2, 1, "#1b1430"); else { q.r(ex, hy + 6, 2, 3, "#1b1430"); q.p(ex, hy + 6, "#f4f0ff"); } });
+    q.r(hx + 7, hy + 4, 2, 1, H[2]); q.r(hx + 10, hy + 4, 2, 1, H[2]);
+    q.r(hx + 9, hy + 10, 3, 1, mix(o.skin, "#6a1f30", 0.45));
+    q.p(hx + 6, hy + 9, mix(o.skin, "#ff6a80", 0.3)); q.p(hx + 12, hy + 9, mix(o.skin, "#ff6a80", 0.3));
+    // front hair
+    if (o.hairStyle === "afro") {
+      q.r(hx + 1, hy - 1, 13, 3, H[1]); q.p(hx + 4, hy + 2, H[1]); q.p(hx + 8, hy + 2, H[1]); q.p(hx + 11, hy + 2, H[1]);
+      q.r(hx + 2, hy - 1, 4, 1, H[0]); q.r(hx - 1, hy + 2, 3, 6, H[1]);
+    } else {
+      q.r(hx + 1, hy - 2, 11, 1, H[1]); q.r(hx, hy - 1, 13, 3, H[1]); q.r(hx - 1, hy, 4, 7, H[1]);
+      q.r(hx + 3, hy + 2, 9, 1, H[1]); q.p(hx + 5, hy + 3, H[1]); q.p(hx + 8, hy + 3, H[1]); q.p(hx + 11, hy + 3, H[1]);
+      q.r(hx + 3, hy - 1, 5, 1, H[0]); q.p(hx + 2, hy, H[0]); q.p(hx + 9, hy, H[0]); q.p(hx + 10, hy - 1, H[0]);
+      q.r(hx - 1, hy + 5, 3, 2, H[2]); q.r(hx + 4, hy + 2, 7, 1, H[2]); q.r(hx + 5, hy + 3, 1, 3, H[2]);
+      if (o.hairStyle === "grey") { q.r(hx + 6, hy + 5, 7, 1, "#2b2b33"); q.r(hx + 6, hy + 6, 3, 3, "#2b2b33"); q.r(hx + 10, hy + 6, 3, 3, "#2b2b33"); q.r(hx + 7, hy + 7, 1, 1, "#bfe6ff"); q.r(hx + 11, hy + 7, 1, 1, "#bfe6ff"); q.r(hx + 2, hy + 6, 4, 1, "#2b2b33"); }
+    }
+    // the happy mask: lifted, it shows the face behind it, with a tear
+    if (o.mask) {
+      const dy = o.lift ? -6 : 0, M = ["#ffffff", "#f3f0e8", "#d9d3c5", "#b8b0a0"], red = "#e2354c";
+      q.r(hx, hy + 6 + dy, 6, 1, "#cfc9bb");
+      q.r(hx + 6, hy + 3 + dy, 7, 9, M[1]); q.r(hx + 5, hy + 4 + dy, 9, 7, M[1]);
+      q.r(hx + 6, hy + 3 + dy, 3, 1, M[0]); q.p(hx + 5, hy + 5 + dy, M[0]); q.r(hx + 6, hy + 11 + dy, 7, 1, M[2]); q.r(hx + 13, hy + 5 + dy, 1, 5, M[2]);
+      q.r(hx + 7, hy + 6 + dy, 1, 2, INK); q.r(hx + 11, hy + 6 + dy, 1, 2, INK);
+      q.p(hx + 6, hy + 8 + dy, "#ff8aa0"); q.p(hx + 12, hy + 8 + dy, "#ff8aa0");
+      q.p(hx + 7, hy + 9 + dy, red); q.r(hx + 8, hy + 10 + dy, 3, 1, red); q.p(hx + 11, hy + 9 + dy, red);
+      if (o.lift) { q.r(hx + 9, hy + 10, 3, 1, S[2]); q.p(hx + 12, hy + 9, "#7ec8ff"); q.r(hx + 12, hy + 10, 1, 2, "#7ec8ff"); q.p(hx + 12, hy + 12, "#bfe6ff"); }
+    }
+    arm(arms[0][0], arms[0][1], true);
+    if (wheel) { q.ring(13, 40, 9.5, 2, "#2a2433"); q.ring(13, 40, 9.5, 1, "#4a4458"); }
+  }
+  // what sits on top of the outline: thin chair spokes would turn into black bars if outlined
+  function wheelOverlay(q, f) {
+    q.ring(14, 41, 7, 1, "#aab4c8");
+    for (let k = 0; k < 4; k++) { const a = f * Math.PI / 16 + k * Math.PI / 4; q.line(14 + Math.cos(a) * 6, 41 + Math.sin(a) * 6, 14 - Math.cos(a) * 6, 41 - Math.sin(a) * 6, "#7a849a"); }
+    q.r(13, 40, 3, 3, "#c9d0de"); q.p(13, 40, "#ffffff");
   }
   const pcache = new Map();
   function personImg(o, frame) {
     const key = [o.skin, o.hair, o.hairStyle, o.shirt, o.pants, o.pin, o.blazer, o.mask, o.lift, o.line, o.wheel, frame].join("|");
     if (pcache.has(key)) return pcache.get(key);
-    const base = document.createElement("canvas"); base.width = 14; base.height = 24;
-    drawPersonParts(base.getContext("2d"), o, frame);
-    const out = outlined(base, 14, 24, o.line);
+    const base = mkCanvas(30, 50);
+    drawPersonArt(pen(base), o, frame);
+    const out = outline(base, o.line);
+    if (frame[0] === "w") wheelOverlay(pen(out), +frame.slice(1));
     pcache.set(key, out); return out;
+  }
+  function outlinedFlat(base, w, h, line) {
+    const out = mkCanvas(w + 2, h + 2), oc = out.getContext("2d");
+    [[0, 1], [2, 1], [1, 0], [1, 2]].forEach(([x, y]) => oc.drawImage(base, x, y));
+    oc.globalCompositeOperation = "source-in"; oc.fillStyle = line || K; oc.fillRect(0, 0, w + 2, h + 2);
+    oc.globalCompositeOperation = "source-over"; oc.drawImage(base, 1, 1);
+    return out;
   }
   const SKIN = { branca: "#f2c7a5", negra: "#7b4a2d" };
   function heroLook(s) {
@@ -454,12 +586,12 @@ h1 em { font-style: normal; color: var(--good); }
     const T = TYPES[t], bw = T.rows[0].length, bh = T.rows.length, base = document.createElement("canvas"); base.width = bw; base.height = bh;
     const bc = base.getContext("2d");
     T.rows.forEach((r, y) => { for (let i = 0; i < bw; i++) { const ch = r[i]; if (ch !== "." && T.pal[ch]) { bc.fillStyle = T.pal[ch]; bc.fillRect(i, y, 1, 1); } } });
-    const out = outlined(base, bw, bh); bcache.set(t, out); return out;
+    const out = outlinedFlat(base, bw, bh); bcache.set(t, out); return out;
   }
   const HEART = (() => {
     const mk = (full) => { const c = document.createElement("canvas"); c.width = 7; c.height = 6; const x = c.getContext("2d");
       [".rr.rr.", "rrrrrrr", "rrrrrrr", ".rrrrr.", "..rrr..", "...r..."].forEach((r, y) => { for (let i = 0; i < 7; i++) if (r[i] === "r") { x.fillStyle = full ? (y === 1 && i === 1 ? "#ffd0d6" : "#e8344c") : "#2c2b3d"; x.fillRect(i, y, 1, 1); } });
-      return outlined(c, 7, 6); };
+      return outlinedFlat(c, 7, 6); };
     return { full: mk(true), empty: mk(false) };
   })();
   function makeBoss(open) {
@@ -485,7 +617,7 @@ h1 em { font-style: normal; color: var(--good); }
     if (open) { px(18, 14, 12, 5, "#ff2d3d"); for (let i = 0; i < 6; i++) px(18 + i * 2, 14, 1, 1, "#ffe0e0"); px(19, 17, 10, 2, "#600"); }
     else { px(18, 16, 12, 1, "#ff2d3d"); px(17, 15, 1, 1, "#ff2d3d"); px(30, 15, 1, 1, "#ff2d3d"); }
     px(22, 0, 4, 2, "#0e0f17"); px(23, 0, 2, 1, "#ff2d3d");
-    return outlined(c, 48, 58, "#05050a");
+    return outlinedFlat(c, 48, 58, "#05050a");
   }
   const BOSS_IMG = { closed: makeBoss(false), open: makeBoss(true) };
 
@@ -1092,20 +1224,14 @@ h1 em { font-style: normal; color: var(--good); }
   function glow(x, y, r, col, a) { const gr = g.createRadialGradient(x, y, 0, x, y, r); gr.addColorStop(0, col.replace("A", a)); gr.addColorStop(1, col.replace("A", 0)); g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2); }
   function sprite(img, x, y, w, h, alpha) { g.globalAlpha = alpha == null ? 1 : alpha; g.drawImage(img, Math.round(x * 2) / 2, Math.round(y * 2) / 2, w || img.width, h || img.height); g.globalAlpha = 1; }
   function shadow(x, y, w) { g.fillStyle = "rgba(0,0,0,0.45)"; g.beginPath(); g.ellipse(x, y + 0.5, w, w * 0.35, 0, 0, Math.PI * 2); g.fill(); }
-  const runFrame = (w) => "r" + (Math.floor(w) % 4);
+  const runFrame = (w) => "r" + (Math.floor(w * 1.5) % 6);
   function person(o, x, y, z, frame, alpha) {
     shadow(x - camX, y, Math.max(3, (o.wheel ? 9 : 6) - z / 8));
-    if (o.wheel) {
-      const sx = x - camX, by = y - z, spin = (o === look ? P.walk : 0) * 0.9;
-      sprite(personImg(o, "idle"), sx - 8, by - 27, 16, 26, alpha);
-      g.fillStyle = "#14121e"; g.fillRect(sx - 6, by - 12, 12, 2); g.fillRect(sx - 7, by - 20, 2, 9);
-      g.strokeStyle = "#14121e"; g.lineWidth = 2.2; g.beginPath(); g.arc(sx - 2, by - 6, 6, 0, Math.PI * 2); g.stroke();
-      g.strokeStyle = "#9aa3b8"; g.lineWidth = 1; g.beginPath(); g.arc(sx - 2, by - 6, 6, 0, Math.PI * 2); g.stroke();
-      g.strokeStyle = "#6a7288"; g.lineWidth = 0.6; for (let k = 0; k < 3; k++) { const a = spin + k * Math.PI / 3; g.beginPath(); g.moveTo(sx - 2 + Math.cos(a) * 5.5, by - 6 + Math.sin(a) * 5.5); g.lineTo(sx - 2 - Math.cos(a) * 5.5, by - 6 - Math.sin(a) * 5.5); g.stroke(); }
-      g.fillStyle = "#14121e"; g.beginPath(); g.arc(sx + 6, by - 2, 2, 0, Math.PI * 2); g.fill();
-      return;
-    }
-    sprite(personImg(o, frame), x - camX - 8, y - 25 - z, 16, 26, alpha);
+    let f = frame;
+    // wheelchair: the wheels turn as the person moves; standing still: slow breathing and a blink
+    if (o.wheel) f = "w" + (Math.floor(((o === look ? P.walk : 0) * 0.9) / (Math.PI / 16)) % 4 + 4) % 4;
+    else if (f === "idle") f = Math.floor(time * 1.4 + x * 0.013) % 2 ? "idle1" : "idle";
+    sprite(personImg(o, f), x - camX - 8, y - 25 - z, 16, 26, alpha);
   }
   function stackDraw(stack, x, y, z, glowOn, shaking, kneel, wob) {
     const st = step(stack.length);
@@ -1667,14 +1793,8 @@ h1 em { font-style: normal; color: var(--good); }
   $("mute").addEventListener("pointerdown", (e) => e.stopPropagation());
 
   function drawPortrait(pvx, s, pvT, lookObj) {
-    pvx.clearRect(0, 0, 16, 26); const lk = lookObj || heroLook(s);
-    if (lk.wheel) {
-      pvx.drawImage(personImg(lk, "idle"), 0, -2);
-      pvx.fillStyle = "#14121e"; pvx.fillRect(2, 12, 11, 2); pvx.fillRect(1, 6, 2, 8);
-      pvx.strokeStyle = "#14121e"; pvx.lineWidth = 1.6; pvx.beginPath(); pvx.arc(6, 19.5, 5, 0, Math.PI * 2); pvx.stroke();
-      pvx.strokeStyle = "#9aa3b8"; pvx.lineWidth = 0.8; pvx.beginPath(); pvx.arc(6, 19.5, 5, 0, Math.PI * 2); pvx.stroke();
-      pvx.fillStyle = "#14121e"; pvx.fillRect(13, 22, 2, 2);
-    } else pvx.drawImage(personImg(lk, "r" + (pvT % 4)), 0, 0);
+    const lk = lookObj || heroLook(s), c = pvx.canvas; pvx.clearRect(0, 0, c.width, c.height); pvx.imageSmoothingEnabled = false;
+    pvx.drawImage(personImg(lk, lk.wheel ? "w" + (pvT % 4) : "r" + (pvT % 6)), 0, 0, c.width, c.height);
   }
   const pvx0 = $("pv").getContext("2d"), dpx = $("drawPv").getContext("2d"); let pvT = 0;
   const bpx = $("bonusPv").getContext("2d");
@@ -1710,7 +1830,7 @@ h1 em { font-style: normal; color: var(--good); }
   }
   const tvHash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   let tvT = 0;
-  const coverFall = [], coverPv = (() => { const c = document.createElement("canvas"); c.width = 16; c.height = 26; return c.getContext("2d"); })();
+  const coverFall = [], coverPv = (() => { const c = document.createElement("canvas"); c.width = 32; c.height = 52; return c.getContext("2d"); })();
   // back to front; dir 1 = walking right, -1 = walking left
   const COVER_PEOPLE = [
     { look: heroLook({ cor: "negra", genero: "homem", orient: "lgbt", classe: "pobre", pcd: "nao" }), x: 206, feet: 207, S: 1, dir: 1, stack: ["boleto", "trabalho", "dobro"] },
