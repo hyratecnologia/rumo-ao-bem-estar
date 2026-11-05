@@ -121,6 +121,7 @@ h1 em { font-style: normal; color: var(--good); }
 .logo-top { font-size: .45em; color: #ffffff; letter-spacing: .3em; }
 .cover-box .cta.press { background: rgba(11,8,32,.75); border: 2px solid #f39aa6; color: #fff; box-shadow: 4px 4px 0 #0b0820; }
 .cover-box .credits { color: #e8d8f0; text-shadow: 1px 1px 0 #0b0820; }
+.cover-foot { display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .cta.press { font-family: var(--pix); letter-spacing: .3em; animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .cta.press { animation: none; } }
@@ -187,8 +188,10 @@ h1 em { font-style: normal; color: var(--good); }
   <canvas id="cover" width="480" height="270" aria-hidden="true"></canvas>
   <div class="box cover-box">
     <h1 class="logo"><span class="logo-top">RUMO À</span><em>SAÚDE MENTAL</em></h1>
-    <button class="cta press" id="startBtn" type="button">▶ começar</button>
-    <p class="credits">semana da psicologia</p>
+    <div class="cover-foot">
+      <button class="cta press" id="startBtn" type="button">▶ começar</button>
+      <p class="credits">semana da psicologia</p>
+    </div>
   </div>
 </div>
 
@@ -1373,7 +1376,18 @@ h1 em { font-style: normal; color: var(--good); }
     } else pvx.drawImage(personImg(lk, "r" + (pvT % 4)), 0, 0);
   }, 130);
   // ===== cover art: original, detailed pixel scene of a city street at dusk (480x270), pre-rendered in layers =====
-  const cov = $("cover"), cx2 = cov.getContext("2d"), CW = 480, CH = 270, VPX = 240, VPY = 186;
+  const CW = 480, CH = 270, VPX = 240, VPY = 186;
+  // the scene is drawn at 480x270 and blown up on screen by a whole number, so every pixel stays square and sharp
+  const covView = $("cover"), cvx = covView.getContext("2d"), cov = document.createElement("canvas"); cov.width = CW; cov.height = CH;
+  const cx2 = cov.getContext("2d");
+  function blitCover() {
+    const r = covView.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    const W = Math.max(1, Math.round(r.width * dpr)), H = Math.max(1, Math.round(r.height * dpr));
+    if (covView.width !== W || covView.height !== H) { covView.width = W; covView.height = H; }
+    const k = Math.max(1, Math.ceil(Math.max(W / CW, H / CH)));
+    cvx.imageSmoothingEnabled = false;
+    cvx.drawImage(cov, Math.round((W - CW * k) / 2), Math.round((H - CH * k) * 0.75), CW * k, CH * k); // crop more sky than street
+  }
   const tvHash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
   const TV_HERO = heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" });
   let tvT = 0;
@@ -1391,6 +1405,7 @@ h1 em { font-style: normal; color: var(--good); }
   // tone ramp with 2x2 ordered dithering between steps
   const BAYER = [[0, 0.5], [0.75, 0.25]];
   const ramp = (cols, f, x, y) => { f = Math.max(0, Math.min(0.9999, f)) * (cols.length - 1); const i = Math.floor(f), fr = f - i; return cols[Math.min(cols.length - 1, i + (fr > BAYER[y & 1][x & 1] ? 1 : 0))]; };
+  const band = (cols, f) => cols[Math.round(Math.max(0, Math.min(1, f)) * (cols.length - 1))]; // hard bands, no dither noise
 
   // ---- sky layer ----
   const SKY_RAMP = ["#191c4c", "#1f2358", "#262a64", "#2e3171", "#37397d", "#424088", "#504793", "#604f9b", "#7256a0", "#895da3", "#a263a2", "#bb69a0", "#d2719c", "#e47c98", "#f18c97", "#f9a29a", "#fcb8a0"];
@@ -1405,14 +1420,21 @@ h1 em { font-style: normal; color: var(--good); }
 
   // ---- clouds: soft cumulus with 5 tones, lit from the sunset below ----
   const CLOUD_RAMP = ["#ffe3d2", "#ffc4b8", "#f8a3ab", "#e1809f", "#b9629a", "#8c5194"];
+  // cumulus: big puffs along a flat base, smaller bumps on top, lit from the sunset below, shaded in clean bands
   function makeCloud(w, h, seed) {
     const c = mkLayer(w, h); L = c.getContext("2d");
-    const blobs = []; const n = 7 + Math.floor(tvHash(seed) * 5);
-    for (let i = 0; i < n; i++) { const r = h * (0.22 + tvHash(seed + i) * 0.3); blobs.push([r + tvHash(seed + i + 9) * (w - 2 * r), h - r - tvHash(seed + i + 19) * (h - 2 * r) * 0.9, r]); }
-    for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
-      let inside = false, shade = 1;
-      blobs.forEach(([bx, by, r]) => { const dx = x - bx, dy = y - by, d = Math.hypot(dx, dy); if (d < r) { inside = true; const lit = (-dx * 0.35 - dy * 0.95) / r; shade = Math.min(shade, 0.5 - lit * 0.5); } });
-      if (inside) pxl(x, y, ramp(CLOUD_RAMP, shade * 0.75 + (y / h) * 0.35, x, y));
+    const n = 6 + Math.floor(tvHash(seed) * 4), base = h - 3, blobs = [];
+    for (let i = 0; i < n; i++) {
+      const u = (i + 0.5) / n, bell = Math.sin(Math.PI * u), r = h * (0.16 + bell * 0.3 + tvHash(seed + i) * 0.1);
+      blobs.push([w * (0.06 + u * 0.88) + (tvHash(seed + i + 9) - 0.5) * w * 0.05, base - r * 0.5 - bell * h * 0.14, r]);
+    }
+    for (let i = 0; i < n; i++) { const [bx, by, r] = blobs[i], a = -Math.PI * (0.2 + tvHash(seed + i + 33) * 0.6); blobs.push([bx + Math.cos(a) * r * 0.72, by + Math.sin(a) * r * 0.72, r * (0.38 + tvHash(seed + i + 51) * 0.14)]); }
+    for (let y = 0; y <= base; y++) for (let x = 0; x < w; x++) {
+      let best = -1, nx = 0, ny = 0;
+      blobs.forEach(([bx, by, r]) => { const dx = x - bx, dy = y - by, d = Math.hypot(dx, dy); if (d < r && 1 - d / r > best) { best = 1 - d / r; nx = dx / r; ny = dy / r; } });
+      if (best < 0) continue;
+      const light = ny * 0.55 + nx * 0.2 + (y / h) * 0.55 - 0.15; // bottoms catch the sun
+      pxl(x, y, y >= base - 1 ? CLOUD_RAMP[1] : band(CLOUD_RAMP, 1 - light));
     }
     return c;
   }
@@ -1466,7 +1488,7 @@ h1 em { font-style: normal; color: var(--good); }
         if (f < 8) {
           const wa = Math.round(pY(y0 + 7, i)), wb = Math.round(pY(y0 + 21, i));
           if (isCol) px_(x, wa, 1, wb - wa, "#2a2768");
-          else { const k = cols.findIndex((c) => c > i), r = tvHash(f * 37 + k * 11 + (left ? 0 : 500)); for (let y = wa; y < wb; y++) pxl(x, y, r > 0.9 ? ramp(["#6a5aa8", "#4a4596", "#2c2a70"], (y - wa) / (wb - wa), x, y) : r > 0.8 ? ramp(["#8a5a8a", "#5a3a6a"], (y - wa) / (wb - wa), x, y) : ramp(["#2a2a72", "#17153a", "#100e2e"], (y - wa) / (wb - wa), x, y)); }
+          else { const k = cols.findIndex((c) => c > i), r = tvHash(f * 37 + k * 11 + (left ? 0 : 500)); for (let y = wa; y < wb; y++) { const fr = (y - wa) / Math.max(1, wb - wa); pxl(x, y, r > 0.9 ? (fr < 0.55 ? "#ffd896" : "#f0a868") : r > 0.8 ? (fr < 0.4 ? "#9a6a9a" : "#6a4278") : (fr < 0.3 ? "#34337e" : "#15133a")); } pxl(x, wb, "#3a3684"); }
         } else {
           // shop front
           const sa = Math.round(pY(y0 + 2, i)), sb = Math.round(pY(y0 + 30, i));
@@ -1474,7 +1496,7 @@ h1 em { font-style: normal; color: var(--good); }
           for (let y = sa; y < sb; y++) {
             const fr = (y - sa) / Math.max(1, sb - sa);
             let c = isCol || Math.abs(fr - 0.3) < 0.03 ? (left ? "#3a2220" : "#141a40") : ramp(left ? WARM : COLD, fr, x, y);
-            if (!isCol && fr > 0.5 && fr < 0.9 && Math.floor(fr * 14) % 3 === 0) c = left ? "#7a3a24" : (tvHash(x * 5 + y) > 0.5 ? "#ff8a7a" : tvHash(x + y * 3) > 0.5 ? "#ffe07a" : "#dfe8ff");
+            if (!isCol && fr > 0.5 && fr < 0.9 && Math.floor(fr * 14) % 3 === 0) { const g = tvHash(Math.floor(i / 3) * 5 + Math.floor(fr * 14)); c = left ? (g > 0.5 ? "#7a3a24" : "#a8522e") : (g > 0.66 ? "#ff8a7a" : g > 0.33 ? "#ffe07a" : "#dfe8ff"); }
             pxl(x, y, c);
           }
         }
@@ -1497,7 +1519,10 @@ h1 em { font-style: normal; color: var(--good); }
       if (d < hw) {
         let c = ramp(["#3a2f5a", "#2e2650", "#241e44"], (y - VPY) / (CH - VPY), x, y);
         const streakL = x < VPX && d > hw * 0.55 && d < hw * 0.95, streakR = x > VPX && d > hw * 0.55 && d < hw * 0.95;
-        if ((streakL || streakR) && y > VPY + 14) { const k = tvHash(Math.floor(d / Math.max(1, hw) * 9) + (streakL ? 0 : 77)); if (k > 0.45 && ((x + y) & 1) && tvHash(x * 13 + y * 7) > 0.35) c = streakL ? (tvHash(y + x) > 0.6 ? "#c06a3e" : "#7a4250") : (tvHash(y + x) > 0.6 ? "#5a74e0" : "#3a3c8a"); }
+        if ((streakL || streakR) && y > VPY + 14) { // shop lights reflected on the wet street: broken vertical streaks
+          const colB = Math.floor(d / Math.max(1, hw) * 14), k = tvHash(colB * 7.3 + (streakL ? 0 : 77));
+          if (k > 0.5 && tvHash(colB * 3.1 + Math.floor((y - VPY) / 3) * 1.7 + (streakL ? 0 : 9)) > 0.3) c = streakL ? (k > 0.8 ? "#c06a3e" : "#6a3c50") : (k > 0.8 ? "#5a74e0" : "#34387e");
+        }
         if (d < 1 + (y - VPY) / 34 && Math.floor(Math.log(y - VPY + 2) * 9) % 2 === 0) c = (y - VPY) > 30 ? "#e0b866" : "#9a7a5a";
         if (Math.abs(d - hw) < 1) c = "#6a5c90";
         pxl(x, y, c);
@@ -1517,17 +1542,32 @@ h1 em { font-style: normal; color: var(--good); }
     for (let x = x0; x <= x1; x++) { const t = (x - x0) / (x1 - x0); pxl(x, Math.round(y0 + (y1 - y0) * t + Math.sin(Math.PI * t) * sag), "#2a2140"); }
     for (let x = x0 + step; x < x1; x += step) { const t = (x - x0) / (x1 - x0); BULBS.push([x, Math.round(y0 + (y1 - y0) * t + Math.sin(Math.PI * t) * sag) + 1, step > 7 ? 2 : 1]); }
   });
-  const LEAF = ["#5a74d8", "#3e56b8", "#2c3f94", "#1f2c70", "#141d4f"];
-  for (let i = 0; i < 2600; i++) {
-    const side = i % 2, r = Math.pow(tvHash(i + 900), 0.7) * 70, a = tvHash(i + 1900) * Math.PI / 2;
-    const x = side ? CW - 1 - Math.cos(a) * r * 1.3 : Math.cos(a) * r * 1.3, y = CH - Math.sin(a) * r;
-    const sh = Math.min(0.999, (r / 70) * 0.5 + (1 - (y - (CH - 70)) / 70) * -0.4 + 0.45 + tvHash(i) * 0.2);
-    px_(Math.floor(x), Math.floor(y), 2, 2, LEAF[Math.floor((1 - sh) * LEAF.length) % LEAF.length]);
+  // bushes in the front corners: leafy clumps drawn back to front, lit from the street, with a dark outline
+  const LEAF = ["#8aa0f0", "#5a74d8", "#3e56b8", "#2c3f94", "#1f2c70", "#141d4f", "#0b1030"];
+  function bush(bx, by, r, seed, toRight) {
+    for (let y = Math.floor(by - r - 2); y <= Math.min(CH - 1, by + r + 2); y++) for (let x = Math.floor(bx - r - 2); x <= bx + r + 2; x++) {
+      const dx = x - bx, dy = y - by, a = Math.atan2(dy, dx), rr = r * (1 + 0.1 * Math.sin(a * 7 + seed) + 0.06 * Math.sin(a * 13 + seed * 2)), d = Math.hypot(dx, dy);
+      if (d > rr || x < 0 || x >= CW) continue;
+      if (d > rr - 1.2) { pxl(x, y, LEAF[6]); continue; }
+      const nx = dx / rr, ny = dy / rr, lightDir = (toRight ? 1 : -1) * nx * 0.35 - ny * 0.65;
+      const leaves = (tvHash(Math.floor((x + seed) / 3) * 13.1 + Math.floor(y / 2) * 7.7) - 0.5) * 0.28;
+      let c = band(LEAF.slice(0, 6), 0.55 - lightDir * 0.5 + leaves);
+      if (lightDir > 0.35 && tvHash(x * 7.3 + y * 13.7) > 0.88) c = LEAF[0];
+      pxl(x, y, c);
+    }
   }
-  // cat on the left sidewalk, bin and bike on the right
+  [false, true].forEach((rightSide) => {
+    const clumps = [];
+    for (let i = 0; i < 14; i++) { const s = i * 3.7 + (rightSide ? 300 : 0), u = tvHash(s + 11), r = 9 + tvHash(s + 23) * 13, x = u * 96; clumps.push([x, CH - (72 - x * 0.62) + r * 0.85, r, s]); }
+    clumps.sort((p, q) => p[1] - q[1]).forEach(([x, y, r, s]) => bush(rightSide ? CW - 1 - x : x, y, r, s, !rightSide));
+  });
+  // cat on the left sidewalk, bike and bin further back on the left, bin on the right
   px_(150, 236, 7, 4, "#0e0c1e"); px_(155, 233, 4, 4, "#0e0c1e"); pxl(155, 232, "#0e0c1e"); pxl(158, 232, "#0e0c1e"); px_(148, 233, 1, 4, "#0e0c1e");
-  px_(318, 226, 6, 9, "#1a1838"); px_(317, 225, 8, 2, "#2a2860");
-  line(334, 238, 344, 238, "#2a2860"); for (const cxw of [332, 346]) { for (let a = 0; a < 6.28; a += 0.4) pxl(Math.round(cxw + Math.cos(a) * 4), Math.round(238 + Math.sin(a) * 4), "#2a2860"); } line(338, 238, 342, 232, "#2a2860"); line(342, 232, 346, 238, "#2a2860"); px_(340, 231, 4, 1, "#2a2860");
+  px_(372, 226, 6, 9, "#1a1838"); px_(371, 225, 8, 2, "#2a2860");
+  { const bx = 112, by = 236; line(bx + 2, by, bx + 12, by, "#2a2860"); for (const cxw of [bx, bx + 14]) { for (let a = 0; a < 6.28; a += 0.4) pxl(Math.round(cxw + Math.cos(a) * 4), Math.round(by + Math.sin(a) * 4), "#2a2860"); } line(bx + 6, by, bx + 10, by - 6, "#2a2860"); line(bx + 10, by - 6, bx + 14, by, "#2a2860"); px_(bx + 8, by - 7, 4, 1, "#2a2860"); }
+  // little neon-heart sign hanging on the right building
+  const NEON_HEART = [".##...##.", "#..#.#..#", "#...#...#", "#.......#", ".#.....#.", "..#...#..", "...#.#...", "....#...."];
+  px_(398, 58, 6, 1, "#2c2970"); px_(385, 60, 15, 14, "#120f2a"); px_(385, 60, 15, 1, "#2c2970"); px_(385, 73, 15, 1, "#2c2970"); px_(385, 60, 1, 14, "#2c2970"); px_(399, 60, 1, 14, "#2c2970");
   L = null;
 
   function drawCover() {
@@ -1537,30 +1577,34 @@ h1 em { font-style: normal; color: var(--good); }
     c.drawImage(cityL, 0, 0);
     // twinkling windows, neon sign, bulbs and lamp glow
     lit.forEach(([x, y], i) => { if (tvHash(i + Math.floor(t / 30) * 0.37) > 0.93) { c.fillStyle = "#3c357e"; c.fillRect(x, y, 2, 2); } });
-    const neon = (t % 70) < 3 ? "#5a2440" : "#ff4d7a";
-    c.fillStyle = neon; [[352, 70, 18], [374, 72, 10], [388, 74, 16], [408, 77, 12], [424, 80, 10]].forEach(([x, y, w]) => { c.fillRect(x, y, w, 2); c.fillRect(x, y + 5, w, 1); });
-    c.fillStyle = "rgba(255,77,122,0.12)"; c.fillRect(348, 64, 92, 26);
+    const neonOn = (t % 70) >= 3;
+    if (neonOn) { c.fillStyle = "rgba(255,77,122,0.10)"; c.fillRect(380, 55, 25, 24); c.fillStyle = "rgba(255,77,122,0.14)"; c.fillRect(383, 58, 19, 18); }
+    c.fillStyle = neonOn ? "#ff4d7a" : "#5a2440";
+    NEON_HEART.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "#") c.fillRect(388 + x, 63 + y, 1, 1); }));
+    if (neonOn) { c.fillStyle = "#ffd0dc"; c.fillRect(389, 64, 1, 1); c.fillRect(394, 64, 1, 1); }
     BULBS.forEach(([x, y, s], i) => { const on = (i + Math.floor(t / 4)) % 9 !== 0; c.fillStyle = on ? "rgba(255,210,120,0.22)" : "rgba(0,0,0,0)"; c.fillRect(x - s, y - s, s * 3, s * 3); c.fillStyle = on ? (i % 3 ? "#ffd36b" : "#ff9a6b") : "#5a4436"; c.fillRect(x, y, s, s); });
     LAMPS.forEach(([x, base, top, w]) => { const d = x < VPX ? 1 : -1, lx = x + 6 * d; c.fillStyle = "rgba(255,226,170,0.09)"; c.beginPath(); c.moveTo(lx - 2, top + w + 1); c.lineTo(lx + 2, top + w + 1); c.lineTo(lx + (base - top) * 0.32, base); c.lineTo(lx - (base - top) * 0.32, base); c.fill(); });
     if (t % 50 > 2) { c.fillStyle = "#ffd84a"; c.fillRect(156, 234, 1, 1); c.fillRect(158, 234, 1, 1); }
     // the person alone, walking with a pile of obligations, dropping the things they love
-    const S = 2, f = Math.floor(t / 3) % 4, hx = 240 - 8 * S, feet = 262;
-    c.fillStyle = "rgba(10,6,24,0.5)"; c.beginPath(); c.ellipse(240, feet, 14, 3, 0, 0, Math.PI * 2); c.fill();
-    c.drawImage(personImg(TV_HERO, "r" + f), hx, feet - 26 * S, 16 * S, 26 * S);
-    let sy = feet - 26 * S + 4;
+    // stands on the right sidewalk, clear of the logo and the start button, walking toward the city
+    const S = 2, f = Math.floor(t / 3) % 4, HX = 328, feet = 234, bob = f % 2;
+    c.fillStyle = "rgba(10,6,24,0.5)"; c.beginPath(); c.ellipse(HX, feet, 14, 3, 0, 0, Math.PI * 2); c.fill();
+    c.save(); c.translate(HX, 0); c.scale(-1, 1); c.drawImage(personImg(TV_HERO, "r" + f), -8 * S, feet - 26 * S, 16 * S, 26 * S); c.restore();
+    let sy = feet - 26 * S + 4 + bob;
     COVER_STACK.forEach((ty, i) => {
       const im = blockImg(ty), sway = Math.round(Math.sin(t / 7 + i * 0.6) * i * 0.7);
-      sy -= im.height * S - 4; c.drawImage(im, 240 - im.width * S / 2 + sway, sy, im.width * S, im.height * S);
+      sy -= im.height * S - 4; c.drawImage(im, HX - im.width * S / 2 + sway, sy, im.width * S, im.height * S);
     });
-    if (t % 26 === 0) coverFall.push({ ty: GOOD[(t / 26) % GOOD.length], x: 236, y: feet - 40, vx: -1.2 - tvHash(t) * 1.2, vy: -3, rest: 0 });
+    if (t % 26 === 0) coverFall.push({ ty: GOOD[(t / 26) % GOOD.length], x: HX + 4, y: feet - 40, vx: 0.8 + tvHash(t) * 0.8, vy: -3, rest: 0 });
     coverFall.forEach((h) => {
       if (!h.rest) { h.vy += 0.5; h.x += h.vx; h.y += h.vy; if (h.y >= feet - 2) { h.y = feet - 2; if (h.vy > 2.5) { h.vy *= -0.35; h.vx *= 0.5; } else h.rest = 1; } }
-      else { h.rest++; h.x -= 1; }
+      else { h.rest++; h.x += 0.5; }
       const im = blockImg(h.ty), q = h.rest ? 0 : Math.floor(t / 3) % 4, w = im.width * S, hh = im.height * S;
       c.save(); c.globalAlpha = Math.max(0, 1 - Math.max(0, h.rest - 14) / 10);
       c.translate(Math.round(h.x), Math.round(h.y - hh / 2)); c.rotate(q * Math.PI / 2); c.drawImage(im, -w / 2, -hh / 2, w, hh); c.restore();
     });
     for (let i = coverFall.length - 1; i >= 0; i--) if (coverFall[i].rest > 24) coverFall.splice(i, 1);
+    blitCover();
   }
   setInterval(() => { if (!$("title").hidden) { tvT++; drawCover(); } }, 100);
   function renderSelect() {
