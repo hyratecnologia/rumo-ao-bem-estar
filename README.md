@@ -6,7 +6,7 @@ Joguinho em pixel art feito para a **Semana da Psicologia**, sobre saúde mental
 
 ## A ideia
 
-Você segue uma avenida rumo à saúde mental. No caminho caem cargas: algumas dá para largar (curtidas, padrão de beleza, "ter mais"), outras não saem (boleto, trabalho, faculdade, doença). As coisas que você ama também caem, e a pressão vai tirando elas de você. Pessoas de máscara de felicidade passam e "chegam lá". O Mercado de Trabalho cobra, joga metas e culpa. Um psicólogo ou psicóloga chega para caminhar junto, sem carregar nada por você. No fim: **saúde mental não é linha de chegada, e ninguém chega sozinho.**
+Você segue uma avenida rumo à saúde mental. No caminho caem cargas: algumas dá para largar (curtidas, padrão de beleza, "ter mais"), outras não saem (boleto, trabalho, faculdade, doença). As coisas que você ama também caem, e a pressão vai tirando elas de você. Pessoas de máscara de felicidade passam e "chegam lá". O Mercado de Trabalho cobra, joga metas e culpa. Um psicólogo ou psicóloga chega para caminhar junto, sem carregar nada por você. No fim: **saúde mental não é linha de chegada, e ninguém caminha sozinho.**
 
 Antes de começar, você escolhe quem vai ser (cor, gênero, orientação, classe, deficiência). A dificuldade muda conforme as escolhas, porque o caminho não é igual para todo mundo.
 
