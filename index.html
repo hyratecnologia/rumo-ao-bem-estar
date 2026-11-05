@@ -690,8 +690,11 @@ h1 em { font-style: normal; color: var(--good); }
     blocks.forEach((b) => debris.push({ type: b.type, x: b.x, y: b.y, z: b.z, vx: 0, vy: 0, vz: 0, rot: 0, vr: 0, life: 0.4, max: 0.4 }));
     blocks = []; boss.spot = null; warnQ = []; warn = null;
     obstacles = obstacles.filter((o) => !o.moving);
+    // only the people who help stay: the boss walks off, the masked ones leave, crowd and barriers fade out
+    traffic.forEach((r) => { r.state = "go"; r.speed = Math.max(r.speed, 320); r.stopX = 1e9; r.selfied = true; });
+    bubbles = bubbles.filter((b) => b.owner !== boss);
     if (!psi.on) { psi.on = true; psi.x = camX - 30; psi.y = P.y + 18; }
-    const offs = [[-34, -18], [-30, 20], [30, -20], [36, 18]];
+    const offs = [[-46, -20], [-42, 22], [48, -22], [54, 20]];
     helpers = offs.map(([ox, oy], i) => ({ look: HELPERS[i], ox, oy, x: ox < 0 ? camX - 30 - i * 16 : camX + LW + 30 + i * 16, y: P.y + oy, stack: [], walk: 0, cd: 0.25 + i * 0.15, arrived: false, target: null }));
   }
 
@@ -965,7 +968,10 @@ h1 em { font-style: normal; color: var(--good); }
     endT += dt;
     if (!fell && endT > WOBBLE) {
       fell = true; sfx.nope(); P.shake = 0;
-      P.stack.forEach((b, i) => spill.push({ type: b.type, x: P.x, y: P.y, z: 23 + i * 10, vx: (rand() - 0.5) * 90 + (i % 2 ? 25 : -25), vy: (rand() - 0.5) * 50, vz: 30 + rand() * 40, rot: 0, vr: (rand() - 0.5) * 12, claimed: null }));
+      // only the top few loads spill (so the helpers can share them); the rest just fades away
+      const keep = P.stack.slice(-8), gone = P.stack.slice(0, -8);
+      gone.forEach((b, i) => debris.push({ type: b.type, x: P.x, y: P.y, z: 23 + i * 10, vx: (rand() - 0.5) * 30, vy: 0, vz: 20, rot: 0, vr: 2, life: 0.6, max: 0.6 }));
+      keep.forEach((b, i) => spill.push({ type: b.type, x: P.x, y: P.y, z: 23 + i * 10, vx: (rand() - 0.5) * 90 + (i % 2 ? 25 : -25), vy: (rand() - 0.5) * 50, vz: 30 + rand() * 40, rot: 0, vr: (rand() - 0.5) * 12, claimed: null }));
       P.stack = [];
     }
     spill.forEach((sp) => {
@@ -977,7 +983,7 @@ h1 em { font-style: normal; color: var(--good); }
     P.x += P.vx * dt; if (Math.abs(P.vx) > 1) P.walk += dt * Math.abs(P.vx) / 7;
     helpers.forEach((h, hi) => {
       if (endT < WOBBLE + 0.5 + hi * 0.2) return;
-      if (!walking && !h.target && h.stack.length < 4) {
+      if (!walking && !h.target && h.stack.length + transfers.filter((tr) => tr.h === h).length < 2) {
         let best = null, bd = 1e9;
         spill.forEach((sp) => { if (!sp.claimed && sp.z === 0 && sp.vz === 0) { const d = Math.hypot(sp.x - h.x, sp.y - h.y); if (d < bd) { bd = d; best = sp; } } });
         if (best) { best.claimed = h; h.target = best; }
@@ -996,7 +1002,10 @@ h1 em { font-style: normal; color: var(--good); }
     // anything nobody could carry goes to the psychologist, so the person stands up free
     if (endT > UP_T - 0.4 && spill.length) { spill.forEach((sp) => debris.push({ type: sp.type, x: sp.x, y: sp.y, z: 0, vx: 0, vy: 0, vz: 0, rot: sp.rot, vr: 0, life: 0.4, max: 0.4 })); spill = []; }
     if (kid) { kid.x += (P.x - 14 - kid.x) * Math.min(1, dt * 4); kid.y += (P.y + 12 - kid.y) * Math.min(1, dt * 4); if (walking) kid.walk += dt * 12; }
-    if (psi.on) { psi.x += (P.x - 26 - psi.x) * Math.min(1, dt * 4); psi.y += (P.y + 6 - psi.y) * Math.min(1, dt * 4); psi.arrived = true; psi.mv = walking; if (walking) psi.walk += dt * 12; }
+    if (boss.on) { boss.sx += 200 * dt; if (boss.sx > LW + 140) boss.on = false; }
+    if (endT > 0.8) { crowd = []; obstacles = []; }
+    // the psychologist stays right beside the person, in front, where nobody covers them
+    if (psi.on) { psi.x += (P.x + 18 - psi.x) * Math.min(1, dt * 4); psi.y += (P.y + 10 - psi.y) * Math.min(1, dt * 4); psi.arrived = true; psi.mv = walking; if (walking) psi.walk += dt * 12; }
     for (let i = transfers.length - 1; i >= 0; i--) { const tr = transfers[i]; tr.t += dt / 0.4; if (tr.t >= 1) { tr.h.stack.push({ type: tr.type }); transfers.splice(i, 1); } }
     if (!said.chord1 && endT > 1) { said.chord1 = true; sfx.chime(); }
     if (endT > UP_T + 0.3 && !dialog) dialog = { lines: ["Saúde mental não é linha de chegada.", "E ninguém caminha sozinho."], t: 0 };
@@ -1153,9 +1162,10 @@ h1 em { font-style: normal; color: var(--good); }
 
   function drawEntities() {
     const list = [];
-    obstacles.forEach((o) => list.push({ y: o.trait ? YMIN - 1 : o.y + o.d / 2, f: () => drawObstacle(o) }));
+    const fadeOut = mode === "ending" ? clamp(1 - endT / 0.8, 0, 1) : 1;
+    obstacles.forEach((o) => list.push({ y: o.trait ? YMIN - 1 : o.y + o.d / 2, f: () => { g.globalAlpha = fadeOut; drawObstacle(o); g.globalAlpha = 1; } }));
     crowd.forEach((c) => list.push({ y: c.y, f: () => {
-      person(CROWD, c.x, c.y, 0, "idle");
+      person(CROWD, c.x, c.y, 0, "idle", fadeOut);
       c.bub += 1 / 60;
       if (c.bub < 1.2) { const x = c.x - camX; g.fillStyle = "#ecebf2"; rrect(x - 4, c.y - 40, 8, 9, 2); g.fill(); g.fillStyle = "#e0404f"; g.fillRect(x - 0.5, c.y - 38.5, 1, 4); g.fillRect(x - 0.5, c.y - 33.5, 1, 1); }
     } }));
@@ -1163,7 +1173,7 @@ h1 em { font-style: normal; color: var(--good); }
     if (kid && mode !== "title") list.push({ y: kid.y, f: () => { shadow(kid.x - camX, kid.y, 4); sprite(personImg(KID, runFrame(kid.walk)), kid.x - camX - 5.5, kid.y - 18, 11, 18); } });
     spill.forEach((sp) => list.push({ y: sp.y, f: () => { const im = blockImg(sp.type); if (sp.z < 2) shadow(sp.x - camX, sp.y, 5); g.save(); g.translate(sp.x - camX, sp.y - sp.z - im.height / 2); g.rotate(sp.rot); g.drawImage(im, -im.width / 2, -im.height / 2); g.restore(); } }));
     helpers.forEach((h) => list.push({ y: h.y, f: () => { person(h.look, h.x, h.y, 0, (!h.arrived || endT > UP_T) ? runFrame(h.walk) : "idle"); stackDrawAt(h.stack, h.x, h.y); } }));
-    if (psi.on) list.push({ y: psi.y, f: () => { person(PSI, psi.x, psi.y, 0, psi.mv ? runFrame(psi.walk) : "idle"); if (psi.arrived && mode === "play") tag(psiName(), psi.x - camX, psi.y - (PSI.wheel ? 35 : 33), "#5fd18a"); } });
+    if (psi.on) list.push({ y: psi.y, f: () => { person(PSI, psi.x, psi.y, 0, psi.mv ? runFrame(psi.walk) : "idle"); if (psi.arrived && (mode === "play" || mode === "ending")) tag(psiName(), psi.x - camX, psi.y - (PSI.wheel ? 35 : 33), "#5fd18a"); } });
     if (mode !== "title") list.push({ y: P.y, f: () => {
       const kneel = mode !== "play" && ((fell && endT < UP_T) || (mode === "ending" && endReason === "colapso" && endT < UP_T));
       const spd = Math.hypot(P.vx, P.vy);
