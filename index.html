@@ -344,12 +344,19 @@ h1 em { font-style: normal; color: var(--good); }
     { skin: "#5a3a26", hair: "#111111", hairStyle: "short", shirt: "#4caf6a", pants: "#4a3b2a", pin: true },
     { skin: "#c98e62", hair: "#2a1a10", hairStyle: "short", shirt: "#ff7aa8", pants: "#2d4a7a" }
   ];
+  // the ones who seem to "make it": all kinds of people, all wearing the same happy mask
   const MASKED = [
     { skin: "#f1c29c", hair: "#e8c04a", hairStyle: "long", shirt: "#ffffff", pants: "#1b1b2a", mask: true },
     { skin: "#8d5a3b", hair: "#1e1410", hairStyle: "afro", shirt: "#ff4f7b", pants: "#f4f1e8", mask: true },
     { skin: "#c98e62", hair: "#3a2418", hairStyle: "short", shirt: "#5fd1e0", pants: "#2a2f45", mask: true, blazer: true },
-    { skin: "#f2c7a5", hair: "#6b4423", hairStyle: "short", shirt: "#f2c94c", pants: "#2d3a5a", mask: true }
+    { skin: "#f2c7a5", hair: "#6b4423", hairStyle: "short", shirt: "#f2c94c", pants: "#2d3a5a", mask: true },
+    { skin: "#5a3a26", hair: "#111111", hairStyle: "short", shirt: "#f4f1e8", pants: "#1b1b2a", mask: true, blazer: true },
+    { skin: "#7b4a2d", hair: "#1c1410", hairStyle: "afro", shirt: "#e8b84a", pants: "#2d3a5a", mask: true },
+    { skin: "#6b3f26", hair: "#2a1a10", hairStyle: "long", shirt: "#7a5cd6", pants: "#f4f1e8", mask: true },
+    { skin: "#8d5a3b", hair: "#1e1410", hairStyle: "short", shirt: "#4caf6a", pants: "#3b3b4f", mask: true, pin: true },
+    { skin: "#e0a878", hair: "#b8562e", hairStyle: "long", shirt: "#ff9ac0", pants: "#2a2f45", mask: true }
   ];
+  const LUX = [["#14121e", "#e8c04a"], ["#f4f1e8", "#c9a24a"], ["#b0182a", "#f4f1e8"], ["#1d3b6e", "#e8c04a"]];
   const KID = { skin: "#f2c7a5", hair: "#5a3a26", hairStyle: "short", shirt: "#ff9ac0", pants: "#3d5a8a" };
   const CROWD = { skin: "#6a6680", hair: "#45425a", hairStyle: "short", shirt: "#55526c", pants: "#403e55", line: "#0c0b14" };
 
@@ -435,6 +442,8 @@ h1 em { font-style: normal; color: var(--good); }
   const CRISIS_POOL = ["TAQUICARDIA", "TAQUICARDIA", "TAQUICARDIA", "FALTA DE AR", "FALTA DE AR", "FALTA DE AR", "SONO", "SONO", "TREMOR", "TONTURA", "ENJOO", "MEDO"];
   const RUN_LINES = ["Tô ótima!", "#gratidão", "Cheguei!", "Só good vibes", "Vida plena", "Saúde mental 100%"];
   const CAR_LINES = ["Venci na vida", "É só querer", "Foco e fé", "#abençoado", "Trabalhe enquanto eles dormem"];
+  const SELFIE_LINES = ["#partiu", "olha eu chegando!", "#vidaperfeita", "bom dia, mundo!", "#gratiluz", "#foco"];
+  const JET_LINES = ["Cheguei antes!", "#jetlife", "Primeira classe pra felicidade", "Sucesso é questão de mindset"];
   const BOSS_LINES = ["PELO BEM DA EMPRESA", "VOCÊ DEVERIA AGRADECER", "NÃO HÁ POBREZA QUE RESISTA A 14 HORAS DE TRABALHO", "VISTA A CAMISA DA EMPRESA", "PELO BEM DA EMPRESA", "VOCÊ DEVERIA AGRADECER", "VISTA A CAMISA DA EMPRESA", "PRODUZA!", "TEM GENTE NA FILA", "SEJA RESILIENTE"];
   const BILLS = ["CARRO DO ANO: SEJA FELIZ", "CURSO: FELICIDADE JÁ", "CELULAR NOVO, VIDA NOVA", "LIVRO: AUTOCUIDADO", "ROUPA DE MARCA = SUCESSO", "FELICIDADE EM 12X", "MÉTODO MENTE SÃ 3.0", "MENTORIA: SEJA FELIZ", "SEJA MAIS", "#SUCESSO"];
   const OBST_BASE = ["PRAZO", "META", "HORA EXTRA", "CONTA ATRASADA", "PROVA AMANHÃ", "SEM FÉRIAS", "FILA", "DESEMPREGO", "TRÂNSITO", "PLANTÃO"];
@@ -702,8 +711,10 @@ h1 em { font-style: normal; color: var(--good); }
       // masked people heading to the well-being gate
       trafT -= dt;
       if (time > 3 && trafT <= 0) {
-        const r = rand(), kind = r < 0.4 ? "run" : r < 0.75 ? "moto" : "car";
-        traffic.push({ kind, x: camX - 40, y: kind === "run" ? pick([YMIN + 2, YMAX - 2, ...LANES]) : pick(LANES), speed: kind === "run" ? 150 : kind === "moto" ? 210 : 185, look: pick(MASKED), walk: 0, state: "go", pt: 0 });
+        // each one is a coin toss: running, a selfie stop, rollerblades, motorbike, luxury car or a private jet
+        const r = rand(), kind = r < 0.2 ? "run" : r < 0.38 ? "selfie" : r < 0.54 ? "patins" : r < 0.7 ? "moto" : r < 0.9 ? "luxo" : "jato";
+        const onFoot = kind === "run" || kind === "selfie" || kind === "patins";
+        traffic.push({ kind, x: camX - (kind === "jato" ? 90 : 40), y: kind === "jato" ? 52 : onFoot ? pick([YMIN + 2, YMAX - 2, ...LANES]) : pick(LANES), speed: { run: 150, selfie: 140, patins: 175, moto: 210, luxo: 190, jato: 330 }[kind], look: pick(MASKED), lux: pick(LUX), walk: 0, state: "go", pt: 0, stopX: camX + 170 + rand() * 120 });
         trafT = 4.5 + rand() * 2.5;
       }
 
@@ -817,9 +828,16 @@ h1 em { font-style: normal; color: var(--good); }
         if (r.flash) r.flash = Math.max(0, r.flash - dt);
         if (r.pt > 0.35 && !r.said) { r.said = true; say(pick(r.kind === "run" ? RUN_LINES : CAR_LINES), r.x, r.y - 44, "white", 1.8, true); if (!said.maskHint) { said.maskHint = true; warnMsg("todo mundo parece chegar lá. repare nas máscaras"); } }
         if (r.pt > 2.0) r.state = "gone";
+      } else if (r.state === "selfie") { // stops mid-road, phone up, flash, then off again
+        r.pt += dt;
+        if (r.pt > 0.5 && !r.snapped) { r.snapped = true; r.flash = 0.25; sfx.snap(); say(pick(SELFIE_LINES), r.x, r.y - 44, "white", 1.6, true); }
+        if (r.flash) r.flash = Math.max(0, r.flash - dt);
+        if (r.pt > 1.9) { r.state = "go"; r.selfied = true; r.snapped = false; r.peek = 0.8; }
       } else {
-        r.x += r.speed * dt; r.walk += dt * 15;
-        if (r.state === "go" && r.x >= arch.x + 6 && arch.x - camX < LW - 40) { r.state = "pose"; r.pt = 0; r.x = arch.x + 6; }
+        r.x += r.speed * dt; r.walk += dt * 15; if (r.peek) r.peek = Math.max(0, r.peek - dt);
+        if (r.kind === "selfie" && !r.selfied && r.x >= r.stopX && r.x < arch.x - 40) { r.state = "selfie"; r.pt = 0; }
+        else if (r.kind === "jato") { if (!r.said && r.x > camX + LW * 0.45) { r.said = true; say(pick(JET_LINES), r.x, 64, "white", 1.8, true); } }
+        else if (r.state === "go" && r.x >= arch.x + 6 && arch.x - camX < LW - 40) { r.state = "pose"; r.pt = 0; r.x = arch.x + 6; }
       }
       if (r.x > camX + LW + 100) traffic.splice(i, 1);
     }
@@ -1168,10 +1186,50 @@ h1 em { font-style: normal; color: var(--good); }
   function drawTraffic(r) {
     const x = r.x - camX, y = r.y;
     if (x < -70 || x > LW + 70) return;
-    const reveal = psiNear() || mode !== "play" || (r.state === "pose" && r.pt > 1.0);
+    const reveal = psiNear() || mode !== "play" || (r.state === "pose" && r.pt > 1.0) || r.peek > 0;
     const lk = reveal ? Object.assign({}, r.look, { lift: true }) : r.look;
     const posing = r.state === "pose";
-    if (r.kind === "run") {
+    if (r.kind === "selfie" && r.state === "selfie") {
+      person(lk, r.x, y, 0, "idle");
+      g.fillStyle = "#14121e"; g.fillRect(x + 6, y - 34, 2, 12); g.fillRect(x + 3, y - 41, 7, 9); g.fillStyle = r.flash ? "#ffffff" : "#6fb6ff"; g.fillRect(x + 4, y - 40, 5, 7);
+      if (r.flash > 0) glow(x + 6, y - 37, 26, "rgba(255,255,255,A)", Math.min(0.9, r.flash * 4));
+      return;
+    }
+    if (r.kind === "patins") {
+      const glide = Math.sin(r.walk * 0.35);
+      person(lk, r.x, y, 0, posing ? "idle" : (glide > 0 ? "r0" : "r2"));
+      [[-4, 0], [3, 0]].forEach(([dx]) => { g.fillStyle = "#e2354c"; g.fillRect(x + dx - 1, y - 2, 5, 2); g.fillStyle = "#ffe066"; g.fillRect(x + dx - 1, y, 1, 1); g.fillRect(x + dx + 2, y, 1, 1); });
+      if (!posing) { g.fillStyle = "rgba(255,255,255,0.25)"; for (let k = 0; k < 3; k++) g.fillRect(x - 14 - k * 5, y - 14 + k * 5, 8 - k * 2, 0.8); }
+      return;
+    }
+    if (r.kind === "jato") {
+      const [c1, c2] = r.lux;
+      g.fillStyle = "rgba(255,170,90,0.35)"; g.beginPath(); g.ellipse(x - 34, y + 1, 9 + Math.random() * 3, 2.5, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "#14121e"; rrect(x - 30, y - 6, 60, 12, 6); g.fill();
+      g.fillStyle = c1 === "#14121e" ? "#e6e6ee" : c1; rrect(x - 29, y - 5, 58, 10, 5); g.fill();
+      g.fillStyle = c2; g.fillRect(x - 26, y + 1, 50, 1.2);
+      g.fillStyle = "#14121e"; g.beginPath(); g.moveTo(x - 22, y - 5); g.lineTo(x - 30, y - 16); g.lineTo(x - 24, y - 16); g.lineTo(x - 12, y - 5); g.closePath(); g.fill();
+      g.beginPath(); g.moveTo(x - 4, y + 2); g.lineTo(x - 14, y + 12); g.lineTo(x - 8, y + 12); g.lineTo(x + 6, y + 2); g.closePath(); g.fill();
+      for (let k = 0; k < 6; k++) { g.fillStyle = k === 3 ? "#ffffff" : "#9fd4f0"; g.fillRect(x - 12 + k * 6, y - 3, 3, 2.5); }
+      g.fillStyle = "#9fd4f0"; g.fillRect(x + 22, y - 4, 5, 3);
+      return;
+    }
+    if (r.kind === "luxo") {
+      const [c1, c2] = r.lux;
+      shadow(x, y, 26);
+      if (!posing) { g.fillStyle = "rgba(255,248,200,0.10)"; g.beginPath(); g.moveTo(x + 26, y - 7); g.lineTo(x + 104, y - 22); g.lineTo(x + 104, y + 8); g.closePath(); g.fill(); }
+      sprite(personImg(lk, "idle"), x - 10, y - 30, 16, 26);
+      g.fillStyle = "#14121e"; g.beginPath(); g.moveTo(x - 27, y - 3); g.lineTo(x - 27, y - 13); g.lineTo(x - 14, y - 15); g.lineTo(x - 4, y - 21); g.lineTo(x + 6, y - 21); g.lineTo(x + 12, y - 14); g.lineTo(x + 27, y - 12); g.lineTo(x + 28, y - 3); g.closePath(); g.fill();
+      g.fillStyle = c1 === "#14121e" ? "#2a2838" : c1; g.beginPath(); g.moveTo(x - 26, y - 4); g.lineTo(x - 26, y - 12); g.lineTo(x - 12, y - 14); g.lineTo(x + 12, y - 13); g.lineTo(x + 26, y - 11); g.lineTo(x + 27, y - 4); g.closePath(); g.fill();
+      g.fillStyle = "rgba(170,220,255,0.7)"; g.beginPath(); g.moveTo(x - 3, y - 14); g.lineTo(x + 2, y - 20); g.lineTo(x + 6, y - 20); g.lineTo(x + 10, y - 14); g.closePath(); g.fill();
+      g.fillStyle = c2; g.fillRect(x - 24, y - 9, 49, 1.2); g.fillRect(x + 24, y - 10, 3, 2);
+      g.fillStyle = "#ff3a4a"; g.fillRect(x - 27, y - 11, 2, 2);
+      [-15, 16].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 3, 4.5, 0, Math.PI * 2); g.fill(); g.fillStyle = c2; g.beginPath(); g.arc(x + dx, y - 3, 2.2, 0, Math.PI * 2); g.fill(); g.fillStyle = "#0c0b12"; g.fillRect(x + dx - 0.5, y - 3.5, 1, 1); });
+      if (Math.sin(time * 9 + r.x) > 0.6) { g.fillStyle = "#fff"; g.fillRect(x + 20, y - 18, 0.8, 5); g.fillRect(x + 18, y - 16, 5, 0.8); }
+      if (r.flash > 0) glow(x + 4, y - 22, 30, "rgba(255,255,255,A)", Math.min(0.9, r.flash * 4));
+      return;
+    }
+    if (r.kind === "run" || r.kind === "selfie") {
       person(lk, r.x, y, 0, posing ? "idle" : runFrame(r.walk));
       g.fillStyle = "#14121e"; g.fillRect(x + 6, y - 15, 6, 6); g.fillStyle = "#fff"; g.fillRect(x + 7, y - 14, 4, 4);
       g.fillStyle = "#14121e"; g.fillRect(x + 7.8, y - 13, 0.8, 0.8); g.fillRect(x + 9.6, y - 13, 0.8, 0.8); g.fillStyle = "#e2354c"; g.fillRect(x + 8, y - 11.5, 2, 0.8);
