@@ -211,7 +211,7 @@ h1 em { font-style: normal; color: var(--good); }
     </div>
     <div class="select-foot">
       <div class="diff">
-        <div class="diff-head"><span>barreiras sociais</span><span class="diff-label" id="diffLabel">POUCAS</span></div>
+        <div class="diff-head"><span>dificuldade</span><span class="diff-label" id="diffLabel">FÁCIL</span></div>
         <div class="diff-bar" id="diffBar"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <button class="cta" id="bornBtn" type="button">nascer</button>
@@ -421,7 +421,7 @@ h1 em { font-style: normal; color: var(--good); }
   const BILLS = ["CARRO DO ANO: SEJA FELIZ", "CURSO: FELICIDADE JÁ", "CELULAR NOVO, VIDA NOVA", "LIVRO: AUTOCUIDADO", "ROUPA DE MARCA = SUCESSO", "FELICIDADE EM 12X", "MÉTODO MENTE SÃ 3.0", "MENTORIA: SEJA FELIZ", "SEJA MAIS", "#SUCESSO"];
   const OBST_BASE = ["PRAZO", "META", "HORA EXTRA", "CONTA ATRASADA", "PROVA AMANHÃ", "SEM FÉRIAS", "FILA", "DESEMPREGO", "TRÂNSITO", "PLANTÃO"];
   const OBST_TRAIT = { negra: ["RACISMO", "“SEM PERFIL”", "SEGUIDA NA LOJA"], mulher: ["MACHISMO", "ASSÉDIO", "SALÁRIO MENOR"], lgbt: ["LGBTFOBIA", "“É SÓ UMA FASE”", "PIADINHA"], pobre: ["SEM GRANA", "ÔNIBUS LOTADO", "SEM INTERNET"], pcd: ["SEM RAMPA", "ESCADA", "CALÇADA QUEBRADA", "CAPACITISMO"], filhos: ["SEM CRECHE", "REUNIÃO NA ESCOLA"] };
-  const DIFF = ["POUCAS", "ALGUMAS", "VÁRIAS", "MUITAS", "MUITÍSSIMAS", "TODAS"];
+  const DIFF = ["FÁCIL", "NORMAL", "DIFÍCIL", "MUITO DIFÍCIL", "EXTREMA", "EXTREMA+"];
   const DIFF_COL = ["#5fd18a", "#b8e05a", "#e8b84a", "#ff8a3d", "#e0404f", "#b01a6a"];
 
   // ================= audio =================
@@ -1210,7 +1210,7 @@ h1 em { font-style: normal; color: var(--good); }
     txt("saúde mental", bx + bw + 4, 13, { size: 5, align: "left", color: "#5fd18a", ls: 0.8, shadow: false });
     g.fillStyle = "#e8b84a"; g.beginPath(); g.arc(bx + bw * frac, 13, 3, 0, Math.PI * 2); g.fill();
     g.strokeStyle = "#14121e"; g.lineWidth = 1; g.stroke();
-    txt("barreiras sociais", LW - 50, 7, { size: 5, align: "right", color: "#8f8da6", ls: 1.2, shadow: false });
+    txt("dificuldade", LW - 50, 7, { size: 5, align: "right", color: "#8f8da6", ls: 1.2, shadow: false });
     txt(DIFF[D], LW - 50, 16, { size: 7, align: "right", font: PIX, color: DIFF_COL[D], ls: 0.6, shadow: false });
   }
   function drawWarn() {
@@ -1637,7 +1637,7 @@ h1 em { font-style: normal; color: var(--good); }
     if (sel.pcd === "sim") names.push("com deficiência");
     if (sel.filhos === "sim") names.push("com filhos");
     names.push(sel.classe === "pobre" ? "pobre" : (f ? "rica" : "rico"));
-    if ($("profile")) $("profile").innerHTML = "você jogou como <b>" + names.join(", ") + "</b> · barreiras sociais: <b style=\"color:" + DIFF_COL[D] + "\">" + DIFF[D].toLowerCase() + "</b>";
+    if ($("profile")) $("profile").innerHTML = "você jogou como <b>" + names.join(", ") + "</b> · dificuldade <b style=\"color:" + DIFF_COL[D] + "\">" + DIFF[D].toLowerCase() + "</b>";
     $("endEyebrow").textContent = "fim do caminho (por enquanto)";
     $("stats").innerHTML = "<div><b>" + stats.hits + "</b><span>tropeços</span></div><div><b>" + stats.dropped + "</b><span>cargas largadas</span></div><div><b>" + stats.lost.length + "</b><span>coisas que você ama perdidas</span></div>" + (stats.walls ? "<div><b>" + stats.walls + "</b><span>barreiras sociais no caminho</span></div>" : "");
     const uniq = [...new Set(stats.lost)];
