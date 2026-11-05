@@ -710,7 +710,7 @@ h1 em { font-style: normal; color: var(--good); }
 
       // masked people heading to the well-being gate
       trafT -= dt;
-      if (time > 3 && trafT <= 0) {
+      if (time > 3 && trafT <= 0 && !boss.on) {
         // each one is a coin toss: running, a selfie stop, rollerblades, motorbike, luxury car or a private jet
         const r = rand(), kind = r < 0.2 ? "run" : r < 0.38 ? "selfie" : r < 0.54 ? "patins" : r < 0.7 ? "moto" : r < 0.9 ? "luxo" : "jato";
         const onFoot = kind === "run" || kind === "selfie" || kind === "patins";
@@ -725,14 +725,17 @@ h1 em { font-style: normal; color: var(--good); }
         crowdT -= dt;
         if (crowdT <= 0) {
           const vis = crowd.filter((c) => c.x > P.x + 30 && c.x < camX + LW - 20);
-          if (vis.length) { const c = pick(vis); throwFrom(pick(DROP), c.x, c.y, 18); c.bub = 0; say(pick(CROWD_LINES), c.x, c.y - 34, "light", 2.4); }
+          if (vis.length && !boss.on) { const c = pick(vis); throwFrom(pick(DROP), c.x, c.y, 18); c.bub = 0; say(pick(CROWD_LINES), c.x, c.y - 34, "light", 2.4); }
           crowdT = (boss.on ? 3.6 : 2.2) + rand() * 1.2;
         }
       }
       crowd = crowd.filter((c) => c.x > camX - 30);
 
       // boss
-      if (time > 60 && !boss.on) { boss.on = true; banner = { text: "MERCADO DE TRABALHO", t: 0 }; sfx.boss(); warnMsg("o mercado de trabalho chegou"); }
+      if (time > 60 && !boss.on) { // the stage clears for the boss: the masked ones hurry off, the crowd goes quiet
+        boss.on = true; banner = { text: "MERCADO DE TRABALHO", t: 0 }; sfx.boss(); warnMsg("o mercado de trabalho chegou");
+        traffic.forEach((r) => { r.state = "go"; r.speed = Math.max(r.speed, 320); r.stopX = 1e9; r.selfied = true; });
+      }
       if (boss.on) updateBoss(dt, L);
 
       if (!psi.on && time > 50 && P.hearts <= 2) { psi.on = true; psi.x = camX - 30; psi.y = P.y; }
@@ -755,7 +758,7 @@ h1 em { font-style: normal; color: var(--good); }
       thinkT -= dt;
       if (thinkT <= 0 && L >= 2) {
         say(pick(THOUGHTS), P.x, P.y - stackTopZ() - 22, "think", 2.8, true);
-        thinkT = crisis.dur > 0 ? 3 : 6 + rand() * 3;
+        thinkT = crisis.dur > 0 ? 3 : (6 + rand() * 3) * (boss.on ? 1.8 : 1);
         if (psiNear()) psi.reply = 1.3;
       }
       if (psi.reply > 0) { psi.reply -= dt; if (psi.reply <= 0 && PSI_LINES.length) say(pick(PSI_LINES), psi.x, psi.y - 40, "green", 2.6, true); }
@@ -1020,19 +1023,19 @@ h1 em { font-style: normal; color: var(--good); }
     think: { bg: "rgba(28,30,58,.94)", fg: "#c9d4ff", bd: "#7f8ad6", it: true },
     blue: { bg: "rgba(6,20,30,.92)", fg: "#9fe6ff", bd: "#6fd8ff" },
     purple: { bg: "rgba(24,10,34,.92)", fg: "#e1a8ff", bd: "#9b5ccf" }, green: { bg: "rgba(6,24,14,.92)", fg: "#8ff0b4", bd: "#5fd18a" },
-    boss: { bg: "#e0404f", fg: "#ffffff", bd: "#e0404f" }
+    boss: { bg: "#e0404f", fg: "#ffffff", bd: "#ffd0d6", size: 10 }
   };
   function bubbleDraw(b) {
     const st = BSTYLE[b.style] || BSTYLE.light;
     const a = clamp(b.t < 0.15 ? b.t / 0.15 : b.t > b.life - 0.35 ? (b.life - b.t) / 0.35 : 1, 0, 1);
-    const w = measure(b.text, 7, MONO, 0.4, st.it ? "italic 600" : "600") + 12, h = 13;
+    const fs = st.size || 7, w = measure(b.text, fs, MONO, 0.4, st.it ? "italic 600" : "600") + 12, h = fs + 6;
     const x = clamp(b.x - camX, w / 2 + 4, LW - w / 2 - 4), y = Math.max(56, b.y);
     g.save(); g.globalAlpha = a;
     g.fillStyle = st.bg; rrect(x - w / 2, y - h / 2, w, h, 3); g.fill();
     g.beginPath(); g.moveTo(x - 3, y + h / 2 - 0.5); g.lineTo(x + 3, y + h / 2 - 0.5); g.lineTo(x, y + h / 2 + 4); g.closePath(); g.fill();
     g.strokeStyle = st.bd; g.lineWidth = 0.7; rrect(x - w / 2, y - h / 2, w, h, 3); g.stroke();
     g.restore();
-    txt(b.text, x, y + 0.3, { size: 7, color: st.fg, ls: 0.4, shadow: false, weight: st.it ? "italic 600" : "600", alpha: a });
+    txt(b.text, x, y + 0.3, { size: fs, color: st.fg, ls: 0.4, shadow: false, weight: st.it ? "italic 600" : "600", alpha: a });
     if (st.it) { g.globalAlpha = a; g.fillStyle = st.bg; [[x - 4, y + h / 2 + 3, 1.8], [x - 7, y + h / 2 + 7, 1.2]].forEach(([cx, cy, r]) => { g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill(); }); g.globalAlpha = 1; }
   }
 
@@ -1069,7 +1072,7 @@ h1 em { font-style: normal; color: var(--good); }
       g.fillStyle = sell ? "#2a1a52" : "#3a1420"; rrect(x, 30, w, 16, 2); g.fill();
       g.strokeStyle = sell ? "#9b7cff" : "#ff6b7d"; g.lineWidth = 0.7; g.stroke();
       txt(s, x + w / 2, 38.3, { size: 6.5, font: PIX, color: sell ? "#e6dcff" : "#ffd6dc", ls: 0.6, shadow: false });
-      if (sell && Math.sin(time * 5 + i) > 0) txt("COMPRE AGORA", x + w / 2, 24, { size: 5, font: PIX, color: "#ffe066", ls: 0.6 });
+      if (sell && !boss.on && Math.sin(time * 5 + i) > 0) txt("COMPRE AGORA", x + w / 2, 24, { size: 5, font: PIX, color: "#ffe066", ls: 0.6 });
     }
     g.fillStyle = "#2b2a3a"; g.fillRect(0, 66, LW, ROAD_T - 66);
     g.fillStyle = "#363548"; g.fillRect(0, 66, LW, 1.5);
@@ -1325,13 +1328,13 @@ h1 em { font-style: normal; color: var(--good); }
     g.imageSmoothingEnabled = false;
     g.clearRect(0, 0, LW, LH);
     drawWorld();
-    if (boss.on) drawBoss();
     blocks.forEach((b) => {
       const sx = b.x - camX, r = clamp(7 - b.z / 30, 3, 7);
       if (b.danger) { g.fillStyle = "rgba(224,64,79," + (0.25 + 0.2 * Math.sin(time * 14)).toFixed(2) + ")"; g.beginPath(); g.ellipse(sx, b.y, 13, 5, 0, 0, Math.PI * 2); g.fill(); }
       g.fillStyle = "rgba(0,0,0,0.4)"; g.beginPath(); g.ellipse(sx, b.y, r, r * 0.4, 0, 0, Math.PI * 2); g.fill();
     });
     drawEntities();
+    if (boss.on) drawBoss(); // in front of holes, barriers and extras
     debris.forEach((d) => { g.save(); g.globalAlpha = clamp(d.life / d.max, 0, 1); g.translate(d.x - camX, d.y - d.z - 6); g.rotate(d.rot); const im = blockImg(d.type); g.drawImage(im, -im.width / 2, -im.height / 2); g.restore(); });
     transfers.forEach((tr) => {
       const tz = 23 + tr.h.stack.length * 10;
