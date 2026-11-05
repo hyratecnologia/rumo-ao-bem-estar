@@ -1359,8 +1359,8 @@ h1 em { font-style: normal; color: var(--good); }
   const cov = $("cover"), cx2 = cov.getContext("2d"), CW = 192, CH = 108;
   const tvHash = (n) => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
   const TV_HERO = heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" });
-  const TV_PSI = { skin: "#f2c7a5", hair: "#3a2414", hairStyle: "short", shirt: "#5fd18a", pants: "#2e3a4a", blazer: false, pin: false, wheel: false };
   let tvT = 0;
+  const COVER_STACK = ["boleto", "trabalho", "aluguel", "faculdade", "doenca"], coverFall = [];
   const CR = (x, y, w, h, c) => { cx2.fillStyle = c; cx2.fillRect(x, y, w, h); };
   const cvLerp = (a, b, t) => a + (b - a) * t;
   const SKY = ["#262a62", "#2f3270", "#3b3a7e", "#4b418a", "#634a94", "#80539a", "#a35d9b", "#c86a96", "#e47b92"];
@@ -1429,11 +1429,23 @@ h1 em { font-style: normal; color: var(--good); }
     [[54, 1], [138, -1]].forEach(([x, d]) => { CR(x, 66, 1, 26, "#120f26"); CR(x, 66, 4 * d || 4, 1, "#120f26"); CR(x + 3 * d, 67, 2, 1, "#ffe0a0"); cx2.fillStyle = "rgba(255,224,160,0.10)"; cx2.beginPath(); cx2.moveTo(x + 3 * d, 67); cx2.lineTo(x + 3 * d - 8, 96); cx2.lineTo(x + 3 * d + 8, 96); cx2.fill(); });
     // bushes
     for (let i = 0; i < 70; i++) { const side = i % 2, bx = side ? CW - 1 - Math.floor(tvHash(i) * 12) : Math.floor(tvHash(i) * 12), by = 92 + Math.floor(tvHash(i + 0.5) * 16); CR(bx, by, 2, 2, tvHash(i + 0.2) > 0.5 ? "#26348a" : "#1a2264"); }
-    // the two walkers, side by side, and hearts above
-    const f = Math.floor(t / 3) % 4;
-    cx2.drawImage(personImg(TV_PSI, "r" + ((f + 2) % 4)), 80, 81);
-    cx2.drawImage(personImg(TV_HERO, "r" + f), 94, 82);
-    for (let i = 0; i < 3; i++) cx2.drawImage(HEART.full, 82 + i * 10, 70 + Math.round(Math.sin((t + i * 6) / 6) * 1.5), 7, 6);
+    // the person alone, walking with a pile of obligations on the head, dropping the things they love
+    const f = Math.floor(t / 3) % 4, px0 = 88, feet = 104;
+    cx2.drawImage(personImg(TV_HERO, "r" + f), px0, feet - 26);
+    COVER_STACK.forEach((ty, i) => {
+      const im = blockImg(ty), sway = Math.round(Math.sin(t / 7 + i * 0.6) * i * 0.35);
+      cx2.drawImage(im, px0 + 8 - im.width / 2 + sway, feet - 26 - im.height + 2 - i * 9);
+    });
+    if (t % 24 === 0) coverFall.push({ ty: GOOD[(t / 24) % GOOD.length], x: px0 + 4, y: feet - 22, vx: -0.7 - tvHash(t) * 0.6, vy: -1.6, rest: 0 });
+    coverFall.forEach((h) => {
+      if (h.rest === 0) { h.vy += 0.3; h.x += h.vx; h.y += h.vy; if (h.y >= feet - 2) { h.y = feet - 2; if (Math.abs(h.vy) > 1.2) { h.vy *= -0.35; h.vx *= 0.5; } else h.rest = 1; } }
+      else { h.rest++; h.x -= 0.5; }
+      const im = blockImg(h.ty), q = h.rest ? 1 : Math.floor(t / 3) % 4;
+      cx2.save(); cx2.globalAlpha = Math.max(0, 1 - Math.max(0, h.rest - 14) / 10);
+      cx2.translate(Math.round(h.x), Math.round(h.y - im.height / 2)); cx2.rotate(q * Math.PI / 2);
+      cx2.drawImage(im, -Math.round(im.width / 2), -Math.round(im.height / 2)); cx2.restore();
+    });
+    for (let i = coverFall.length - 1; i >= 0; i--) if (coverFall[i].rest > 24 || coverFall[i].x < -20) coverFall.splice(i, 1);
   }
   setInterval(() => { if (!$("title").hidden) { tvT++; drawCover(); } }, 110);
   function renderSelect() {
