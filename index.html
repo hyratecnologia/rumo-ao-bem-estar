@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07070d">
-<meta name="description" content="Rumo ao Bem-Estar: um joguinho sobre saúde mental feito para a Semana da Psicologia.">
-<meta property="og:title" content="Rumo ao Bem-Estar">
-<meta property="og:description" content="Um joguinho sobre saúde mental, cobranças e bem-estar. Todo mundo parece chegar lá. Por que você não chega?">
-<title>Rumo ao Bem-Estar</title>
+<meta name="description" content="Rumo à Saúde Mental: um joguinho sobre saúde mental feito para a Semana da Psicologia.">
+<meta property="og:title" content="Rumo à Saúde Mental">
+<meta property="og:description" content="Um joguinho sobre saúde mental e cobranças. Todo mundo parece chegar lá. Por que você não chega?">
+<title>Rumo à Saúde Mental</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Silkscreen:wght@400;700&display=swap">
@@ -36,24 +36,21 @@ button { cursor: pointer; font-family: var(--mono); }
 button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
 .wrap {
-  box-sizing: border-box; height: 100%;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-  padding-block: 8px;
-  padding-left: max(16px, env(safe-area-inset-left, 0px));
-  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  box-sizing: border-box; height: 100%; height: 100dvh; position: relative;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 #stage { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
 .screen { position: relative; }
-canvas#c { display: block; width: 100%; height: 100%; image-rendering: pixelated; background: #000; touch-action: none; border-radius: 4px; }
-.mute { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; background: rgba(10,10,18,.7); border: 1px solid var(--edge); color: var(--ink); font-size: 9px; letter-spacing: .05em; }
-.tbtns { position: absolute; right: 12px; bottom: 12px; display: none; gap: 12px; }
+canvas#c { display: block; width: 100%; height: 100%; image-rendering: pixelated; background: #000; touch-action: none; }
+.mute { position: absolute; top: max(8px, env(safe-area-inset-top, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); width: 34px; height: 34px; border-radius: 50%; background: rgba(10,10,18,.7); border: 1px solid var(--edge); color: var(--ink); font-size: 9px; letter-spacing: .05em; }
+.tbtns { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); display: none; gap: 12px; }
 .tbtns button { width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); background: rgba(10,10,18,.55); color: var(--ink); font-size: 10px; letter-spacing: .12em; touch-action: none; }
 .tbtns button.drop { border-color: rgba(95,209,138,.6); color: var(--good); }
 .tbtns button.on { background: rgba(255,255,255,.15); }
 @media (pointer: coarse) { .tbtns { display: flex; } .keys { display: none; } }
-.keys { margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: lowercase; text-align: center; }
+.keys { display: none; margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: lowercase; text-align: center; }
 .keys b { color: var(--ink); font-weight: 600; }
-.rotate { display: none; margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .14em; }
+.rotate { display: none; position: absolute; top: 16px; left: 0; right: 0; text-align: center; margin: 0; color: var(--muted); font-size: 11px; letter-spacing: .14em; }
 @media (pointer: coarse) and (orientation: portrait) { .rotate { display: block; } }
 
 .ov {
@@ -101,7 +98,7 @@ h1 em { font-style: normal; color: var(--good); }
 .diff { width: 100%; display: flex; flex-direction: column; gap: 8px; text-align: left; }
 .diff-head { display: flex; justify-content: space-between; align-items: baseline; font-size: 9px; letter-spacing: .28em; color: var(--muted); text-transform: uppercase; }
 .diff-label { font-family: var(--pix); font-size: 14px; letter-spacing: .14em; }
-.diff-bar { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.diff-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
 .diff-bar i { height: 6px; background: var(--edge); }
 .twist { font-family: var(--pix); font-size: clamp(16px, 4.4vw, 26px); letter-spacing: .12em; line-height: 1.5; color: var(--bad); margin: 0; text-wrap: balance; }
 @media (max-width: 560px) {
@@ -126,7 +123,7 @@ h1 em { font-style: normal; color: var(--good); }
 <div class="wrap">
   <div id="stage">
     <div class="screen" id="screen">
-      <canvas id="c" width="960" height="540" aria-label="Jogo Rumo ao Bem-Estar"></canvas>
+      <canvas id="c" width="960" height="540" aria-label="Jogo Rumo à Saúde Mental"></canvas>
       <button class="mute" id="mute" type="button" aria-label="Som ligado">SOM</button>
       <div class="tbtns">
         <button type="button" data-k="jump">PULAR</button>
@@ -141,8 +138,8 @@ h1 em { font-style: normal; color: var(--good); }
 <div class="ov" id="title">
   <div class="box">
     <span class="eyebrow">semana da psicologia</span>
-    <h1>RUMO AO <em>BEM-ESTAR</em></h1>
-    <p class="lead">Siga a avenida até o bem-estar. Todo mundo parece chegar lá. Por que você não chega?</p>
+    <h1>RUMO À <em>SAÚDE MENTAL</em></h1>
+    <p class="lead">Siga a avenida até a saúde mental. Todo mundo parece chegar lá. Por que você não chega?</p>
     <ul class="legend">
       <li><i style="background:#e0404f"></i>cargas que não saem</li>
       <li><i style="background:#e8b84a"></i>cargas que dá pra largar</li>
@@ -168,12 +165,11 @@ h1 em { font-style: normal; color: var(--good); }
         <div class="opt-row"><span>orientação</span><div class="seg" data-key="orient"><button type="button" data-v="hetero">hétero</button><button type="button" data-v="lgbt">lgbt+</button></div></div>
         <div class="opt-row"><span>classe</span><div class="seg" data-key="classe"><button type="button" data-v="rica">rica</button><button type="button" data-v="pobre">pobre</button></div></div>
         <div class="opt-row"><span>deficiência</span><div class="seg" data-key="pcd"><button type="button" data-v="nao">não</button><button type="button" data-v="sim">cadeira de rodas</button></div></div>
-        <div class="opt-row"><span>filhos</span><div class="seg" data-key="filhos"><button type="button" data-v="nao">não</button><button type="button" data-v="sim">sim</button></div></div>
       </div>
     </div>
     <div class="diff">
       <div class="diff-head"><span>dificuldade</span><span class="diff-label" id="diffLabel">FÁCIL</span></div>
-      <div class="diff-bar" id="diffBar"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="diff-bar" id="diffBar"><i></i><i></i><i></i><i></i><i></i><i></i></div>
     </div>
     <button class="cta" id="bornBtn" type="button">nascer</button>
   </div>
@@ -189,15 +185,15 @@ h1 em { font-style: normal; color: var(--good); }
 <div class="ov" id="end" hidden>
   <div class="box">
     <span class="eyebrow" id="endEyebrow">fim do caminho (por enquanto)</span>
-    <h1>BEM-ESTAR NÃO É LINHA DE CHEGADA.</h1>
+    <h1>SAÚDE MENTAL NÃO É LINHA DE CHEGADA.</h1>
     <p class="lead" style="color:var(--good)">E ninguém chega sozinho.</p>
     <p class="profile" id="profile"></p>
     <div class="stats" id="stats"></div>
     <p class="lead" id="lostLine" style="color:#6fd8ff" hidden></p>
     <div class="lines">
       <p>A dificuldade não mede esforço. Mede o tamanho do caminho que cada pessoa encontra pela frente.</p>
-      <p>Algumas cargas não dependem de quem carrega: boleto, trabalho, doença, filhos sem rede de apoio, racismo, machismo, LGBTfobia, capacitismo. E o Mercado ainda joga a culpa em você.</p>
-      <p>Quem chegava ao bem-estar usava máscara de felicidade. O bem-estar que os outros mostram nem sempre é o que parece.</p>
+      <p>Algumas cargas não dependem de quem carrega: boleto, trabalho, doença, racismo, machismo, LGBTfobia, capacitismo. E o Mercado ainda joga a culpa em você.</p>
+      <p>Quem chegava à saúde mental usava máscara de felicidade. A saúde mental que os outros mostram nem sempre é o que parece.</p>
       <p id="psiLine">O psicólogo não carregou nada por você. Caminhou junto e ajudou a ver o que dava para soltar.</p>
     </div>
     <p class="help"><b>CVV 188</b> · ligação gratuita, 24 horas. CAPS e clínicas-escola de psicologia também atendem de graça.</p>
@@ -210,7 +206,7 @@ h1 em { font-style: normal; color: var(--good); }
 
 <script>
 (function () {
-  const LW = 480, LH = 270;
+  let LW = 480; const LH = 270;
   const ROAD_T = 84, ROAD_B = 212, YMIN = 74, YMAX = 224, MID = 148;
   const LANES = [100, 132, 164, 196];
   const $ = (id) => document.getElementById(id);
@@ -389,14 +385,14 @@ h1 em { font-style: normal; color: var(--good); }
   const KID_LINES = ["tô com fome!", "me leva no colo?", "brinca comigo?", "olha!", "tô cansado..."];
   const CRISIS_CAP = { "TAQUICARDIA": "o coração dispara", "FALTA DE AR": "o ar não vem", "TREMOR": "o corpo treme", "TONTURA": "tudo gira", "ENJOO": "o estômago revira", "MEDO": "e se der tudo errado?", "SONO": "faz dias que você não dorme direito" };
   const CRISIS_POOL = ["TAQUICARDIA", "TAQUICARDIA", "TAQUICARDIA", "FALTA DE AR", "FALTA DE AR", "FALTA DE AR", "SONO", "SONO", "TREMOR", "TONTURA", "ENJOO", "MEDO"];
-  const RUN_LINES = ["Tô ótima!", "#gratidão", "Cheguei!", "Só good vibes", "Vida plena", "Bem-estar total"];
+  const RUN_LINES = ["Tô ótima!", "#gratidão", "Cheguei!", "Só good vibes", "Vida plena", "Saúde mental 100%"];
   const CAR_LINES = ["Venci na vida", "É só querer", "Foco e fé", "#abençoado", "Trabalhe enquanto eles dormem"];
   const BOSS_LINES = ["PELO BEM DA EMPRESA", "VOCÊ DEVERIA AGRADECER", "NÃO HÁ POBREZA QUE RESISTA A 14 HORAS DE TRABALHO", "VISTA A CAMISA DA EMPRESA", "PELO BEM DA EMPRESA", "VOCÊ DEVERIA AGRADECER", "VISTA A CAMISA DA EMPRESA", "PRODUZA!", "TEM GENTE NA FILA", "SEJA RESILIENTE"];
-  const BILLS = ["CARRO DO ANO: SEJA FELIZ", "CURSO: FELICIDADE JÁ", "CELULAR NOVO, VIDA NOVA", "LIVRO: AUTOCUIDADO", "ROUPA DE MARCA = SUCESSO", "FELICIDADE EM 12X", "MÉTODO BEM-ESTAR 3.0", "MENTORIA: SEJA FELIZ", "SEJA MAIS", "#SUCESSO"];
+  const BILLS = ["CARRO DO ANO: SEJA FELIZ", "CURSO: FELICIDADE JÁ", "CELULAR NOVO, VIDA NOVA", "LIVRO: AUTOCUIDADO", "ROUPA DE MARCA = SUCESSO", "FELICIDADE EM 12X", "MÉTODO MENTE SÃ 3.0", "MENTORIA: SEJA FELIZ", "SEJA MAIS", "#SUCESSO"];
   const OBST_BASE = ["PRAZO", "META", "HORA EXTRA", "CONTA ATRASADA", "PROVA AMANHÃ", "SEM FÉRIAS", "FILA", "DESEMPREGO", "TRÂNSITO", "PLANTÃO"];
   const OBST_TRAIT = { negra: ["RACISMO", "“SEM PERFIL”", "SEGUIDA NA LOJA"], mulher: ["MACHISMO", "ASSÉDIO", "SALÁRIO MENOR"], lgbt: ["LGBTFOBIA", "“É SÓ UMA FASE”", "PIADINHA"], pobre: ["SEM GRANA", "ÔNIBUS LOTADO", "SEM INTERNET"], pcd: ["SEM RAMPA", "ESCADA", "CALÇADA QUEBRADA", "CAPACITISMO"], filhos: ["SEM CRECHE", "REUNIÃO NA ESCOLA"] };
-  const DIFF = ["FÁCIL", "NORMAL", "DIFÍCIL", "MUITO DIFÍCIL", "EXTREMA", "EXTREMA+", "EXTREMA++"];
-  const DIFF_COL = ["#5fd18a", "#b8e05a", "#e8b84a", "#ff8a3d", "#e0404f", "#d02a5a", "#b01a6a"];
+  const DIFF = ["FÁCIL", "NORMAL", "DIFÍCIL", "MUITO DIFÍCIL", "EXTREMA", "EXTREMA+"];
+  const DIFF_COL = ["#5fd18a", "#b8e05a", "#e8b84a", "#ff8a3d", "#e0404f", "#b01a6a"];
 
   // ================= audio =================
   let AC = null, master = null, muted = false;
@@ -627,7 +623,7 @@ h1 em { font-style: normal; color: var(--good); }
       if (jumpEdge && P.z === 0) { P.vz = 235 * Math.max(0.7, 1 - L * 0.028); sfx.jump(); }
       if (dropEdge) doDrop();
 
-      if (!said.start) { said.start = true; warnMsg("siga a avenida até o bem-estar"); if (sel.classe === "pobre") say("JÁ VEIO COM VOCÊ", P.x, P.y - stackTopZ() - 10, "red", 2.6, true); }
+      if (!said.start) { said.start = true; warnMsg("siga a avenida até a saúde mental"); if (sel.classe === "pobre") say("JÁ VEIO COM VOCÊ", P.x, P.y - stackTopZ() - 10, "red", 2.6, true); }
 
       // loads from the sky
       spawnT -= dt;
@@ -866,7 +862,7 @@ h1 em { font-style: normal; color: var(--good); }
     if (psi.on) { psi.x += (P.x - 26 - psi.x) * Math.min(1, dt * 4); psi.y += (P.y + 6 - psi.y) * Math.min(1, dt * 4); psi.arrived = true; psi.mv = walking; if (walking) psi.walk += dt * 12; }
     for (let i = transfers.length - 1; i >= 0; i--) { const tr = transfers[i]; tr.t += dt / 0.4; if (tr.t >= 1) { tr.h.stack.push({ type: tr.type }); transfers.splice(i, 1); } }
     if (!said.chord1 && endT > 1) { said.chord1 = true; sfx.chime(); }
-    if (endT > 4.5 && !dialog) dialog = { lines: ["Bem-estar não é linha de chegada.", "E ninguém chega sozinho."], t: 0 };
+    if (endT > 4.5 && !dialog) dialog = { lines: ["Saúde mental não é linha de chegada.", "E ninguém chega sozinho."], t: 0 };
     if (dialog) dialog.t += dt;
     if (!said.chord2 && endT > 7.5) { said.chord2 = true; sfx.chord(); }
     if (endT > 11.5 && !said.over) { said.over = true; mode = "over"; showEnd(); }
@@ -1010,9 +1006,9 @@ h1 em { font-style: normal; color: var(--good); }
       glow(ax, MID, 90, "rgba(95,209,138,A)", 0.12);
       for (let y = ROAD_T + 3; y < ROAD_B - 3; y += 6) { const odd = Math.floor(y / 6) % 2; g.fillStyle = odd ? "rgba(236,235,242,0.55)" : "rgba(20,20,30,0.55)"; g.fillRect(ax - 3, y, 3, 6); g.fillStyle = odd ? "rgba(20,20,30,0.55)" : "rgba(236,235,242,0.55)"; g.fillRect(ax, y, 3, 6); }
       g.fillStyle = "#0e0e16"; g.fillRect(ax - 3, 44, 6, 40); g.fillRect(ax - 3, ROAD_B, 6, 18);
-      g.fillStyle = "#123b26"; rrect(ax - 44, 26, 88, 20, 3); g.fill();
+      g.fillStyle = "#123b26"; rrect(ax - 62, 26, 124, 20, 3); g.fill();
       g.strokeStyle = "#5fd18a"; g.lineWidth = 1; g.stroke();
-      txt("BEM-ESTAR", ax, 36.5, { size: 9, font: PIX, color: "#c8ffd9", ls: 1.2, shadow: false });
+      txt("SAÚDE MENTAL", ax, 36.5, { size: 9, font: PIX, color: "#c8ffd9", ls: 1.2, shadow: false });
     }
   }
 
@@ -1146,12 +1142,12 @@ h1 em { font-style: normal; color: var(--good); }
     for (let i = 0; i < 5; i++) sprite(i < P.hearts ? HEART.full : HEART.empty, 8 + i * 11, 6, 10.5, 9.5);
     txt("saúde mental", 8, 19, { size: 5, align: "left", color: "#8f8da6", ls: 1.2, shadow: false });
     const bx = 160, bw = 150, frac = clamp((P.x - 70) / Math.max(1, arch.x - 70), 0, 1);
-    txt("CAMINHO DO BEM-ESTAR", bx + bw / 2, 6.5, { size: 5, color: "#8f8da6", ls: 1.6, shadow: false });
+    txt("CAMINHO DA SAÚDE MENTAL", bx + bw / 2, 6.5, { size: 5, color: "#8f8da6", ls: 1.6, shadow: false });
     g.fillStyle = "#2c2b3d"; g.fillRect(bx, 12, bw, 2);
     const gr = g.createLinearGradient(bx, 0, bx + bw, 0); gr.addColorStop(0, "#e0404f"); gr.addColorStop(1, "#e8b84a");
     g.fillStyle = gr; g.fillRect(bx, 12, bw * frac, 2);
     g.fillStyle = "#5fd18a"; g.fillRect(bx + bw - 1, 9, 1.5, 8);
-    txt("bem-estar", bx + bw + 4, 13, { size: 5, align: "left", color: "#5fd18a", ls: 0.8, shadow: false });
+    txt("saúde mental", bx + bw + 4, 13, { size: 5, align: "left", color: "#5fd18a", ls: 0.8, shadow: false });
     g.fillStyle = "#e8b84a"; g.beginPath(); g.arc(bx + bw * frac, 13, 3, 0, Math.PI * 2); g.fill();
     g.strokeStyle = "#14121e"; g.lineWidth = 1; g.stroke();
     txt("dificuldade", LW - 50, 7, { size: 5, align: "right", color: "#8f8da6", ls: 1.2, shadow: false });
@@ -1305,6 +1301,8 @@ h1 em { font-style: normal; color: var(--good); }
   }
   function fit() {
     const st = $("stage"), w = st.clientWidth, h = st.clientHeight;
+    // fill the whole screen: the visible stretch of avenue widens with the screen's aspect ratio
+    LW = Math.round(Math.max(480, Math.min(680, LH * w / Math.max(1, h))));
     const s = Math.max(0.5, Math.min(w / LW, h / LH));
     const cw = Math.floor(LW * s), ch = Math.floor(LH * s);
     $("screen").style.width = cw + "px"; $("screen").style.height = ch + "px";
@@ -1356,7 +1354,14 @@ h1 em { font-style: normal; color: var(--good); }
     $("psiLine").textContent = (PSI.fem ? "A psicóloga" : "O psicólogo") + " não carregou nada por você. Caminhou junto e ajudou a ver o que dava para soltar.";
     $("end").hidden = false; $("againBtn").focus();
   }
-  $("startBtn").addEventListener("click", showSelect);
+  function goFull() {
+    const el = document.documentElement, rq = el.requestFullscreen || el.webkitRequestFullscreen;
+    if (!rq || document.fullscreenElement || document.webkitFullscreenElement || !matchMedia("(pointer: coarse)").matches) return;
+    try { const r = rq.call(el, { navigationUI: "hide" }); if (r && r.then) r.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch (e) {} }).catch(() => {}); } catch (e) {}
+  }
+  addEventListener("orientationchange", () => setTimeout(fit, 250));
+  if (window.visualViewport) visualViewport.addEventListener("resize", fit);
+  $("startBtn").addEventListener("click", () => { goFull(); showSelect(); });
   $("againBtn").addEventListener("click", start);
   $("charBtn").addEventListener("click", showSelect);
   if (isTouch) $("ctrlHint").textContent = "arraste na tela para andar · toque rápido ou PULAR para pular · LARGAR solta uma carga · 5 corações";
