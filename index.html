@@ -1674,9 +1674,15 @@ h1 em { font-style: normal; color: var(--good); }
     cvx.drawImage(cov, Math.round((W - CW * k) / 2), Math.round((H - CH * k) * 0.75), CW * k, CH * k); // crop more sky than street
   }
   const tvHash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
-  const TV_HERO = heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" });
   let tvT = 0;
-  const COVER_STACK = ["boleto", "trabalho", "aluguel", "faculdade", "doenca"], coverFall = [];
+  const coverFall = [], coverPv = (() => { const c = document.createElement("canvas"); c.width = 16; c.height = 26; return c.getContext("2d"); })();
+  // back to front; dir 1 = walking right, -1 = walking left
+  const COVER_PEOPLE = [
+    { look: heroLook({ cor: "negra", genero: "homem", orient: "lgbt", classe: "pobre", pcd: "nao" }), x: 206, feet: 207, S: 1, dir: 1, stack: ["boleto", "trabalho", "dobro"] },
+    { look: heroLook({ cor: "branca", genero: "mulher", orient: "lgbt", classe: "rica", pcd: "sim" }), x: 286, feet: 211, S: 1, dir: -1, stack: ["casa", "trabalho"] },
+    { look: heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" }), x: 330, feet: 234, S: 2, dir: -1, stack: ["boleto", "aluguel", "faculdade", "casa"] },
+    { look: heroLook({ cor: "branca", genero: "homem", orient: "hetero", classe: "rica", pcd: "nao" }), x: 172, feet: 246, S: 2, dir: 1, stack: ["trabalho", "doenca", "cuidar"] }
+  ];
   const mkLayer = (w, h) => { const c = document.createElement("canvas"); c.width = w || CW; c.height = h || CH; return c; };
   let L = null;
   const px_ = (x, y, w, h, c) => { L.fillStyle = c; L.fillRect(x, y, w, h); };
@@ -1870,20 +1876,23 @@ h1 em { font-style: normal; color: var(--good); }
     BULBS.forEach(([x, y, s], i) => { const on = (i + Math.floor(t / 4)) % 9 !== 0; c.fillStyle = on ? "rgba(255,210,120,0.22)" : "rgba(0,0,0,0)"; c.fillRect(x - s, y - s, s * 3, s * 3); c.fillStyle = on ? (i % 3 ? "#ffd36b" : "#ff9a6b") : "#5a4436"; c.fillRect(x, y, s, s); });
     LAMPS.forEach(([x, base, top, w]) => { const d = x < VPX ? 1 : -1, lx = x + 6 * d; c.fillStyle = "rgba(255,226,170,0.09)"; c.beginPath(); c.moveTo(lx - 2, top + w + 1); c.lineTo(lx + 2, top + w + 1); c.lineTo(lx + (base - top) * 0.32, base); c.lineTo(lx - (base - top) * 0.32, base); c.fill(); });
     if (t % 50 > 2) { c.fillStyle = "#ffd84a"; c.fillRect(156, 234, 1, 1); c.fillRect(158, 234, 1, 1); }
-    // the person alone, walking with a pile of obligations, dropping the things they love
-    // stands on the right sidewalk, clear of the logo and the start button, walking toward the city
-    const S = 2, f = Math.floor(t / 3) % 4, HX = 328, feet = 234, bob = f % 2;
-    c.fillStyle = "rgba(10,6,24,0.5)"; c.beginPath(); c.ellipse(HX, feet, 14, 3, 0, 0, Math.PI * 2); c.fill();
-    c.save(); c.translate(HX, 0); c.scale(-1, 1); c.drawImage(personImg(TV_HERO, "r" + f), -8 * S, feet - 26 * S, 16 * S, 26 * S); c.restore();
-    let sy = feet - 26 * S + 4 + bob;
-    COVER_STACK.forEach((ty, i) => {
-      const im = blockImg(ty), sway = Math.round(Math.sin(t / 7 + i * 0.6) * i * 0.7);
-      sy -= im.height * S - 4; c.drawImage(im, HX - im.width * S / 2 + sway, sy, im.width * S, im.height * S);
+    // many different people on the same avenue, each with their own pile, each losing what they love along the way
+    COVER_PEOPLE.forEach((pp, n) => {
+      const S = pp.S, f = Math.floor((t + n * 2) / 3) % 4, bob = f % 2;
+      c.fillStyle = "rgba(10,6,24,0.5)"; c.beginPath(); c.ellipse(pp.x, pp.feet, 7 * S, 1.5 * S, 0, 0, Math.PI * 2); c.fill();
+      drawPortrait(coverPv, null, f, pp.look);
+      c.save(); c.translate(pp.x, 0); c.scale(pp.dir, 1); c.drawImage(coverPv.canvas, -8 * S, pp.feet - 26 * S, 16 * S, 26 * S); c.restore();
+      let sy = pp.feet - 26 * S + 2 * S + (pp.look.wheel ? 0 : bob);
+      pp.stack.forEach((ty, i) => {
+        const im = blockImg(ty), sway = Math.round(Math.sin(t / 7 + i * 0.6 + n) * i * 0.35 * S);
+        sy -= im.height * S - 2 * S; c.drawImage(im, pp.x - im.width * S / 2 + sway, sy, im.width * S, im.height * S);
+      });
+      if ((t + n * 17) % 34 === 0) coverFall.push({ ty: GOOD[Math.floor((t + n * 5) / 34) % GOOD.length], x: pp.x - pp.dir * 2, y: pp.feet - 20 * S, vx: -pp.dir * (0.4 + tvHash(t + n) * 0.4) * S, vy: -1.5 * S, rest: 0, feet: pp.feet, S });
     });
-    if (t % 26 === 0) coverFall.push({ ty: GOOD[(t / 26) % GOOD.length], x: HX + 4, y: feet - 40, vx: 0.8 + tvHash(t) * 0.8, vy: -3, rest: 0 });
     coverFall.forEach((h) => {
-      if (!h.rest) { h.vy += 0.5; h.x += h.vx; h.y += h.vy; if (h.y >= feet - 2) { h.y = feet - 2; if (h.vy > 2.5) { h.vy *= -0.35; h.vx *= 0.5; } else h.rest = 1; } }
-      else { h.rest++; h.x += 0.5; }
+      const S = h.S;
+      if (!h.rest) { h.vy += 0.25 * S; h.x += h.vx; h.y += h.vy; if (h.y >= h.feet - 1) { h.y = h.feet - 1; if (h.vy > 1.2 * S) { h.vy *= -0.35; h.vx *= 0.5; } else h.rest = 1; } }
+      else { h.rest++; h.x += h.vx * 0.3; }
       const im = blockImg(h.ty), q = h.rest ? 0 : Math.floor(t / 3) % 4, w = im.width * S, hh = im.height * S;
       c.save(); c.globalAlpha = Math.max(0, 1 - Math.max(0, h.rest - 14) / 10);
       c.translate(Math.round(h.x), Math.round(h.y - hh / 2)); c.rotate(q * Math.PI / 2); c.drawImage(im, -w / 2, -hh / 2, w, hh); c.restore();
