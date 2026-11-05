@@ -382,15 +382,15 @@ h1 em { font-style: normal; color: var(--good); }
   const SHOE = rampOf("#3a3346");
   // 30x50 art pixels before the outline; feet on row 49
   function drawPersonArt(q, o, frame) {
-    const wheel = frame[0] === "w", kneel = frame === "kneel", jump = frame === "jump", run = frame[0] === "r";
+    const wheel = frame[0] === "w", sit = frame === "sit", kneel = frame === "kneel", jump = frame === "jump", run = frame[0] === "r";
     const S = skinRamp(o.skin), C = rampOf(o.shirt), Pn = rampOf(o.pants), H = rampOf(o.hair);
     let hipX = 15, hipY = 32, legs, arms, up = 0, lean = 0, drop = 0;
     if (run) { const f = +frame.slice(1) % 6, L = RUN6[f]; legs = [[L[0], L[1]], [L[2], L[3]]]; up = RUNBOB[f]; lean = 1; arms = [[RUNARM[f], RUNARM[f] + 55], [-RUNARM[f], -RUNARM[f] + 55]]; }
     else if (jump) { legs = [[55, -8], [-25, -50]]; up = -1; arms = [[150, 165], [130, 150]]; }
     else if (kneel) { legs = [[40, -90], [12, -90]]; drop = 9; hipY = 41; arms = [[25, 50], [10, 40]]; }
-    else if (wheel) { legs = [[90, 0], [90, 4]]; hipX = 13; hipY = 33; drop = 1; arms = [[30, 75], [20, 65]]; }
+    else if (wheel || sit) { legs = [[90, 0], [90, 4]]; hipX = 13; hipY = 33; drop = 1; arms = sit ? [[60, 85], [50, 80]] : [[30, 75], [20, 65]]; }
     else { legs = [[4, 0], [-3, 0]]; arms = [[6, 12], [-4, 6]]; if (frame === "idle1") up = 1; }
-    if (!kneel && !wheel) hipY += (frame === "idle1" ? 0 : up);
+    if (!kneel && !wheel && !sit) hipY += (frame === "idle1" ? 0 : up);
     const tx = 10 + lean, ty = 17 + up + drop, hx = 9 + lean + (kneel ? 1 : 0), hy = 3 + up + drop;
     const longSleeve = !!o.blazer;
 
@@ -1633,7 +1633,7 @@ h1 em { font-style: normal; color: var(--good); }
     tiles(SC.road, 1, ROAD_T);
     // light pools on the asphalt, in hard bands
     g.globalCompositeOperation = "lighter";
-    lamps.forEach(([hx]) => { [[50, 14, 0.035], [34, 9, 0.04], [18, 5, 0.05]].forEach(([rx, ry, a]) => { g.fillStyle = "rgba(255,180,90," + a + ")"; g.beginPath(); g.ellipse(hx, 100, rx, ry, 0, 0, Math.PI * 2); g.fill(); }); });
+    lamps.forEach(([hx]) => { [[50, 14, 0.022], [34, 9, 0.026], [18, 5, 0.032]].forEach(([rx, ry, a]) => { g.fillStyle = "rgba(255,180,90," + a + ")"; g.beginPath(); g.ellipse(hx, 100, rx, ry, 0, 0, Math.PI * 2); g.fill(); }); });
     g.globalCompositeOperation = "source-over";
     // worn paint: edges, lane dashes, double yellow centre, arrows
     const ox = -(camX % 8);
@@ -1850,6 +1850,70 @@ h1 em { font-style: normal; color: var(--good); }
     }
     return false;
   }
+  // ===== v6 vehicles and props of the masked ones (2x art, cached) =====
+  const vcache = new Map();
+  const cached = (key, fn) => { if (!vcache.has(key)) vcache.set(key, fn()); return vcache.get(key); };
+  function wheelArt(q, cx, cy, r, rim) {
+    q.disc(cx, cy, r + 1.5, "#0e0c14"); q.disc(cx, cy, r, "#1e1c26"); q.ring(cx, cy, r, 1, "#34303e");
+    q.disc(cx, cy, r * 0.5, rim[1]); q.ring(cx, cy, r * 0.5, 1, rim[2]); q.p(cx - 1, cy - 1, rim[0]); q.p(cx, cy, "#14121e");
+  }
+  // a low luxury convertible, 112x44 art, facing right
+  const luxImg = (c1, c2) => cached("lux" + c1 + c2, () => {
+    const c = mkCanvas(112, 44), q = pen(c), B = rampOf(c1 === "#14121e" ? "#2a2838" : c1), T = rampOf(c2);
+    q.r(46, 8, 8, 12, "#3a2420"); q.r(46, 8, 8, 2, "#5a3a30");
+    q.r(4, 20, 38, 3, B[1]); q.r(40, 18, 38, 3, B[2]);
+    for (let x = 78; x < 110; x++) q.r(x, 21 + Math.floor((x - 78) / 10), 1, 3, B[1]);
+    q.r(3, 22, 106, 13, B[1]); q.r(3, 22, 106, 1, B[0]); q.r(5, 20, 34, 1, B[0]); q.r(80, 21, 26, 1, B[0]);
+    q.r(3, 31, 106, 4, B[2]); q.r(3, 34, 106, 1, B[3]); q.r(3, 27, 106, 1, T[1]); q.r(3, 26, 106, 1, T[0]);
+    q.r(40, 22, 1, 9, B[2]); q.r(78, 22, 1, 9, B[2]); q.r(64, 24, 5, 1, T[1]);
+    [[26, 34], [88, 34]].forEach(([x, y]) => q.disc(x, y, 11, "#0e0c14"));
+    q.thick(72, 19, 81, 7, 2, "#9fd4f0"); q.line(74, 18, 82, 7, "#e0f4ff"); q.r(71, 18, 4, 2, T[1]);
+    q.r(106, 23, 4, 3, "#fff8c0"); q.r(107, 23, 2, 1, "#ffffff"); q.r(2, 22, 3, 3, "#ff3a4a"); q.p(3, 22, "#ff9aa0");
+    q.r(96, 30, 12, 2, T[1]);
+    wheelArt(q, 26, 35, 7.5, T); wheelArt(q, 88, 35, 7.5, T);
+    return outline(c);
+  });
+  // motorbike, 68x40 art
+  const motoImg = () => cached("moto", () => {
+    const c = mkCanvas(68, 40), q = pen(c), R = rampOf("#d94a3d"), M = ["#c8ccd8", "#8a8fa0", "#4a4e5e"];
+    q.thick(54, 30, 46, 10, 2, M[1]); q.r(44, 7, 6, 2, M[2]); q.r(48, 6, 3, 2, "#1a1826");
+    q.thick(14, 30, 28, 22, 2, M[2]); q.r(20, 26, 22, 3, M[2]);
+    q.r(24, 14, 22, 9, R[1]); q.r(26, 12, 16, 3, R[1]); q.r(26, 12, 14, 1, R[0]); q.r(24, 20, 22, 3, R[2]); q.r(30, 15, 6, 2, R[0]);
+    q.r(10, 18, 18, 4, "#2a2433"); q.r(10, 18, 18, 1, "#4a4458");
+    q.r(6, 26, 16, 3, M[1]); q.r(4, 25, 4, 3, M[2]); q.r(6, 26, 16, 1, M[0]);
+    q.r(52, 12, 6, 5, "#2a2433"); q.r(56, 13, 3, 3, "#fff8c0"); q.p(57, 13, "#ffffff");
+    q.r(30, 23, 10, 5, "#3a3846"); q.r(31, 24, 8, 1, "#5a5868");
+    wheelArt(q, 13, 31, 7, M); wheelArt(q, 55, 31, 7, M);
+    return outline(c);
+  });
+  // private jet seen from the side, 128x36 art
+  const jetImg = (c1, c2) => cached("jet" + c1 + c2, () => {
+    const c = mkCanvas(128, 36), q = pen(c), B = rampOf(c1 === "#14121e" ? "#e6e6ee" : c1), T = rampOf(c2);
+    for (let x = 0; x < 22; x++) q.r(4 + x, 2 + Math.floor(x * 0.55), 1, 14 - Math.floor(x * 0.55), B[1]);
+    q.r(4, 2, 6, 1, B[0]); q.r(4, 3, 2, 12, T[1]);
+    q.ell(64, 19, 60, 7.5, B[1]); q.ell(64, 16, 56, 3.5, B[0]); q.ell(66, 23, 56, 3, B[2]);
+    for (let x = 108; x < 126; x++) q.r(x, 14 + Math.floor((x - 108) * 0.28), 1, Math.max(1, 11 - Math.floor((x - 108) * 0.6)), B[1]);
+    q.r(112, 15, 6, 3, "#2a3a5a"); q.r(112, 15, 6, 1, "#9fd4f0");
+    q.r(10, 21, 104, 1, T[1]); q.r(10, 22, 104, 1, T[2]);
+    for (let k = 0; k < 8; k++) { q.r(44 + k * 8, 16, 4, 3, "#2a3a5a"); q.r(44 + k * 8, 16, 4, 1, "#9fd4f0"); }
+    q.r(36, 15, 4, 8, B[2]); q.r(36, 15, 4, 1, B[0]);
+    for (let y = 0; y < 9; y++) q.r(58 + Math.floor(y * 1.6), 25 + y, 22 - Math.floor(y * 1.2), 1, y < 2 ? B[2] : B[1]);
+    q.ell(26, 10, 12, 4, B[1]); q.ell(26, 9, 11, 2, B[0]); q.r(14, 8, 3, 5, "#2a2433");
+    return outline(c);
+  });
+  // smiley sign on a stick, selfie stick, roller skate
+  const signImg = () => cached("sign", () => { const c = mkCanvas(16, 26), q = pen(c);
+    q.r(7, 12, 2, 14, "#7a5a3a"); q.r(7, 12, 1, 14, "#9a7a5a");
+    q.r(1, 0, 14, 13, "#ffffff"); q.r(1, 11, 14, 2, "#e0dccf"); q.r(4, 4, 2, 2, INK); q.r(10, 4, 2, 2, INK); q.p(3, 8, "#e2354c"); q.r(4, 9, 8, 1, "#e2354c"); q.p(12, 8, "#e2354c"); q.p(3, 7, "#ffb0c0"); q.p(12, 7, "#ffb0c0");
+    return outline(c); });
+  const selfieImg = (flash) => cached("selfie" + flash, () => { const c = mkCanvas(14, 56), q = pen(c);
+    q.r(6, 16, 2, 40, "#3a3846"); q.r(6, 16, 1, 40, "#6a6878");
+    q.r(1, 0, 12, 18, "#1a1826"); q.r(2, 1, 10, 15, flash ? "#ffffff" : "#6fb6ff"); if (!flash) { q.r(2, 1, 10, 3, "#9fd0ff"); q.r(5, 7, 4, 4, "#ffd0e0"); q.r(4, 11, 6, 3, "#ff9ac0"); } q.p(7, 17, "#5a5868");
+    return outline(c); });
+  const skateImg = () => cached("skate", () => { const c = mkCanvas(12, 6), q = pen(c);
+    q.r(0, 0, 12, 2, "#e2354c"); q.r(0, 0, 12, 1, "#ff6a7a"); [2, 6, 10].forEach((x) => { q.disc(x, 4, 1.6, "#ffe066"); q.p(x, 4, "#a8801e"); });
+    return outline(c); });
+  const beam = (x, y, len, a) => { g.fillStyle = "rgba(255,248,200," + a + ")"; g.beginPath(); g.moveTo(x, y - 2); g.lineTo(x + len, y - 14); g.lineTo(x + len, y + 9); g.closePath(); g.fill(); };
   function drawTraffic(r) {
     const x = r.x - camX, y = r.y;
     if (x < -70 || x > LW + 70) return;
@@ -1858,70 +1922,40 @@ h1 em { font-style: normal; color: var(--good); }
     const posing = r.state === "pose";
     if (r.kind === "selfie" && r.state === "selfie") {
       person(lk, r.x, y, 0, "idle");
-      g.fillStyle = "#14121e"; g.fillRect(x + 6, y - 34, 2, 12); g.fillRect(x + 3, y - 41, 7, 9); g.fillStyle = r.flash ? "#ffffff" : "#6fb6ff"; g.fillRect(x + 4, y - 40, 5, 7);
+      spr(selfieImg(r.flash > 0), x + 2.5, y - 42);
       if (r.flash > 0) glow(x + 6, y - 37, 26, "rgba(255,255,255,A)", Math.min(0.9, r.flash * 4));
       return;
     }
     if (r.kind === "patins") {
       const glide = Math.sin(r.walk * 0.35);
-      person(lk, r.x, y, 0, posing ? "idle" : (glide > 0 ? "r0" : "r2"));
-      [[-4, 0], [3, 0]].forEach(([dx]) => { g.fillStyle = "#e2354c"; g.fillRect(x + dx - 1, y - 2, 5, 2); g.fillStyle = "#ffe066"; g.fillRect(x + dx - 1, y, 1, 1); g.fillRect(x + dx + 2, y, 1, 1); });
-      if (!posing) { g.fillStyle = "rgba(255,255,255,0.25)"; for (let k = 0; k < 3; k++) g.fillRect(x - 14 - k * 5, y - 14 + k * 5, 8 - k * 2, 0.8); }
+      person(lk, r.x, y, 0, posing ? "idle" : (glide > 0 ? "r0" : "r3"));
+      spr(skateImg(), x - 5, y - 2.5); spr(skateImg(), x + 1.5, y - 2);
+      if (!posing) { g.fillStyle = "rgba(255,255,255,0.22)"; for (let k = 0; k < 3; k++) g.fillRect(x - 14 - k * 5, y - 14 + k * 5, 8 - k * 2, 0.5); }
       return;
     }
     if (r.kind === "jato") {
       const [c1, c2] = r.lux;
-      g.fillStyle = "rgba(255,170,90,0.35)"; g.beginPath(); g.ellipse(x - 34, y + 1, 9 + Math.random() * 3, 2.5, 0, 0, Math.PI * 2); g.fill();
-      g.fillStyle = "#14121e"; rrect(x - 30, y - 6, 60, 12, 6); g.fill();
-      g.fillStyle = c1 === "#14121e" ? "#e6e6ee" : c1; rrect(x - 29, y - 5, 58, 10, 5); g.fill();
-      g.fillStyle = c2; g.fillRect(x - 26, y + 1, 50, 1.2);
-      g.fillStyle = "#14121e"; g.beginPath(); g.moveTo(x - 22, y - 5); g.lineTo(x - 30, y - 16); g.lineTo(x - 24, y - 16); g.lineTo(x - 12, y - 5); g.closePath(); g.fill();
-      g.beginPath(); g.moveTo(x - 4, y + 2); g.lineTo(x - 14, y + 12); g.lineTo(x - 8, y + 12); g.lineTo(x + 6, y + 2); g.closePath(); g.fill();
-      for (let k = 0; k < 6; k++) { g.fillStyle = k === 3 ? "#ffffff" : "#9fd4f0"; g.fillRect(x - 12 + k * 6, y - 3, 3, 2.5); }
-      g.fillStyle = "#9fd4f0"; g.fillRect(x + 22, y - 4, 5, 3);
-      return;
-    }
-    if (r.kind === "luxo") {
-      const [c1, c2] = r.lux;
-      shadow(x, y, 26);
-      if (!posing) { g.fillStyle = "rgba(255,248,200,0.10)"; g.beginPath(); g.moveTo(x + 26, y - 7); g.lineTo(x + 104, y - 22); g.lineTo(x + 104, y + 8); g.closePath(); g.fill(); }
-      sprite(personImg(lk, "idle"), x - 10, y - 30, 16, 26);
-      g.fillStyle = "#14121e"; g.beginPath(); g.moveTo(x - 27, y - 3); g.lineTo(x - 27, y - 13); g.lineTo(x - 14, y - 15); g.lineTo(x - 4, y - 21); g.lineTo(x + 6, y - 21); g.lineTo(x + 12, y - 14); g.lineTo(x + 27, y - 12); g.lineTo(x + 28, y - 3); g.closePath(); g.fill();
-      g.fillStyle = c1 === "#14121e" ? "#2a2838" : c1; g.beginPath(); g.moveTo(x - 26, y - 4); g.lineTo(x - 26, y - 12); g.lineTo(x - 12, y - 14); g.lineTo(x + 12, y - 13); g.lineTo(x + 26, y - 11); g.lineTo(x + 27, y - 4); g.closePath(); g.fill();
-      g.fillStyle = "rgba(170,220,255,0.7)"; g.beginPath(); g.moveTo(x - 3, y - 14); g.lineTo(x + 2, y - 20); g.lineTo(x + 6, y - 20); g.lineTo(x + 10, y - 14); g.closePath(); g.fill();
-      g.fillStyle = c2; g.fillRect(x - 24, y - 9, 49, 1.2); g.fillRect(x + 24, y - 10, 3, 2);
-      g.fillStyle = "#ff3a4a"; g.fillRect(x - 27, y - 11, 2, 2);
-      [-15, 16].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 3, 4.5, 0, Math.PI * 2); g.fill(); g.fillStyle = c2; g.beginPath(); g.arc(x + dx, y - 3, 2.2, 0, Math.PI * 2); g.fill(); g.fillStyle = "#0c0b12"; g.fillRect(x + dx - 0.5, y - 3.5, 1, 1); });
-      if (Math.sin(time * 9 + r.x) > 0.6) { g.fillStyle = "#fff"; g.fillRect(x + 20, y - 18, 0.8, 5); g.fillRect(x + 18, y - 16, 5, 0.8); }
-      if (r.flash > 0) glow(x + 4, y - 22, 30, "rgba(255,255,255,A)", Math.min(0.9, r.flash * 4));
+      g.fillStyle = "rgba(255,170,90,0.35)"; g.beginPath(); g.ellipse(x - 34, y - 5, 7 + Math.random() * 3, 2, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "rgba(255,230,160,0.6)"; g.fillRect(x - 33, y - 6, 3, 1.5);
+      spr(jetImg(c1, c2), x - 33, y - 10);
+      if (Math.floor(time * 2) % 2) { g.fillStyle = "#ff3a4a"; g.fillRect(x - 31, y - 11, 1, 1); }
       return;
     }
     if (r.kind === "run" || r.kind === "selfie") {
       person(lk, r.x, y, 0, posing ? "idle" : runFrame(r.walk));
-      g.fillStyle = "#14121e"; g.fillRect(x + 6, y - 15, 6, 6); g.fillStyle = "#fff"; g.fillRect(x + 7, y - 14, 4, 4);
-      g.fillStyle = "#14121e"; g.fillRect(x + 7.8, y - 13, 0.8, 0.8); g.fillRect(x + 9.6, y - 13, 0.8, 0.8); g.fillStyle = "#e2354c"; g.fillRect(x + 8, y - 11.5, 2, 0.8);
+      spr(signImg(), x + 4, y - 18);
     } else if (r.kind === "moto") {
-      shadow(x, y, 14);
-      if (!posing) { g.fillStyle = "rgba(255,248,200,0.10)"; g.beginPath(); g.moveTo(x + 13, y - 7); g.lineTo(x + 70, y - 18); g.lineTo(x + 70, y + 4); g.closePath(); g.fill(); }
-      sprite(personImg(lk, "idle"), x - 9, y - 30, 16, 26);
-      g.fillStyle = "#14121e"; rrect(x - 14, y - 10, 28, 8, 2); g.fill();
-      g.fillStyle = "#d94a3d"; rrect(x - 13, y - 9, 26, 6, 2); g.fill(); g.fillStyle = "#ff8a80"; g.fillRect(x - 11, y - 9, 16, 1);
-      g.fillStyle = "#fff8c0"; g.fillRect(x + 12, y - 8, 2, 2);
-      [-10, 10].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 2, 4, 0, Math.PI * 2); g.fill(); g.fillStyle = "#8a8fa0"; g.beginPath(); g.arc(x + dx, y - 2, 1.3, 0, Math.PI * 2); g.fill(); });
+      shadow(x, y, 15);
+      if (!posing) beam(x + 13, y - 7, 60, 0.08);
+      sprite(personImg(lk, "sit"), x - 9, y - 27, 16, 26);
+      spr(motoImg(), x - 17, y - 19);
     } else {
-      shadow(x, y, 24);
-      if (!posing) { g.fillStyle = "rgba(255,248,200,0.10)"; g.beginPath(); g.moveTo(x + 22, y - 8); g.lineTo(x + 100, y - 24); g.lineTo(x + 100, y + 8); g.closePath(); g.fill(); }
-      g.fillStyle = "#14121e"; rrect(x - 24, y - 15, 48, 14, 3); g.fill(); rrect(x - 13, y - 25, 26, 12, 3); g.fill();
-      g.fillStyle = "#e8b84a"; rrect(x - 23, y - 14, 46, 12, 3); g.fill();
-      g.fillStyle = "#fff1a8"; g.fillRect(x - 20, y - 13, 40, 1);
-      g.fillStyle = "#9fd4f0"; rrect(x - 12, y - 24, 24, 10, 2); g.fill();
-      g.save(); rrect(x - 12, y - 24, 24, 10, 2); g.clip();
-      sprite(personImg(lk, "idle"), x - 6, y - 26, 16, 26);
-      g.restore();
-      g.fillStyle = "#14121e"; g.fillRect(x - 0.5, y - 24, 1, 10);
-      g.fillStyle = "#fff8c0"; g.fillRect(x + 21, y - 11, 2, 3);
-      [-14, 14].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 2, 4.5, 0, Math.PI * 2); g.fill(); g.fillStyle = "#b0b4c0"; g.beginPath(); g.arc(x + dx, y - 2, 1.5, 0, Math.PI * 2); g.fill(); });
-      if (Math.sin(time * 9 + r.x) > 0.6) { g.fillStyle = "#fff"; g.fillRect(x + 26, y - 22, 0.8, 5); g.fillRect(x + 24, y - 20, 5, 0.8); }
+      const [c1, c2] = r.lux || LUX[0];
+      shadow(x, y, 27);
+      if (!posing) beam(x + 26, y - 7, 80, 0.08);
+      sprite(personImg(lk, "sit"), x - 9, y - 27, 16, 26);
+      spr(luxImg(c1, c2), x - 28, y - 21);
+      if (Math.sin(time * 9 + r.x) > 0.6) { g.fillStyle = "#fff"; g.fillRect(x + 18, y - 18, 0.5, 4); g.fillRect(x + 16.25, y - 16.25, 4, 0.5); }
     }
     if (r.flash > 0) glow(x + 4, y - 22, 30, "rgba(255,255,255,A)", Math.min(0.9, r.flash * 4));
   }
