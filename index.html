@@ -109,10 +109,18 @@ h1 em { font-style: normal; color: var(--good); }
 .lead.small { font-size: 12px; }
 .h-end { font-size: clamp(16px, 3.6vw, 28px); }
 /* retro start screen */
-.ov.retro { background: rgba(5,5,10,.82) repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px); }
-.logo { font-size: clamp(24px, 6vw, 52px); line-height: 1.15; color: #ecebf2; text-shadow: 3px 3px 0 #e0404f, 6px 6px 0 rgba(0,0,0,.6); }
-.logo em { text-shadow: 3px 3px 0 #1f6b45, 6px 6px 0 rgba(0,0,0,.6); }
-#tv { width: min(480px, 86vw); aspect-ratio: 160 / 72; height: auto; image-rendering: pixelated; border: 2px solid #2c2b3d; box-shadow: 0 0 0 2px #07070d, 0 0 24px rgba(111,216,255,.12); }
+.ov.retro { background: #07070d; padding: 0; }
+#cover { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; image-rendering: pixelated; }
+.ov.retro::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0 1px, transparent 1px 3px); }
+.cover-box { position: relative; z-index: 1; min-height: 100%; box-sizing: border-box; justify-content: space-between; margin: 0 auto;
+  padding: calc(env(safe-area-inset-top, 0px) + 18px) 16px calc(env(safe-area-inset-bottom, 0px) + 18px); }
+.logo { display: flex; flex-direction: column; align-items: center; gap: .1em; margin: 0; line-height: 1; letter-spacing: .06em;
+  font-size: clamp(30px, 8vw, 72px); color: #c8ffd9;
+  text-shadow: 3px 0 0 #0b0820, -3px 0 0 #0b0820, 0 3px 0 #0b0820, 0 -3px 0 #0b0820, 3px 3px 0 #0b0820, -3px -3px 0 #0b0820, 3px -3px 0 #0b0820, -3px 3px 0 #0b0820, 0 7px 0 #6b3b8f, 3px 7px 0 #0b0820, -3px 7px 0 #0b0820, 0 10px 0 #0b0820; }
+.logo em { color: #8ff0b4; }
+.logo-top { font-size: .45em; color: #ffffff; letter-spacing: .3em; }
+.cover-box .cta.press { background: rgba(11,8,32,.75); border: 2px solid #f39aa6; color: #fff; box-shadow: 4px 4px 0 #0b0820; }
+.cover-box .credits { color: #e8d8f0; text-shadow: 1px 1px 0 #0b0820; }
 .cta.press { font-family: var(--pix); letter-spacing: .3em; animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .cta.press { animation: none; } }
@@ -120,8 +128,7 @@ h1 em { font-style: normal; color: var(--good); }
 .credits b { color: var(--gold); font-weight: 600; text-transform: none; }
 @media (max-height: 520px) {
   #title .box, #end .box { gap: 10px; }
-  .logo { font-size: 26px; }
-  #tv { width: auto; height: 42vh; }
+  .logo { font-size: clamp(26px, 9vh, 44px); }
   .h-end { font-size: 16px; }
   .stats div { padding: 5px 10px; }
   .stats b { font-size: 14px; }
@@ -177,9 +184,9 @@ h1 em { font-style: normal; color: var(--good); }
 </div>
 
 <div class="ov retro" id="title">
-  <div class="box">
-    <h1 class="logo">RUMO À<br><em>SAÚDE MENTAL</em></h1>
-    <canvas id="tv" width="160" height="72" aria-hidden="true"></canvas>
+  <canvas id="cover" width="192" height="108" aria-hidden="true"></canvas>
+  <div class="box cover-box">
+    <h1 class="logo"><span class="logo-top">RUMO À</span><em>SAÚDE MENTAL</em></h1>
     <button class="cta press" id="startBtn" type="button">▶ começar</button>
     <p class="credits">semana da psicologia</p>
   </div>
@@ -1348,74 +1355,87 @@ h1 em { font-style: normal; color: var(--good); }
       pvx.fillStyle = "#14121e"; pvx.fillRect(13, 22, 2, 2);
     } else pvx.drawImage(personImg(lk, "r" + (pvT % 4)), 0, 0);
   }, 130);
-  // detailed pixel-art opening scene: night city, someone and a psychologist walking together toward the arch
-  const tv = $("tv"), tvx = tv.getContext("2d"), TW = 160, TH = 72;
+  // ===== cover art: original pixel scene of a city street at dusk, drawn in code, fills the whole start screen =====
+  const cov = $("cover"), cx2 = cov.getContext("2d"), CW = 192, CH = 108;
   const tvHash = (n) => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
   const TV_HERO = heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" });
   const TV_PSI = { skin: "#f2c7a5", hair: "#3a2414", hairStyle: "short", shirt: "#5fd18a", pants: "#2e3a4a", blazer: false, pin: false, wheel: false };
   let tvT = 0;
-  // pre-built skyline strips that tile seamlessly while scrolling
-  function tvStrip(seed, minH, maxH) {
-    const list = []; let x = 0, i = 0;
-    while (x < 320) { const k = seed + i, w = 10 + Math.floor(tvHash(k) * 14), h = minH + Math.floor(tvHash(k + 0.5) * (maxH - minH)); list.push({ x, w, h, k, ant: tvHash(k + 0.3) > 0.6 }); x += w + 1 + Math.floor(tvHash(k + 0.9) * 4); i++; }
-    return { list, len: x };
+  const CR = (x, y, w, h, c) => { cx2.fillStyle = c; cx2.fillRect(x, y, w, h); };
+  const cvLerp = (a, b, t) => a + (b - a) * t;
+  const SKY = ["#262a62", "#2f3270", "#3b3a7e", "#4b418a", "#634a94", "#80539a", "#a35d9b", "#c86a96", "#e47b92"];
+  const TOWERS = [[64, 13, 46], [79, 9, 30], [90, 12, 56], [104, 15, 38], [121, 11, 48], [134, 8, 24]];
+  const LOW = [[60, 18, 14], [77, 14, 10], [93, 20, 16], [112, 16, 12], [127, 14, 15]];
+  const CLOUDS = [[70, 40, 15], [92, 30, 18], [118, 36, 14], [140, 46, 11], [56, 52, 10]];
+  function cloud(x0, y0, r) {
+    for (let dy = -r; dy <= r; dy++) for (let dx = -r * 1.6; dx <= r * 1.6; dx++) {
+      const bump = Math.sin(dx * 0.45 + x0) * 2.5;
+      if ((dx * dx) / (r * r * 2.56) + ((dy + bump) * (dy + bump)) / (r * r * 0.42) > 1) continue;
+      const k = (dy + r) / (2 * r), c = k < 0.3 ? "#ffc4c0" : k < 0.55 ? "#f39aa6" : k < 0.8 ? "#d77498" : "#a95a92";
+      CR(Math.round(x0 + dx), Math.round(y0 + dy), 1, 1, c);
+    }
   }
-  const TV_FAR = tvStrip(3, 8, 22), TV_NEAR = tvStrip(71, 6, 18);
-  function tvSkyline(strip, off, base, col, win) {
-    const o = off % strip.len;
-    for (let rep = 0; rep < 2; rep++) strip.list.forEach((bd) => {
-      const x = Math.floor(bd.x - o + rep * strip.len); if (x > TW || x + bd.w < 0) return;
-      tvx.fillStyle = col; tvx.fillRect(x, base - bd.h, bd.w, bd.h);
-      if (bd.ant) tvx.fillRect(x + Math.floor(bd.w / 2), base - bd.h - 4, 1, 4);
-      if (win) for (let wy = 3; wy < bd.h - 3; wy += 4) for (let wx = 2; wx < bd.w - 2; wx += 3) {
-        const r = tvHash(bd.k * 13 + wx * 0.7 + wy * 1.3);
-        if (r > 0.62) { tvx.fillStyle = r > 0.93 ? "#ffe9b0" : r > 0.8 ? "#e8b84a" : "#6fd8ff55"; tvx.fillRect(x + wx, base - bd.h + wy, 1, 2); }
+  function sideBuilding(left) {
+    const W = 62;
+    for (let i = 0; i < W; i++) {
+      const x = left ? i : CW - 1 - i, t = i / W;
+      const top = Math.round(cvLerp(4, 28, t)), bot = Math.round(cvLerp(108, 86, t));
+      CR(x, top, 1, bot - top, i % 2 ? "#18163f" : "#1a1844");
+      for (let f = 1; f < 9; f++) {
+        const y = Math.round(cvLerp(top, bot, f / 9));
+        CR(x, y, 1, 1, "#28256a");
+        const wy = Math.round(cvLerp(top, bot, (f - 0.55) / 9)), wh = Math.max(1, Math.round((bot - top) / 9 * 0.45));
+        if (i % 7 > 1) CR(x, wy, 1, wh, tvHash(f * 31 + Math.floor(i / 7) + (left ? 0 : 99)) > 0.86 ? "#4a4aa8" : "#121033");
+      }
+      if (left && i % 4 === 0) CR(x, top - 4, 1, 4, "#2a2868");
+    }
+    if (left) for (let i = 0; i < W; i++) CR(i, Math.round(cvLerp(4, 28, i / W)) - 4, 1, 1, "#2a2868");
+  }
+  function drawCover() {
+    const t = tvT;
+    SKY.forEach((c, i) => {
+      CR(0, i * 10, CW, 10, c);
+      if (i < SKY.length - 1) for (let x = (i % 2); x < CW; x += 2) CR(x, i * 10 + 9, 1, 1, SKY[i + 1]);
+    });
+    for (let i = 0; i < 18; i++) { if ((i + Math.floor(t / 5)) % 7 === 0) continue; CR(Math.floor(tvHash(i) * CW), Math.floor(tvHash(i + 0.4) * 22), 1, 1, i % 3 ? "#9a9ad8" : "#ffffff"); }
+    CLOUDS.forEach(([x, y, r], i) => cloud(50 + ((x - 50 + t * (0.04 + i * 0.01)) % 100), y, r));
+    TOWERS.forEach(([x, w, h], n) => {
+      const top = 84 - h;
+      CR(x, top, w, h, "#3a3374"); CR(x + w - 2, top, 2, h, "#2f2a63");
+      for (let wy = top + 3; wy < 82; wy += 3) for (let wx = x + 2; wx < x + w - 3; wx += 2) {
+        const r = tvHash(n * 97 + wx * 1.3 + wy * 0.7), lit = r > 0.9 && ((t >> 4) + wx + wy) % 11 !== 0;
+        CR(wx, wy, 1, 1, lit ? "#f6b6c8" : r > 0.55 ? "#6c64b4" : "#4a4290");
       }
     });
+    CR(96, 22, 1, 6, "#2a2560"); CR(88, 22, 18, 1, "#2a2560"); CR(104, 23, 1, 3, "#2a2560");
+    CR(126, 32, 1, 5, "#2a2560"); CR(120, 32, 14, 1, "#2a2560");
+    LOW.forEach(([x, w, h], n) => { CR(x, 88 - h, w, h, "#2a2460"); for (let wx = x + 2; wx < x + w - 2; wx += 3) for (let wy = 90 - h; wy < 86; wy += 3) if (tvHash(n * 7 + wx + wy * 3) > 0.6) CR(wx, wy, 2, 1, "#5d57a8"); });
+    sideBuilding(true); sideBuilding(false);
+    // street in perspective
+    CR(0, 86, CW, 22, "#221c3a");
+    for (let y = 86; y < CH; y++) { const hw = Math.round((y - 80) * 2.2); CR(96 - hw, y, hw * 2, 1, "#2e2650"); if (y % 3 === 0) CR(95, y, 2, 1, "#5e3b68"); }
+    for (let y = 92; y < CH; y += 2) CR(96 - Math.round((y - 80) * 0.6), y, Math.round((y - 80) * 1.2), 1, "rgba(240,140,150,0.10)");
+    // warm shop (left) and blue shop (right)
+    CR(6, 80, 40, 28, "#2b1d24"); CR(8, 82, 36, 3, "#5a2f2a");
+    for (let i = 0; i < 4; i++) { CR(9 + i * 9, 86, 7, 20, "#f39b52"); CR(10 + i * 9, 87, 5, 8, "#ffd08a"); CR(9 + i * 9, 95, 7, 1, "#b8642e"); }
+    CR(28, 72, 8, 7, "#1b1218"); CR(29, 73, 6, 5, "#c43a3a"); CR(31, 74, 3, 3, "#ffd0a0");
+    CR(146, 80, 40, 28, "#141a40"); CR(148, 82, 36, 3, "#24306e");
+    for (let i = 0; i < 4; i++) { CR(149 + i * 9, 86, 7, 20, "#3d5fe0"); CR(150 + i * 9, 87, 5, 18, "#6f93ff"); for (let k = 0; k < 4; k++) CR(150 + i * 9 + (k % 2) * 2, 89 + k * 4, 1, 2, k % 2 ? "#ff8a7a" : "#c8d6ff"); }
+    CR(170, 74, 6, 5, "#c43a3a");
+    cx2.fillStyle = "rgba(243,155,82,0.16)"; cx2.beginPath(); cx2.moveTo(46, 108); cx2.lineTo(46, 86); cx2.lineTo(70, 108); cx2.fill();
+    cx2.fillStyle = "rgba(111,147,255,0.16)"; cx2.beginPath(); cx2.moveTo(146, 108); cx2.lineTo(146, 86); cx2.lineTo(122, 108); cx2.fill();
+    // string lights and lamps
+    for (let x = 48; x < 145; x += 4) { const y = Math.round(78 + 4 * Math.sin(Math.PI * (x - 48) / 96)); CR(x, y, 1, 1, "#3b2f50"); if ((x / 4 + (t >> 2)) % 5 !== 0) CR(x, y + 1, 1, 1, (x / 4) % 2 ? "#ffd36b" : "#ff9a6b"); }
+    [[54, 1], [138, -1]].forEach(([x, d]) => { CR(x, 66, 1, 26, "#120f26"); CR(x, 66, 4 * d || 4, 1, "#120f26"); CR(x + 3 * d, 67, 2, 1, "#ffe0a0"); cx2.fillStyle = "rgba(255,224,160,0.10)"; cx2.beginPath(); cx2.moveTo(x + 3 * d, 67); cx2.lineTo(x + 3 * d - 8, 96); cx2.lineTo(x + 3 * d + 8, 96); cx2.fill(); });
+    // bushes
+    for (let i = 0; i < 70; i++) { const side = i % 2, bx = side ? CW - 1 - Math.floor(tvHash(i) * 12) : Math.floor(tvHash(i) * 12), by = 92 + Math.floor(tvHash(i + 0.5) * 16); CR(bx, by, 2, 2, tvHash(i + 0.2) > 0.5 ? "#26348a" : "#1a2264"); }
+    // the two walkers, side by side, and hearts above
+    const f = Math.floor(t / 3) % 4;
+    cx2.drawImage(personImg(TV_PSI, "r" + ((f + 2) % 4)), 80, 81);
+    cx2.drawImage(personImg(TV_HERO, "r" + f), 94, 82);
+    for (let i = 0; i < 3; i++) cx2.drawImage(HEART.full, 82 + i * 10, 70 + Math.round(Math.sin((t + i * 6) / 6) * 1.5), 7, 6);
   }
-  function drawTV() {
-    const t = tvT, g2 = tvx;
-    // sky in retro bands
-    ["#07071a", "#0b0b24", "#10102e", "#161536", "#1d1a3e", "#26204a"].forEach((c, i) => { g2.fillStyle = c; g2.fillRect(0, i * 7, TW, 7); });
-    for (let i = 0; i < 40; i++) { const sx = Math.floor(tvHash(i) * TW), sy = Math.floor(tvHash(i + 0.4) * 30); if ((i + Math.floor(t / 4)) % 9 === 0) continue; g2.fillStyle = (i + Math.floor(t / 6)) % 5 === 0 ? "#ffffff" : "#8f8da6"; g2.fillRect(sx, sy, 1, 1); }
-    // moon
-    g2.fillStyle = "#f3e9c6"; g2.fillRect(130, 5, 6, 8); g2.fillRect(129, 6, 8, 6); g2.fillStyle = "#d8cc9f"; g2.fillRect(131, 7, 2, 2); g2.fillRect(134, 10, 1, 1);
-    // far and near skyline (parallax)
-    tvSkyline(TV_FAR, t * 0.25, 44, "#15142a", false);
-    tvSkyline(TV_NEAR, t * 0.5, 46, "#1f1d36", true);
-    // finish arch in the distance
-    const ax = 136;
-    g2.fillStyle = "#0e0e16"; g2.fillRect(ax - 12, 32, 2, 15); g2.fillRect(ax + 10, 32, 2, 15);
-    g2.fillStyle = "#123b26"; g2.fillRect(ax - 14, 27, 28, 6); g2.fillStyle = (t % 10 < 5) ? "#5fd18a" : "#3fae6c";
-    g2.fillRect(ax - 14, 27, 28, 1); g2.fillRect(ax - 14, 32, 28, 1); g2.fillRect(ax - 14, 27, 1, 6); g2.fillRect(ax + 13, 27, 1, 6);
-    for (let i = 0; i < 5; i++) { g2.fillStyle = "#c8ffd9"; g2.fillRect(ax - 10 + i * 5, 29, 3, 2); }
-    // sidewalk
-    g2.fillStyle = "#2b2a3a"; g2.fillRect(0, 46, TW, 4); g2.fillStyle = "#363548"; g2.fillRect(0, 46, TW, 1);
-    g2.fillStyle = "#24232f"; for (let x = -(t % 6); x < TW; x += 6) g2.fillRect(x, 47, 1, 3);
-    // road
-    g2.fillStyle = "#16151f"; g2.fillRect(0, 50, TW, 22); g2.fillStyle = "#0c0c12"; g2.fillRect(0, 50, TW, 1);
-    g2.fillStyle = "#e8b84a"; for (let x = -(t * 2 % 12); x < TW; x += 12) g2.fillRect(x, 66, 6, 1);
-    g2.fillStyle = "#8f8da633"; for (let x = -(t * 2 % 12); x < TW; x += 12) g2.fillRect(x + 3, 57, 4, 1);
-    // street lamps with light cones
-    for (let x = -(t * 2 % 64) + 20; x < TW + 10; x += 64) {
-      g2.fillStyle = "#ffe9b015"; g2.beginPath(); g2.moveTo(x + 2, 25); g2.lineTo(x - 10, 64); g2.lineTo(x + 16, 64); g2.fill();
-      g2.fillStyle = "#3a3950"; g2.fillRect(x, 24, 1, 23); g2.fillRect(x, 24, 4, 1);
-      g2.fillStyle = "#ffe9b0"; g2.fillRect(x + 3, 25, 2, 1);
-    }
-    // the two walkers: person and psychologist side by side
-    const f = Math.floor(t / 2) % 4;
-    g2.drawImage(personImg(TV_PSI, "r" + ((f + 2) % 4)), 30, 36);
-    g2.drawImage(personImg(TV_HERO, "r" + f), 46, 40);
-    // floating hearts ahead
-    for (let i = 0; i < 3; i++) {
-      const hx = 76 + i * 16, hy = 36 + Math.round(Math.sin((t + i * 6) / 5) * 2);
-      g2.drawImage(HEART.full, hx, hy, 7, 6);
-      if ((t + i * 4) % 14 < 2) { g2.fillStyle = "#ffffff"; g2.fillRect(hx + 8, hy - 2, 1, 1); g2.fillRect(hx - 2, hy + 5, 1, 1); }
-    }
-    // shooting star every so often
-    const sp = t % 90; if (sp < 8) { g2.fillStyle = "#ffffff"; g2.fillRect(20 + sp * 6, 4 + sp, 2, 1); g2.fillStyle = "#ffffff55"; g2.fillRect(14 + sp * 6, 3 + sp, 6, 1); }
-  }
-  setInterval(() => { if (!$("title").hidden) { tvT++; drawTV(); } }, 90);
+  setInterval(() => { if (!$("title").hidden) { tvT++; drawCover(); } }, 110);
   function renderSelect() {
     document.querySelectorAll(".seg").forEach((sg) => sg.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(sel[sg.dataset.key] === b.dataset.v))));
     const d = diffOf();
