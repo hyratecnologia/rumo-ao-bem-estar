@@ -1,12 +1,30 @@
 # Rumo à Saúde Mental — projeto completo (frases + dinâmica)
 
-Documento para análise. Levantado direto do código (`index.html`) da **v5** (05/11/2026). As mudanças de cada versão estão na seção 0. Versões antigas seguem jogáveis em `/v2/`, `/v3/` e `/v4/`.
+Documento para análise. Levantado direto do código (`index.html`) da **v6** (05/11/2026). As mudanças de cada versão estão na seção 0. Versões antigas seguem jogáveis em `/v2/`, `/v3/`, `/v4/` e `/v5/`.
 Jogo no ar: **https://hyratecnologia.com/rumo-a-saude-mental/** (também em https://hyratecnologia.github.io/rumo-ao-bem-estar/)
 Código: https://github.com/hyratecnologia/rumo-ao-bem-estar
 
 ---
 
 ## 0. Histórico de mudanças
+
+### v6 (05/11/2026): visual refeito do zero
+
+A jogabilidade, as falas, as regras e os tempos são **os mesmos da v5**. Mudou todo o desenho:
+
+| # | O que mudou |
+|---|---|
+| 1 | **Pixel art detalhado**: tudo é desenhado com o dobro de resolução (cada unidade do jogo vira 2×2 pixels de desenho). Os bonecos têm o mesmo tamanho na tela, com 4 vezes mais pixels |
+| 2 | **Cores em 4 tons** (luz, base, sombra, sombra funda). A sombra puxa para o roxo e a luz para o amarelo, e o contorno de cada parte é uma versão escura da própria cor, não preto chapado |
+| 3 | **Pessoas**: rosto com olhos (com brilho), sobrancelhas, nariz, boca e bochechas; cabelos com mechas (curto, comprido, black power, grisalho com óculos); roupas com dobras; corrida em 6 quadros; respiração e piscar quando parado; cadeira de rodas com raios girando; máscara com lágrima ao levantar |
+| 4 | **Cargas, o que você ama e corações** redesenhados em ícones detalhados |
+| 5 | **Cenário em camadas**: céu com estrelas e lua; prédios ao fundo com antenas piscando; prédios da frente com janelas acesas, ar-condicionado, escada de incêndio, caixa-d'água e lojas com toldo; calçada com árvores, lixeira, hidrante, banco e postes; asfalto com rachaduras, bueiros e poças que refletem a luz; orla com grade, luzes e água |
+| 6 | **Veículos e mascarados**: conversível de luxo, moto, jato, patins, pau de selfie e plaquinha sorridente |
+| 7 | **Obstáculos** redesenhados (despertador, gráfico, relógio de ponto, envelopes, livros, mala acorrentada, porta, carro, maca) e o **muro social de tijolos** |
+| 8 | **Chefão** redesenhado: terno, gravata, maleta e monitor com gráfico subindo; ao gritar, ergue o punho |
+| 9 | **Interface** com molduras de pixel: barra de progresso em blocos, plaquinhas, balões, avisos e caixa de texto final |
+| 10 | **Capa**: em vez de uma cena separada, mostra a própria avenida do jogo, com as quatro pessoas andando e deixando cair o que amam |
+| 11 | **Telas** (escolha, sorteio, bônus, fim) com janelas e botões em pixel |
 
 ### v5 (05/11/2026)
 
@@ -60,7 +78,7 @@ Código: https://github.com/hyratecnologia/rumo-ao-bem-estar
 - **O que é:** joguinho em pixel art, de navegador, feito para a **Semana da Psicologia**. Tema: saúde mental, cobranças sociais, desigualdade e cuidado.
 - **Formato:** um único arquivo HTML, sem instalação. Funciona no computador, no celular (de preferência deitado) e com controle de videogame. Pode ser instalado na tela inicial do celular, onde aparece com o nome "Saúde Mental".
 - **Duração:** uma partida leva cerca de 3 minutos (no máximo 180 segundos de jogo, mais o final).
-- **Visual:** uma avenida noturna vista de cima em 3/4, rolando para a direita. A personagem anda com uma pilha de "cargas" na cabeça.
+- **Visual:** pixel art detalhado (desde a v6). Uma avenida noturna vista de cima em 3/4, rolando para a direita, com céu, prédios em camadas, calçadas e a orla. A personagem anda com uma pilha de "cargas" na cabeça.
 - **Mensagem central:** *"Saúde mental não é linha de chegada. E ninguém caminha sozinho."*
 - **Descrição para compartilhar (link):** "Um joguinho sobre saúde mental e cobranças. Todo mundo parece chegar lá. Por que você não chega?"
 
@@ -76,7 +94,7 @@ Código: https://github.com/hyratecnologia/rumo-ao-bem-estar
 - Botão: **▶ começar** (piscando)
 - Rodapé: **semana da psicologia**
 
-**Cena animada:** uma avenida da cidade ao entardecer/noite, com prédios, nuvens rosadas, varal de lâmpadas, postes, um gato preto, uma bicicleta e uma plaquinha de coração em neon que pisca. **Várias pessoas diferentes** andam pela avenida, cada uma com sua pilha, para a capa não ficar enviesada numa identidade só:
+**Cena animada:** a própria avenida noturna do jogo, rolando devagar atrás do logo (desde a v6). **Várias pessoas diferentes** andam pela avenida, cada uma com sua pilha, para a capa não ficar enviesada numa identidade só:
 - um homem branco rico: trabalho, doença, cuidar dos pais
 - uma mulher negra pobre: boleto, aluguel, faculdade, dupla jornada
 - mais ao fundo, um homem negro LGBT+: boleto, trabalho, provar o dobro
@@ -143,7 +161,7 @@ Ao clicar em **nascer**, a escolha feita **não vale**:
 ## 5. Interface durante a partida (HUD)
 
 - **5 corações**, com a legenda **"saúde mental"**
-- Barra de progresso **"CAMINHO DA SAÚDE MENTAL"**, que termina num marco verde **"saúde mental"**
+- Barra de progresso **"CAMINHO DA SAÚDE MENTAL"**, em blocos que vão do vermelho ao amarelo, terminando num marco verde **"saúde mental"**
 - Canto direito: **"dificuldade"** e o nível (FÁCIL … EXTREMA+)
 - **Balões de fala acompanham quem fala**: os da personagem ficam acima da plaquinha "VOCÊ", os do(a) psicólogo(a) um pouco ao lado, e cada pessoa mostra no máximo 2 balões (o mais novo embaixo)
 - Plaquinha **"VOCÊ"** em cima da pilha da personagem

@@ -244,6 +244,21 @@ h1 em { font-style: normal; color: var(--good); }
 .ov.retro::after { background: repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px); }
 .cover-box .cta.press { background: #d63a4a; box-shadow: inset -3px -3px 0 #8e1d2a, inset 3px 3px 0 #ff8a92, 0 0 0 3px #07050f, 0 5px 0 3px #07050f; border: 0; }
 @media (max-height: 520px) { #select .box, #draw .box, #bonus .box, #end .box { padding: 10px 14px; } }
+@media (max-height: 640px) and (min-width: 700px) {
+  #end .box { padding: 6px 16px; row-gap: 5px; }
+  #end .stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; width: 100%; }
+  #end .stats div { min-width: 0; padding: 4px 6px; }
+  #end .stats b { font-size: 14px; }
+  #end .stats span { font-size: 8px; letter-spacing: .08em; line-height: 1.25; display: block; }
+  #end .h-end { font-size: 15px; }
+  #end .row-btns { flex-wrap: nowrap; gap: 12px; }
+  #end .row-btns .cta { font-size: 10px; letter-spacing: .1em; padding: 10px 12px; }
+  #end .help-list { font-size: 10.5px; gap: 1px; }
+  #end .help-title { font-size: 9px; margin-bottom: 3px; }
+  #end .disclaimer { font-size: 9px; line-height: 1.45; }
+  #end .lead { font-size: 11px; }
+  #end.ov { padding-top: calc(env(safe-area-inset-top, 0px) + 6px); padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 6px); }
+}
 </style>
 
 </head>
