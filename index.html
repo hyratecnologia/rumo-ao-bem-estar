@@ -663,7 +663,7 @@ h1 em { font-style: normal; color: var(--good); }
         spawnT = Math.max(1.6, (time < 12 ? 3.0 : 2.6) - D * 0.15) * (0.8 + rand() * 0.4);
       }
       goodT -= dt;
-      if (time > 1.5 && goodT <= 0) { fall(pick(GOOD), P.x + 20 + rand() * 40 + P.vx * 1.2, clamp(P.y + (rand() - 0.5) * 30, YMIN, YMAX), 2.4); goodT = time < 25 ? 3.6 + rand() * 1.4 : 7 + rand() * 2; }
+      if (time > 1.5 && goodT <= 0) { fall(pick(GOOD), P.x + 20 + rand() * 40 + P.vx * 1.2, clamp(P.y + (rand() - 0.5) * 30, YMIN, YMAX), 2.4); goodT = time < 35 ? 3.6 + rand() * 1.4 : 7 + rand() * 2; }
       if (sel.orient === "lgbt" && time > 7) { specialT -= dt; if (specialT <= 0) { fall("armario", P.x + 40, P.y); specialT = 10 + rand() * 3; } }
 
       // barriers
@@ -690,7 +690,7 @@ h1 em { font-style: normal; color: var(--good); }
       }
 
       // crowd on the sidewalks
-      if (time > 20) {
+      if (time > 25) {
         if (!crowdX) { crowdX = camX + LW + 10; warnMsg("a multidão cobra o tempo todo"); }
         while (crowdX < camX + LW + 60) { crowd.push({ x: crowdX, y: rand() < 0.5 ? YMIN - 4 : YMAX + 2, bub: 9 }); crowdX += 30 + rand() * 45; }
         crowdT -= dt;
@@ -703,10 +703,10 @@ h1 em { font-style: normal; color: var(--good); }
       crowd = crowd.filter((c) => c.x > camX - 30);
 
       // boss
-      if (time > 40 && !boss.on) { boss.on = true; banner = { text: "MERCADO DE TRABALHO", t: 0 }; sfx.boss(); warnMsg("o mercado de trabalho chegou"); }
+      if (time > 60 && !boss.on) { boss.on = true; banner = { text: "MERCADO DE TRABALHO", t: 0 }; sfx.boss(); warnMsg("o mercado de trabalho chegou"); }
       if (boss.on) updateBoss(dt, L);
 
-      if (!psi.on && time > 30 && P.hearts <= 2) { psi.on = true; psi.x = camX - 30; psi.y = P.y; }
+      if (!psi.on && time > 50 && P.hearts <= 2) { psi.on = true; psi.x = camX - 30; psi.y = P.y; }
       if (psi.on) {
         const tx = P.x - 26, ty = P.y + 6, ddx = tx - psi.x, ddy = ty - psi.y, dd = Math.hypot(ddx, ddy);
         const sp = Math.min(dd, 180 * dt);
@@ -718,9 +718,9 @@ h1 em { font-style: normal; color: var(--good); }
           warnMsg((PSI.fem ? "perto dela" : "perto dele") + ", o que brilha dá pra soltar");
         }
         if (psi.arrived) psi.t += dt;
-        if (psi.arrived && psi.t > 18) startEnding("fim");
+        if (psi.arrived && psi.t > 30) startEnding("fim");
       }
-      if (time > 115) startEnding("fim");
+      if (time > 180) startEnding("fim");
 
       // self-talk
       thinkT -= dt;
@@ -878,7 +878,7 @@ h1 em { font-style: normal; color: var(--good); }
     }
     boss.lineT -= dt;
     if (boss.lineT <= 0) { say(pick(BOSS_LINES), bx - 10, by - 110, "boss", 1.5); boss.lineT = 3 + rand() * 2; }
-    if (!psi.on && (boss.t > 20 || P.hearts <= 1)) { psi.on = true; psi.x = camX - 30; psi.y = P.y; }
+    if (!psi.on && (boss.t > 35 || P.hearts <= 1)) { psi.on = true; psi.x = camX - 30; psi.y = P.y; }
   }
 
   // ending: the pile wobbles, the person falls and everything spills; people come, pick up each thing and carry it together
