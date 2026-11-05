@@ -477,6 +477,8 @@ h1 em { font-style: normal; color: var(--good); }
   const BOSS_LINES = ["PELO BEM DA EMPRESA", "VOCÊ DEVERIA AGRADECER", "NÃO HÁ POBREZA QUE RESISTA A 14 HORAS DE TRABALHO", "VISTA A CAMISA DA EMPRESA", "PELO BEM DA EMPRESA", "VOCÊ DEVERIA AGRADECER", "VISTA A CAMISA DA EMPRESA", "PRODUZA!", "TEM GENTE NA FILA", "SEJA RESILIENTE"];
   const BILLS = ["CARRO DO ANO: SEJA FELIZ", "CURSO: FELICIDADE JÁ", "CELULAR NOVO, VIDA NOVA", "LIVRO: AUTOCUIDADO", "ROUPA DE MARCA = SUCESSO", "FELICIDADE EM 12X", "MÉTODO MENTE SÃ 3.0", "MENTORIA: SEJA FELIZ", "SEJA MAIS", "#SUCESSO"];
   const OBST_BASE = ["PRAZO", "META", "HORA EXTRA", "CONTA ATRASADA", "PROVA AMANHÃ", "SEM FÉRIAS", "FILA", "DESEMPREGO", "TRÂNSITO", "PLANTÃO"];
+  const OBST_KIND = { PRAZO: "relogio", META: "grafico", "HORA EXTRA": "ponto", "CONTA ATRASADA": "envelopes", "PROVA AMANHÃ": "livros", "SEM FÉRIAS": "mala", FILA: "fila", DESEMPREGO: "porta", "TRÂNSITO": "transito", "PLANTÃO": "maca" };
+  const QUEUE = [{ skin: "#8d5a3b", hair: "#2a2a33", hairStyle: "short", shirt: "#6a6680", pants: "#403e55" }, { skin: "#f1c29c", hair: "#45425a", hairStyle: "long", shirt: "#7a7590", pants: "#3b3950" }, { skin: "#5a3a26", hair: "#1c1410", hairStyle: "afro", shirt: "#5a5670", pants: "#45425a" }];
   const OBST_TRAIT = { negra: ["RACISMO", "“SEM PERFIL”", "SEGUIDA NA LOJA"], mulher: ["MACHISMO", "ASSÉDIO", "SALÁRIO MENOR"], lgbt: ["LGBTFOBIA", "“É SÓ UMA FASE”", "PIADINHA"], pobre: ["SEM GRANA", "ÔNIBUS LOTADO", "SEM INTERNET"], pcd: ["SEM RAMPA", "ESCADA", "CALÇADA QUEBRADA", "CAPACITISMO"], filhos: ["SEM CRECHE", "REUNIÃO NA ESCOLA"] };
   const DIFF = ["FÁCIL", "NORMAL", "DIFÍCIL", "MUITO DIFÍCIL", "EXTREMA", "EXTREMA+"];
   const DIFF_COL = ["#5fd18a", "#b8e05a", "#e8b84a", "#ff8a3d", "#e0404f", "#b01a6a"];
@@ -742,9 +744,10 @@ h1 em { font-style: normal; color: var(--good); }
         const tp = obstPool(), trait = tp.length > 0 && rand() < 0.6;
         // social barriers are a wall across the whole street, sidewalk to sidewalk: no jumping over, no going around
         const y = trait ? (YMIN + YMAX) / 2 : pick(LANES);
-        const kind = trait ? "wall" : pick(["barreira", "cone", "caixas", "buraco", "barreira"]);
-        const dims = { wall: [12, YMAX - YMIN + 12, 15], barreira: [16, 12, 11], cone: [10, 10, 12], caixas: [16, 12, 14], buraco: [22, 14, 5] }[kind];
-        obstacles.push({ x: Math.max(camX + LW + 30, lastOx + 110), y, w: dims[0], d: dims[1], h: dims[2], kind, label: trait ? pick(tp) : pick(OBST_BASE), trait, hit: false, stuck: 0 });
+        // each everyday barrier is its own little scene, most of them moving
+        const label = trait ? pick(tp) : pick(OBST_BASE), kind = trait ? "wall" : OBST_KIND[label];
+        const dims = { wall: [12, YMAX - YMIN + 12, 15], fila: [12, 36, 20], transito: [28, 14, 12], relogio: [12, 10, 12], ponto: [12, 10, 16], envelopes: [18, 14, 12], livros: [12, 10, 18], mala: [16, 10, 12], porta: [8, 32, 18], maca: [26, 12, 10], grafico: [18, 10, 12] }[kind];
+        obstacles.push({ x: Math.max(camX + LW + 30, lastOx + 110), y, y0: y, w: dims[0], d: dims[1], h: dims[2], h0: dims[2], kind, label, trait, hit: false, stuck: 0, t: rand() * 6 });
         obstT = Math.max(2.2, 4.0 - D * 0.38) * (0.75 + rand() * 0.5);
         if (!trait && !said.jumpHint) { said.jumpHint = true; warnMsg(isTouch ? "pule as barreiras: toque rápido na tela ou PULAR" : "pule as barreiras com espaço, ou desvie"); }
         if (trait && !said.traitHint) { said.traitHint = true; warnMsg("algumas barreiras não dependem de quem passa"); }
@@ -861,7 +864,17 @@ h1 em { font-style: normal; color: var(--good); }
     arch.x += (arch.tx - arch.x) * Math.min(1, dt * 3);
     camX += (P.x - 160 - camX) * Math.min(1, dt * 5); camX = Math.max(0, camX);
     if (banner) { banner.t += dt; if (banner.t > 3) banner = null; }
-    obstacles.forEach((o) => { if (o.moving) o.x += o.vx * dt; });
+    obstacles.forEach((o) => {
+      if (o.moving) o.x += o.vx * dt;
+      if (!o.kind) return;
+      o.t = (o.t || 0) + dt;
+      if (o.kind === "transito") o.y = MID + Math.sin(o.t * 1.3) * 52;            // car crossing the avenue
+      if (o.kind === "maca") o.y = MID + Math.sin(o.t * 0.85) * 48;               // stretcher rushing across
+      if (o.kind === "envelopes") o.y = clamp(o.y0 + Math.sin(o.t * 3) * 18, YMIN + 6, YMAX - 6); // bills fluttering
+      if (o.kind === "relogio" && mode === "play") o.x -= 50 * dt;                 // the deadline rolls toward you
+      if (o.kind === "grafico") o.h = 7 + (0.5 + 0.5 * Math.sin(o.t * 2.4)) * 16;  // the bar keeps rising
+      if (o.kind === "porta") o.h = (o.t % 2.6) < 1.5 ? o.h0 : 0;                  // the door opens now and then
+    });
     obstacles = obstacles.filter((o) => o.x > camX - 40);
 
     for (let i = traffic.length - 1; i >= 0; i--) {
@@ -1201,6 +1214,7 @@ h1 em { font-style: normal; color: var(--good); }
       txt(o.label, x, y - 22, { size: 6, font: PIX, color: "#ffb4ba", ls: 0.5 });
       return;
     }
+    if (o.kind && o.kind !== "wall" && drawCreative(o, x, y)) return;
     if (o.kind === "buraco") {
       g.fillStyle = "#0c0b12"; g.beginPath(); g.ellipse(x, y, o.w / 2, o.d / 2, 0, 0, Math.PI * 2); g.fill();
       g.strokeStyle = "#3a3950"; g.lineWidth = 1; g.stroke();
@@ -1236,6 +1250,92 @@ h1 em { font-style: normal; color: var(--good); }
       g.fillStyle = "rgba(24,10,34,0.92)"; rrect(x - w / 2, top - 14, w, 10, 2); g.fill(); g.strokeStyle = "#9b5ccf"; g.lineWidth = 0.7; g.stroke();
       txt(o.label, x, top - 8.7, { size: 6, font: PIX, color: "#e1a8ff", ls: 0.5, shadow: false });
     }
+  }
+  function drawCreative(o, x, y) {
+    const t = o.t || 0, lab = (yy) => txt(o.label, x, yy, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
+    const px = (a, b, w, h, c) => { g.fillStyle = c; g.fillRect(a, b, w, h); };
+    if (o.kind === "fila") {
+      [-12, 0, 12].forEach((dy, i) => { const sh = Math.sin(t * 3 + i * 1.7) > 0.7 ? 1 : 0; person(QUEUE[i], o.x + sh, y + dy, 0, "idle"); });
+      lab(y - 12 - 32); return true;
+    }
+    if (o.kind === "transito") {
+      shadow(x, y, 18);
+      g.fillStyle = "#14121e"; rrect(x - 15, y - 13, 30, 12, 3); g.fill(); rrect(x - 8, y - 20, 16, 9, 3); g.fill();
+      g.fillStyle = "#5a6a8a"; rrect(x - 14, y - 12, 28, 10, 3); g.fill(); g.fillStyle = "#9fd4f0"; rrect(x - 7, y - 19, 14, 7, 2); g.fill();
+      g.fillStyle = "#ffe9a0"; g.fillRect(x + 12, y - 10, 2, 2); g.fillStyle = "#ff3a4a"; g.fillRect(x - 14, y - 10, 2, 2);
+      [-9, 9].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 2, 3.2, 0, Math.PI * 2); g.fill(); });
+      if (Math.sin(t * 5) > 0.85) txt("BI-BI!", x + 20, y - 22, { size: 5, font: PIX, color: "#ffffff", ls: 0.4 });
+      lab(y - 28); return true;
+    }
+    if (o.kind === "maca") {
+      shadow(x, y, 16);
+      px(x - 13, y - 9, 26, 1, "#14121e"); px(x - 12, y - 8, 1, 6, "#14121e"); px(x + 11, y - 8, 1, 6, "#14121e");
+      g.fillStyle = "#14121e"; rrect(x - 13, y - 14, 26, 6, 2); g.fill(); g.fillStyle = "#f4f1e8"; rrect(x - 12, y - 13, 24, 4, 2); g.fill();
+      px(x - 2, y - 14, 4, 1, "#e2354c"); px(x - 0.5, y - 15.5, 1, 4, "#e2354c");
+      [-11, 11].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 1.5, 1.6, 0, Math.PI * 2); g.fill(); });
+      if (Math.sin(t * 8) > 0) { glow(x - 10, y - 18, 10, "rgba(255,60,80,A)", 0.5); px(x - 11, y - 19, 2, 2, "#ff3a4a"); } else { glow(x - 10, y - 18, 10, "rgba(80,140,255,A)", 0.5); px(x - 11, y - 19, 2, 2, "#5a8aff"); }
+      lab(y - 26); return true;
+    }
+    if (o.kind === "relogio") {
+      const ring = Math.sin(t * 30) * (Math.sin(t * 2) > 0 ? 1 : 0), cx = x + ring * 0.8, cy = y - 7;
+      shadow(x, y, 6);
+      g.fillStyle = "#14121e"; [-4, 4].forEach((dx) => { g.beginPath(); g.arc(cx + dx, cy - 6, 2.6, 0, Math.PI * 2); g.fill(); });
+      g.fillStyle = "#e8c04a"; [-4, 4].forEach((dx) => { g.beginPath(); g.arc(cx + dx, cy - 6, 1.6, 0, Math.PI * 2); g.fill(); });
+      g.fillStyle = "#14121e"; g.beginPath(); g.arc(cx, cy, 6.5, 0, Math.PI * 2); g.fill(); g.fillStyle = "#c8323a"; g.beginPath(); g.arc(cx, cy, 5.5, 0, Math.PI * 2); g.fill();
+      g.fillStyle = "#f4f1e8"; g.beginPath(); g.arc(cx, cy, 4.2, 0, Math.PI * 2); g.fill();
+      g.strokeStyle = "#14121e"; g.lineWidth = 0.8; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(t * 6) * 3.4, cy + Math.sin(t * 6) * 3.4); g.moveTo(cx, cy); g.lineTo(cx, cy - 2.5); g.stroke();
+      if (ring) txt("TRIIIM", x, y - 24, { size: 5, font: PIX, color: "#ffffff", ls: 0.4 });
+      lab(y - 31); return true;
+    }
+    if (o.kind === "ponto") {
+      shadow(x, y, 7);
+      g.fillStyle = "#14121e"; rrect(x - 6.5, y - 17, 13, 17, 2); g.fill(); g.fillStyle = "#4a4a5e"; rrect(x - 5.5, y - 16, 11, 15, 2); g.fill();
+      px(x - 4.5, y - 14, 9, 5, "#14121e"); if (Math.sin(t * 4) > -0.3) txt("23:47", x, y - 11.3, { size: 3.6, font: PIX, color: "#ff4d5e", ls: 0.2, shadow: false });
+      px(x - 3, y - 6, 6, 1, "#14121e"); px(x - 2, y - 4, 4, 2, "#e8c04a");
+      lab(y - 23); return true;
+    }
+    if (o.kind === "envelopes") {
+      shadow(x, y, 8);
+      [[-6, -14, 0], [4, -18, 1.3], [-1, -9, 2.6]].forEach(([dx, dy, ph]) => {
+        const fy = y + dy + Math.sin(t * 6 + ph) * 2, fx = x + dx;
+        px(fx - 4.5, fy - 3.5, 9, 7, "#14121e"); px(fx - 4, fy - 3, 8, 6, "#f4f1e8");
+        g.strokeStyle = "#8a8fa8"; g.lineWidth = 0.6; g.beginPath(); g.moveTo(fx - 4, fy - 3); g.lineTo(fx, fy); g.lineTo(fx + 4, fy - 3); g.stroke(); px(fx + 1.5, fy + 0.5, 2, 2, "#e2354c");
+      });
+      lab(y - 30); return true;
+    }
+    if (o.kind === "livros") {
+      const cols = ["#3c6fd1", "#e2354c", "#4caf6a", "#e8c04a", "#7a5cd6"];
+      shadow(x, y, 7);
+      cols.forEach((c, i) => { const sw = Math.sin(t * 2.2) * i * 0.45, bw = 12 - (i % 2) * 2; px(x - bw / 2 - 0.5 + sw, y - 4 - i * 3.6 - 0.5, bw + 1, 4.2, "#14121e"); px(x - bw / 2 + sw, y - 4 - i * 3.6, bw, 3.2, c); px(x + bw / 2 - 2 + sw, y - 4 - i * 3.6 + 0.6, 1.4, 2, "#f4f1e8"); });
+      lab(y - 28); return true;
+    }
+    if (o.kind === "mala") {
+      shadow(x, y, 9);
+      g.fillStyle = "#14121e"; rrect(x - 8.5, y - 12, 17, 12, 2); g.fill(); g.fillStyle = "#a8662e"; rrect(x - 7.5, y - 11, 15, 10, 2); g.fill();
+      px(x - 3, y - 14, 6, 2, "#14121e"); px(x - 7.5, y - 7, 15, 1, "#7a4520");
+      for (let k = -7; k <= 7; k += 2) px(x + k, y - 7 + Math.abs(k) * 0.25, 1.4, 1.4, "#b0b4c0");
+      g.fillStyle = "#e8c04a"; rrect(x - 2, y - 7, 4, 4, 1); g.fill(); px(x - 0.5, y - 6, 1, 1.5, "#14121e");
+      g.strokeStyle = "#14121e"; g.lineWidth = 0.9; g.beginPath(); g.moveTo(x + 11, y); g.lineTo(x + 11, y - 18); g.stroke(); g.fillStyle = "#e2354c"; g.beginPath(); g.moveTo(x + 11, y - 18); g.lineTo(x + 13, y - 11); g.lineTo(x + 9, y - 11); g.closePath(); g.fill();
+      lab(y - 25); return true;
+    }
+    if (o.kind === "porta") {
+      const open = o.h === 0, fx = x, top = y - o.d / 2 - 18;
+      px(fx - 4.5, top, 9, o.d + 18, "rgba(0,0,0,0.25)");
+      px(fx - 1, top - 2, 2, o.d + 20, "#14121e");
+      const panel = open ? 6 : o.d + 16;
+      px(fx - 3.5, top + 1, 7, panel, "#14121e"); px(fx - 2.5, top + 2, 5, panel - 2, open ? "#3a3a48" : "#8a5a2b");
+      g.fillStyle = "#14121e"; rrect(fx - 18, top - 13, 36, 9, 2); g.fill(); g.fillStyle = open ? "#2f6a46" : "#c8323a"; rrect(fx - 17, top - 12, 34, 7, 2); g.fill();
+      txt(open ? "ABERTA?" : "VAGA PREENCHIDA", fx, top - 8.4, { size: 3.6, font: PIX, color: "#ffffff", ls: 0.2, shadow: false });
+      lab(top - 20); return true;
+    }
+    if (o.kind === "grafico") {
+      shadow(x, y, 9);
+      const hs = [o.h * 0.45, o.h * 0.7, o.h];
+      hs.forEach((h, i) => { px(x - 8.5 + i * 6, y - h - 0.5, 5, h + 0.5, "#14121e"); px(x - 8 + i * 6, y - h, 4, h, i === 2 ? "#ff5a6e" : "#c8323a"); });
+      g.strokeStyle = "#3fe08a"; g.lineWidth = 1; g.beginPath(); g.moveTo(x - 9, y - hs[0] - 3); g.lineTo(x - 3, y - hs[1] - 3); g.lineTo(x + 4, y - hs[2] - 4); g.stroke();
+      lab(y - 30); return true;
+    }
+    return false;
   }
   function drawTraffic(r) {
     const x = r.x - camX, y = r.y;
