@@ -208,6 +208,42 @@ h1 em { font-style: normal; color: var(--good); }
   .stats span { font-size: 8px; letter-spacing: .14em; }
 }
 @media (max-height: 520px) { #end .box { gap: 8px; } .help-box { padding: 6px 12px; } .help-list { font-size: 11px; gap: 2px; } .disclaimer { font-size: 9.5px; } #end .lead { font-size: 12px; } }
+/* ===== v6: pixel-art windows and buttons ===== */
+.ov { background: radial-gradient(ellipse at 50% 42%, rgba(14,11,34,.74), rgba(4,3,12,.93) 78%); }
+#select .box, #draw .box, #bonus .box, #end .box {
+  background: #110e24; border: 3px solid #3a3466; padding: 20px 24px; box-sizing: border-box;
+  box-shadow: 0 0 0 3px #07050f, inset 0 3px 0 rgba(255,255,255,.05), inset 0 -4px 0 rgba(0,0,0,.35), 0 18px 50px rgba(0,0,0,.6);
+}
+#bonus .box { border-color: #2f9d68; background: #0e1a18; }
+#end .box { max-width: 680px; }
+.eyebrow { font-family: var(--pix); letter-spacing: .3em; }
+.cta, .cta.press { font-family: var(--pix); font-size: 12px; letter-spacing: .22em; color: #fff; background: #d63a4a; border: 0; border-radius: 0; padding: 12px 22px;
+  box-shadow: inset -3px -3px 0 #8e1d2a, inset 3px 3px 0 #ff8a92, 0 0 0 3px #07050f, 0 5px 0 3px #07050f; text-shadow: 1px 1px 0 #5a1018; }
+.cta:hover { background: #e84a5a; }
+.cta:active { transform: translateY(3px); box-shadow: inset 3px 3px 0 #8e1d2a, 0 0 0 3px #07050f, 0 2px 0 3px #07050f; }
+.cta.alt { background: #2a2650; box-shadow: inset -3px -3px 0 #16132e, inset 3px 3px 0 #4a4480, 0 0 0 3px #07050f, 0 5px 0 3px #07050f; text-shadow: 1px 1px 0 #07050f; }
+.cta.alt:hover { background: #343060; }
+.bonus-cta { background: #2f9d68; box-shadow: inset -3px -3px 0 #1b5a37, inset 3px 3px 0 #6fe0a0, 0 0 0 3px #07050f, 0 5px 0 3px #07050f; text-shadow: 1px 1px 0 #10301e; }
+.bonus-cta:hover { background: #38b078; }
+.seg { gap: 8px; }
+.seg button { font-family: var(--pix); font-size: 10px; letter-spacing: .14em; color: var(--muted); background: #1c1838; border: 0; padding: 9px 6px;
+  box-shadow: inset -2px -2px 0 #0e0b20, inset 2px 2px 0 #2e2a58, 0 0 0 2px #07050f; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { color: #2a1a06; background: #e8b84a; box-shadow: inset -2px -2px 0 #a8801e, inset 2px 2px 0 #fff1a8, 0 0 0 2px #07050f; }
+.portrait { border: 0; background: repeating-conic-gradient(#1c1838 0 25%, #171431 0 50%) 0 0 / 12px 12px; box-shadow: 0 0 0 3px var(--gold), 0 0 0 6px #07050f; }
+.portrait span { font-family: var(--pix); }
+.bonus-pv { box-shadow: 0 0 0 3px var(--good), 0 0 0 6px #07050f, 0 0 34px rgba(95,209,138,.35); }
+.diff-bar { gap: 3px; }
+.diff-bar i { height: 8px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.12); }
+.stats { gap: 12px; }
+.stats div { border: 0; background: #1a1636; box-shadow: inset 0 -3px 0 rgba(0,0,0,.35), inset 0 2px 0 rgba(255,255,255,.05), 0 0 0 2px #3a3466; }
+.help-box { border: 0; background: #0f1d18; box-shadow: 0 0 0 2px #2f9d68, inset 0 2px 0 rgba(255,255,255,.05); }
+.perks li b { font-family: var(--pix); }
+/* title: the live avenue behind the logo */
+.ov.retro { background: linear-gradient(180deg, rgba(6,5,16,.72) 0%, rgba(6,5,16,.05) 34%, rgba(6,5,16,0) 58%, rgba(6,5,16,.78) 100%); }
+.ov.retro::after { background: repeating-linear-gradient(0deg, rgba(0,0,0,.06) 0 1px, transparent 1px 3px); }
+.cover-box .cta.press { background: #d63a4a; box-shadow: inset -3px -3px 0 #8e1d2a, inset 3px 3px 0 #ff8a92, 0 0 0 3px #07050f, 0 5px 0 3px #07050f; border: 0; }
+@media (max-height: 520px) { #select .box, #draw .box, #bonus .box, #end .box { padding: 10px 14px; } }
 </style>
 
 </head>
@@ -228,7 +264,6 @@ h1 em { font-style: normal; color: var(--good); }
 </div>
 
 <div class="ov retro" id="title">
-  <canvas id="cover" width="480" height="270" aria-hidden="true"></canvas>
   <div class="box cover-box">
     <h1 class="logo"><span class="logo-top">RUMO À</span><em>SAÚDE MENTAL</em></h1>
     <div class="cover-foot">
@@ -1438,7 +1473,7 @@ h1 em { font-style: normal; color: var(--good); }
     shadow(x - camX, y, Math.max(3, (o.wheel ? 9 : 6) - z / 8));
     let f = frame;
     // wheelchair: the wheels turn as the person moves; standing still: slow breathing and a blink
-    if (o.wheel) f = "w" + (Math.floor(((o === look ? P.walk : 0) * 0.9) / (Math.PI / 16)) % 4 + 4) % 4;
+    if (o.wheel) f = "w" + (Math.floor(((o === look && mode !== "title" ? P.walk : time * 3) * 0.9) / (Math.PI / 16)) % 4 + 4) % 4;
     else if (f === "idle") f = Math.floor(time * 1.4 + x * 0.013) % 2 ? "idle1" : "idle";
     sprite(personImg(o, f), x - camX - 8, y - 25 - z, 16, 26, alpha);
   }
@@ -1710,7 +1745,7 @@ h1 em { font-style: normal; color: var(--good); }
     }
     // the "mental health" gate: two posts, a quiet sign, a finish line nobody reaches
     const ax = arch.x - camX;
-    if (ax > -60 && ax < LW + 80) {
+    if (mode !== "title" && ax > -60 && ax < LW + 80) {
       for (let y = ROAD_T + 3; y < ROAD_B - 3; y += 3) { const odd = Math.floor(y / 3) % 2; g.fillStyle = odd ? "rgba(236,235,242,0.42)" : "rgba(20,20,30,0.5)"; g.fillRect(ax - 3, y, 3, 3); g.fillStyle = odd ? "rgba(20,20,30,0.5)" : "rgba(236,235,242,0.42)"; g.fillRect(ax, y, 3, 3); }
       g.fillStyle = "#14121e"; g.fillRect(ax - 2, 44, 4, 38); g.fillRect(ax - 2, ROAD_B, 4, 16);
       g.fillStyle = "#2e3a34"; g.fillRect(ax - 2, 44, 1, 38); g.fillRect(ax - 2, ROAD_B, 1, 16);
@@ -1721,6 +1756,22 @@ h1 em { font-style: normal; color: var(--good); }
     }
   }
 
+  // title screen: many different people on the same avenue, each with their own pile, each losing what they love
+  const TITLE_PEOPLE = [
+    { look: heroLook({ cor: "negra", genero: "homem", orient: "lgbt", classe: "pobre", pcd: "nao" }), dx: 150, y: 122, stack: ["boleto", "trabalho", "dobro"] },
+    { look: heroLook({ cor: "branca", genero: "mulher", orient: "lgbt", classe: "rica", pcd: "sim" }), dx: 268, y: 150, stack: ["casa", "trabalho"] },
+    { look: heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" }), dx: 96, y: 186, stack: ["boleto", "aluguel", "faculdade", "casa"] },
+    { look: heroLook({ cor: "branca", genero: "homem", orient: "hetero", classe: "rica", pcd: "nao" }), dx: 350, y: 206, stack: ["trabalho", "doenca", "cuidar"] }
+  ].map((tp) => Object.assign(tp, { stack: tp.stack.map((type) => ({ type })), next: 1 + Math.random() * 3 }));
+  const titleFall = [];
+  function titleUpdate(dt) {
+    TITLE_PEOPLE.forEach((tp) => {
+      tp.next -= dt;
+      if (tp.next <= 0) { tp.next = 2.6 + Math.random() * 2.4; titleFall.push({ type: pick(GOOD), x: camX + tp.dx * LW / 480 - 4, y: tp.y + 1, z: 26 + tp.stack.length * 10, vx: -10 - Math.random() * 10, vz: 30, rot: 0, vr: -5, life: 2.2 }); }
+    });
+    titleFall.forEach((h) => { h.vz -= 220 * dt; h.z += h.vz * dt; h.x += h.vx * dt; h.rot += h.vr * dt; if (h.z <= 0) { h.z = 0; h.vz = Math.abs(h.vz) > 50 ? -h.vz * 0.3 : 0; h.vx *= 0.6; h.vr = 0; h.rot = Math.round(h.rot / (Math.PI / 2)) * Math.PI / 2; } h.life -= dt * (h.z === 0 ? 0.8 : 0); });
+    for (let i = titleFall.length - 1; i >= 0; i--) if (titleFall[i].life <= 0) titleFall.splice(i, 1);
+  }
   function drawEntities() {
     const list = [];
     const fadeOut = mode === "ending" ? clamp(1 - endT / 0.8, 0, 1) : 1;
@@ -1746,7 +1797,8 @@ h1 em { font-style: normal; color: var(--good); }
       stackDraw(P.stack, P.x, P.y, P.z, psiNear() && mode === "play", P.shake > 0, kneel, mode === "ending" && !fell ? endT / WOBBLE : 0);
       if (mode === "play") tag("VOCÊ", P.x - camX, P.y - 23 - P.z - P.stack.length * step(P.stack.length) - 8, "#e8b84a");
     } });
-    else list.push({ y: 150, f: () => person(heroLook(sel), camX + 160, 150, 0, runFrame(time * 7)) });
+    else TITLE_PEOPLE.forEach((tp, i) => { const x = camX + tp.dx * LW / 480; list.push({ y: tp.y, f: () => { person(tp.look, x, tp.y, 0, runFrame(time * 4.2 + i * 1.3)); stackDraw(tp.stack, x, tp.y, 0, false, false, false, 0); } }); });
+    if (mode === "title") titleFall.forEach((h) => list.push({ y: h.y, f: () => { const im = blockImg(h.type), w = im.width / 2, hh = im.height / 2; if (h.z < 2) shadow(h.x - camX, h.y, 4); g.save(); g.globalAlpha = clamp(h.life, 0, 1); g.translate(h.x - camX, h.y - h.z - hh / 2); g.rotate(h.rot); g.drawImage(im, -w / 2, -hh / 2, w, hh); g.restore(); } }));
     list.sort((a, b) => a.y - b.y).forEach((e) => e.f());
   }
   function stackDrawAt(stack, x, y) { stack.forEach((b, i) => blk(b.type, x - camX, y - 23 - i * 10)); }
@@ -2196,7 +2248,7 @@ h1 em { font-style: normal; color: var(--good); }
   function frame(ts) {
     const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
     if (!paused) {
-      if (mode === "title") { time += dt; camX += dt * 30; }
+      if (mode === "title") { time += dt; camX += dt * 30; titleUpdate(dt); }
       else if (mode !== "over" && mode !== "bonus") update(dt);
       render();
     }
@@ -2243,247 +2295,6 @@ h1 em { font-style: normal; color: var(--good); }
     setTimeout(() => $("bonusBtn").focus(), 50);
   }
   $("bonusBtn").addEventListener("click", (e) => { e.stopPropagation(); $("bonus").hidden = true; mode = "play"; last = performance.now(); });
-  // ===== cover art: original, detailed pixel scene of a city street at dusk (480x270), pre-rendered in layers =====
-  const CW = 480, CH = 270, VPX = 240, VPY = 186;
-  // the scene is drawn at 480x270 and blown up on screen by a whole number, so every pixel stays square and sharp
-  const covView = $("cover"), cvx = covView.getContext("2d"), cov = document.createElement("canvas"); cov.width = CW; cov.height = CH;
-  const cx2 = cov.getContext("2d");
-  function blitCover() {
-    const r = covView.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
-    const W = Math.max(1, Math.round(r.width * dpr)), H = Math.max(1, Math.round(r.height * dpr));
-    if (covView.width !== W || covView.height !== H) { covView.width = W; covView.height = H; }
-    const k = Math.max(1, Math.ceil(Math.max(W / CW, H / CH)));
-    cvx.imageSmoothingEnabled = false;
-    cvx.drawImage(cov, Math.round((W - CW * k) / 2), Math.round((H - CH * k) * 0.75), CW * k, CH * k); // crop more sky than street
-  }
-  const tvHash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
-  let tvT = 0;
-  const coverFall = [], coverPv = (() => { const c = document.createElement("canvas"); c.width = 32; c.height = 52; return c.getContext("2d"); })();
-  // back to front; dir 1 = walking right, -1 = walking left
-  const COVER_PEOPLE = [
-    { look: heroLook({ cor: "negra", genero: "homem", orient: "lgbt", classe: "pobre", pcd: "nao" }), x: 206, feet: 207, S: 1, dir: 1, stack: ["boleto", "trabalho", "dobro"] },
-    { look: heroLook({ cor: "branca", genero: "mulher", orient: "lgbt", classe: "rica", pcd: "sim" }), x: 286, feet: 211, S: 1, dir: -1, stack: ["casa", "trabalho"] },
-    { look: heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" }), x: 330, feet: 234, S: 2, dir: -1, stack: ["boleto", "aluguel", "faculdade", "casa"] },
-    { look: heroLook({ cor: "branca", genero: "homem", orient: "hetero", classe: "rica", pcd: "nao" }), x: 172, feet: 246, S: 2, dir: 1, stack: ["trabalho", "doenca", "cuidar"] }
-  ];
-  const mkLayer = (w, h) => { const c = document.createElement("canvas"); c.width = w || CW; c.height = h || CH; return c; };
-  let L = null;
-  const px_ = (x, y, w, h, c) => { L.fillStyle = c; L.fillRect(x, y, w, h); };
-  const pxl = (x, y, c) => { L.fillStyle = c; L.fillRect(x, y, 1, 1); };
-  const pY = (y0, x) => VPY + (y0 - VPY) * Math.abs(VPX - x) / VPX; // perspective: a line at height y0 on the near edge, seen at column x
-  function line(x0, y0, x1, y1, c) {
-    x0 = Math.round(x0); y0 = Math.round(y0); x1 = Math.round(x1); y1 = Math.round(y1);
-    const dx = Math.abs(x1 - x0), dy = -Math.abs(y1 - y0), sx = x0 < x1 ? 1 : -1, sy = y0 < y1 ? 1 : -1; let e = dx + dy;
-    for (;;) { pxl(x0, y0, c); if (x0 === x1 && y0 === y1) break; const e2 = 2 * e; if (e2 >= dy) { e += dy; x0 += sx; } if (e2 <= dx) { e += dx; y0 += sy; } }
-  }
-  // tone ramp with 2x2 ordered dithering between steps
-  const BAYER = [[0, 0.5], [0.75, 0.25]];
-  const ramp = (cols, f, x, y) => { f = Math.max(0, Math.min(0.9999, f)) * (cols.length - 1); const i = Math.floor(f), fr = f - i; return cols[Math.min(cols.length - 1, i + (fr > BAYER[y & 1][x & 1] ? 1 : 0))]; };
-  const band = (cols, f) => cols[Math.round(Math.max(0, Math.min(1, f)) * (cols.length - 1))]; // hard bands, no dither noise
-
-  // ---- sky layer ----
-  const SKY_RAMP = ["#191c4c", "#1f2358", "#262a64", "#2e3171", "#37397d", "#424088", "#504793", "#604f9b", "#7256a0", "#895da3", "#a263a2", "#bb69a0", "#d2719c", "#e47c98", "#f18c97", "#f9a29a", "#fcb8a0"];
-  const skyL = mkLayer();
-  L = skyL.getContext("2d");
-  for (let y = 0; y < 200; y++) for (let x = 0; x < CW; x++) pxl(x, y, ramp(SKY_RAMP, Math.pow(y / 200, 1.15) + (1 - Math.abs(x - VPX) / VPX) * 0.08, x, y));
-  for (let i = 0; i < 70; i++) {
-    const x = Math.floor(tvHash(i) * CW), y = Math.floor(tvHash(i + 50) * 70), b = tvHash(i + 99);
-    pxl(x, y, b > 0.85 ? "#ffffff" : b > 0.5 ? "#b8b6f0" : "#6f6cc0");
-    if (b > 0.94) { pxl(x - 1, y, "#8a88d8"); pxl(x + 1, y, "#8a88d8"); pxl(x, y - 1, "#8a88d8"); pxl(x, y + 1, "#8a88d8"); }
-  }
-
-  // ---- clouds: soft cumulus with 5 tones, lit from the sunset below ----
-  const CLOUD_RAMP = ["#ffe3d2", "#ffc4b8", "#f8a3ab", "#e1809f", "#b9629a", "#8c5194"];
-  // cumulus: big puffs along a flat base, smaller bumps on top, lit from the sunset below, shaded in clean bands
-  function makeCloud(w, h, seed) {
-    const c = mkLayer(w, h); L = c.getContext("2d");
-    const n = 6 + Math.floor(tvHash(seed) * 4), base = h - 3, blobs = [];
-    for (let i = 0; i < n; i++) {
-      const u = (i + 0.5) / n, bell = Math.sin(Math.PI * u), r = h * (0.16 + bell * 0.3 + tvHash(seed + i) * 0.1);
-      blobs.push([w * (0.06 + u * 0.88) + (tvHash(seed + i + 9) - 0.5) * w * 0.05, base - r * 0.5 - bell * h * 0.14, r]);
-    }
-    for (let i = 0; i < n; i++) { const [bx, by, r] = blobs[i], a = -Math.PI * (0.2 + tvHash(seed + i + 33) * 0.6); blobs.push([bx + Math.cos(a) * r * 0.72, by + Math.sin(a) * r * 0.72, r * (0.38 + tvHash(seed + i + 51) * 0.14)]); }
-    for (let y = 0; y <= base; y++) for (let x = 0; x < w; x++) {
-      let best = -1, nx = 0, ny = 0;
-      blobs.forEach(([bx, by, r]) => { const dx = x - bx, dy = y - by, d = Math.hypot(dx, dy); if (d < r && 1 - d / r > best) { best = 1 - d / r; nx = dx / r; ny = dy / r; } });
-      if (best < 0) continue;
-      const light = ny * 0.55 + nx * 0.2 + (y / h) * 0.55 - 0.15; // bottoms catch the sun
-      pxl(x, y, y >= base - 1 ? CLOUD_RAMP[1] : band(CLOUD_RAMP, 1 - light));
-    }
-    return c;
-  }
-  const CLOUDS = [[makeCloud(190, 74, 3), 128, 46, 0.7], [makeCloud(130, 50, 41), 268, 22, 1], [makeCloud(110, 36, 77), 44, 92, 1.3], [makeCloud(96, 34, 113), 330, 96, 1.1], [makeCloud(70, 24, 151), 205, 128, 1.6]];
-
-  // ---- city layer (everything in front of the sky) ----
-  const cityL = mkLayer(); L = cityL.getContext("2d");
-  const lit = [];
-  // far hazy skyline
-  for (let x = 120, i = 0; x < 360; i++) { const w = 8 + Math.floor(tvHash(i + 200) * 16), h = 18 + Math.floor(tvHash(i + 230) * 46); px_(x, VPY + 6 - h, w, h, "#5d4e98"); for (let wy = VPY + 9 - h; wy < VPY + 2; wy += 4) for (let wx = x + 2; wx < x + w - 1; wx += 3) if (tvHash(wx * 3 + wy) > 0.7) pxl(wx, wy, "#7d6db8"); x += w + 1; }
-  // mid towers with rim light, window grids and rooftop details
-  const TOWERS = [[150, 26, 112, 0], [178, 18, 80, 1], [198, 30, 146, 2], [230, 22, 98, 0], [254, 34, 132, 3], [290, 20, 86, 1], [312, 26, 70, 0]];
-  TOWERS.forEach(([x, w, h, kind], n) => {
-    const top = VPY + 8 - h;
-    if (kind === 1) { px_(x + 3, top - 8, w - 6, 8, "#352e72"); }
-    px_(x, top, w, h, "#3a3277"); px_(x + w - 4, top, 4, h, "#2f2868"); px_(x, top, 1, h, "#9c5f9e"); px_(x, top, w, 1, "#a8669f");
-    for (let wy = top + 4; wy < VPY + 4; wy += 4) for (let wx = x + 3; wx < x + w - 5; wx += 3) {
-      const r = tvHash(n * 131 + wx * 7.1 + wy * 3.3);
-      if (r > 0.86) { const c = r > 0.96 ? "#fff0d8" : r > 0.92 ? "#ffc690" : "#f6a8c8"; px_(wx, wy, 2, 2, c); lit.push([wx, wy, c]); }
-      else px_(wx, wy, 2, 2, r > 0.45 ? "#4d4594" : "#443c88");
-    }
-    if (kind === 2) { // crane
-      const mx = x + 8; px_(mx, top - 34, 2, 34, "#2a2462"); for (let k = 0; k < 34; k += 4) line(mx, top - k, mx + 1, top - k - 4, "#2a2462");
-      px_(mx - 14, top - 34, 56, 2, "#2a2462"); px_(mx - 14, top - 32, 6, 4, "#2a2462"); line(mx + 1, top - 40, mx + 40, top - 33, "#2a2462"); line(mx + 1, top - 40, mx - 12, top - 34, "#2a2462"); px_(mx, top - 42, 2, 8, "#2a2462");
-      px_(mx + 34, top - 32, 1, 18, "#2a2462"); px_(mx + 32, top - 14, 5, 3, "#2a2462");
-    }
-    if (kind === 3) { px_(x + 6, top - 18, 1, 18, "#2a2462"); px_(x + 24, top - 10, 1, 10, "#2a2462"); px_(x + 14, top - 6, 8, 6, "#2f2868"); line(x + 14, top - 6, x + 22, top - 6, "#9c5f9e"); }
-    if (kind === 0 && n % 2 === 0) { px_(x + Math.floor(w / 2), top - 12, 1, 12, "#2a2462"); }
-  });
-  // low buildings and trees at the end of the street
-  [[160, 30, 26], [194, 22, 18], [218, 44, 30], [266, 30, 20], [298, 30, 28]].forEach(([x, w, h], n) => {
-    const top = VPY + 8 - h; px_(x, top, w, h, "#2b2563"); px_(x, top, w, 1, "#6a4c8e");
-    for (let wy = top + 3; wy < VPY + 4; wy += 4) for (let wx = x + 2; wx < x + w - 2; wx += 4) { const r = tvHash(n * 17 + wx + wy * 5); px_(wx, wy, 2, 2, r > 0.75 ? "#ffcf8f" : "#3c3580"); if (r > 0.75) lit.push([wx, wy, "#ffcf8f"]); }
-  });
-  for (let i = 0; i < 160; i++) { const x = 168 + tvHash(i + 400) * 144, y = VPY + 2 + tvHash(i + 450) * 8; px_(Math.floor(x), Math.floor(y), 3, 2, tvHash(i + 470) > 0.5 ? "#232055" : "#1b1946"); }
-
-  // side buildings in one-point perspective, with floors, windows, roof rail and shop fronts on the ground floor
-  const WARM = ["#fff1c4", "#ffd896", "#ffbd72", "#f79a52", "#d8733a", "#a8522e"], COLD = ["#e6eeff", "#b9caff", "#8ea6ff", "#6481f2", "#4560d6", "#2f42a8"];
-  function sideBuilding(left) {
-    const xEnd = 150;
-    const near = (x) => left ? x : CW - 1 - x;
-    // column positions of window mullions spaced in depth
-    const cols = []; for (let k = 0; k < 40; k++) { const r = 1 / (1 + k * 0.16); const xx = VPX - VPX * r; if (xx > xEnd) break; cols.push(Math.round(xx)); }
-    for (let i = 0; i <= xEnd; i++) {
-      const x = near(i), top = Math.round(pY(-14, i)), bot = Math.round(pY(238, i));
-      px_(x, top, 1, bot - top, i % 3 ? "#19173f" : "#1b1943");
-      const isCol = cols.includes(i);
-      for (let f = 0; f < 9; f++) {
-        const y0 = -14 + f * 26, ya = Math.round(pY(y0, i)), yb = Math.round(pY(y0 + 26, i));
-        pxl(x, ya, "#2b286b");
-        if (f < 8) {
-          const wa = Math.round(pY(y0 + 7, i)), wb = Math.round(pY(y0 + 21, i));
-          if (isCol) px_(x, wa, 1, wb - wa, "#2a2768");
-          else { const k = cols.findIndex((c) => c > i), r = tvHash(f * 37 + k * 11 + (left ? 0 : 500)); for (let y = wa; y < wb; y++) { const fr = (y - wa) / Math.max(1, wb - wa); pxl(x, y, r > 0.9 ? (fr < 0.55 ? "#ffd896" : "#f0a868") : r > 0.8 ? (fr < 0.4 ? "#9a6a9a" : "#6a4278") : (fr < 0.3 ? "#34337e" : "#15133a")); } pxl(x, wb, "#3a3684"); }
-        } else {
-          // shop front
-          const sa = Math.round(pY(y0 + 2, i)), sb = Math.round(pY(y0 + 30, i));
-          const aw = Math.round(pY(y0 - 4, i)); px_(x, aw, 1, sa - aw, (cols.findIndex((c) => c > i) % 2) ? (left ? "#8a2f3c" : "#2a3a8a") : (left ? "#c2434f" : "#3e56c0"));
-          for (let y = sa; y < sb; y++) {
-            const fr = (y - sa) / Math.max(1, sb - sa);
-            let c = isCol || Math.abs(fr - 0.3) < 0.03 ? (left ? "#3a2220" : "#141a40") : ramp(left ? WARM : COLD, fr, x, y);
-            if (!isCol && fr > 0.5 && fr < 0.9 && Math.floor(fr * 14) % 3 === 0) { const g = tvHash(Math.floor(i / 3) * 5 + Math.floor(fr * 14)); c = left ? (g > 0.5 ? "#7a3a24" : "#a8522e") : (g > 0.66 ? "#ff8a7a" : g > 0.33 ? "#ffe07a" : "#dfe8ff"); }
-            pxl(x, y, c);
-          }
-        }
-      }
-      if (left && i % 5 === 0) px_(x, top - 9, 1, 9, "#2c2970");
-    }
-    if (left) for (let i = 0; i <= xEnd; i++) { pxl(i, Math.round(pY(-14, i)) - 9, "#3a3684"); pxl(i, Math.round(pY(-14, i)) - 5, "#2c2970"); }
-    else { // rooftop sign frame on the right building
-      for (let i = 20; i < 110; i++) { const x = near(i); const t0 = Math.round(pY(-14, i)); px_(x, t0 - 22, 1, 2, "#2c2970"); px_(x, t0 - 6, 1, 1, "#2c2970"); if (i % 12 === 0) px_(x, t0 - 22, 1, 22, "#2c2970"); }
-    }
-  }
-  sideBuilding(true); sideBuilding(false);
-
-  // ground: sidewalks with tiles, curb, wet road with dashes and reflections
-  for (let y = VPY; y < CH; y++) {
-    const hw = (y - VPY) * 1.62;
-    for (let x = 0; x < CW; x++) {
-      const i = x < VPX ? x : CW - 1 - x; if (y < pY(238, i)) continue;
-      const d = Math.abs(x - VPX);
-      if (d < hw) {
-        let c = ramp(["#3a2f5a", "#2e2650", "#241e44"], (y - VPY) / (CH - VPY), x, y);
-        const streakL = x < VPX && d > hw * 0.55 && d < hw * 0.95, streakR = x > VPX && d > hw * 0.55 && d < hw * 0.95;
-        if ((streakL || streakR) && y > VPY + 14) { // shop lights reflected on the wet street: broken vertical streaks
-          const colB = Math.floor(d / Math.max(1, hw) * 14), k = tvHash(colB * 7.3 + (streakL ? 0 : 77));
-          if (k > 0.5 && tvHash(colB * 3.1 + Math.floor((y - VPY) / 3) * 1.7 + (streakL ? 0 : 9)) > 0.3) c = streakL ? (k > 0.8 ? "#c06a3e" : "#6a3c50") : (k > 0.8 ? "#5a74e0" : "#34387e");
-        }
-        if (d < 1 + (y - VPY) / 34 && Math.floor(Math.log(y - VPY + 2) * 9) % 2 === 0) c = (y - VPY) > 30 ? "#e0b866" : "#9a7a5a";
-        if (Math.abs(d - hw) < 1) c = "#6a5c90";
-        pxl(x, y, c);
-      } else {
-        const ty = [200, 204, 209, 215, 222, 231, 242, 256].some((v) => Math.abs(y - v) < 0.5);
-        const tx = Math.floor((d - hw) / (4 + (y - VPY) / 10)) !== Math.floor((d - hw - 1) / (4 + (y - VPY) / 10));
-        pxl(x, y, ty || tx ? "#2e2750" : ramp(["#4a3f6e", "#3d3460", "#342b54"], (y - VPY) / (CH - VPY), x, y));
-        if (d - hw < 2) pxl(x, y, "#5a4f84");
-      }
-    }
-  }
-  // street lamps, string lights, bushes, small details
-  const LAMPS = [[96, 262, 150, 2], [176, 214, 168, 1], [384, 262, 150, 2], [304, 214, 168, 1]];
-  LAMPS.forEach(([x, base, top, w], i) => { const d = x < VPX ? 1 : -1; px_(x, top, w, base - top, "#0f0d24"); px_(x - w, base - 3, w * 3, 3, "#0f0d24"); px_(x, top, 7 * d, w, "#0f0d24"); px_(x + 5 * d - (d < 0 ? 2 : 0), top + w, 3, 2, "#ffe9b0"); });
-  const BULBS = [];
-  [[20, 104, 460, 104, 30, 9], [150, 150, 330, 150, 14, 6]].forEach(([x0, y0, x1, y1, sag, step]) => {
-    for (let x = x0; x <= x1; x++) { const t = (x - x0) / (x1 - x0); pxl(x, Math.round(y0 + (y1 - y0) * t + Math.sin(Math.PI * t) * sag), "#2a2140"); }
-    for (let x = x0 + step; x < x1; x += step) { const t = (x - x0) / (x1 - x0); BULBS.push([x, Math.round(y0 + (y1 - y0) * t + Math.sin(Math.PI * t) * sag) + 1, step > 7 ? 2 : 1]); }
-  });
-  // bushes in the front corners: leafy clumps drawn back to front, lit from the street, with a dark outline
-  const LEAF = ["#8aa0f0", "#5a74d8", "#3e56b8", "#2c3f94", "#1f2c70", "#141d4f", "#0b1030"];
-  function bush(bx, by, r, seed, toRight) {
-    for (let y = Math.floor(by - r - 2); y <= Math.min(CH - 1, by + r + 2); y++) for (let x = Math.floor(bx - r - 2); x <= bx + r + 2; x++) {
-      const dx = x - bx, dy = y - by, a = Math.atan2(dy, dx), rr = r * (1 + 0.1 * Math.sin(a * 7 + seed) + 0.06 * Math.sin(a * 13 + seed * 2)), d = Math.hypot(dx, dy);
-      if (d > rr || x < 0 || x >= CW) continue;
-      if (d > rr - 1.2) { pxl(x, y, LEAF[6]); continue; }
-      const nx = dx / rr, ny = dy / rr, lightDir = (toRight ? 1 : -1) * nx * 0.35 - ny * 0.65;
-      const leaves = (tvHash(Math.floor((x + seed) / 3) * 13.1 + Math.floor(y / 2) * 7.7) - 0.5) * 0.28;
-      let c = band(LEAF.slice(0, 6), 0.55 - lightDir * 0.5 + leaves);
-      if (lightDir > 0.35 && tvHash(x * 7.3 + y * 13.7) > 0.88) c = LEAF[0];
-      pxl(x, y, c);
-    }
-  }
-  [false, true].forEach((rightSide) => {
-    const clumps = [];
-    for (let i = 0; i < 14; i++) { const s = i * 3.7 + (rightSide ? 300 : 0), u = tvHash(s + 11), r = 9 + tvHash(s + 23) * 13, x = u * 96; clumps.push([x, CH - (72 - x * 0.62) + r * 0.85, r, s]); }
-    clumps.sort((p, q) => p[1] - q[1]).forEach(([x, y, r, s]) => bush(rightSide ? CW - 1 - x : x, y, r, s, !rightSide));
-  });
-  // cat on the left sidewalk, bike and bin further back on the left, bin on the right
-  px_(150, 236, 7, 4, "#0e0c1e"); px_(155, 233, 4, 4, "#0e0c1e"); pxl(155, 232, "#0e0c1e"); pxl(158, 232, "#0e0c1e"); px_(148, 233, 1, 4, "#0e0c1e");
-  px_(372, 226, 6, 9, "#1a1838"); px_(371, 225, 8, 2, "#2a2860");
-  { const bx = 112, by = 236; line(bx + 2, by, bx + 12, by, "#2a2860"); for (const cxw of [bx, bx + 14]) { for (let a = 0; a < 6.28; a += 0.4) pxl(Math.round(cxw + Math.cos(a) * 4), Math.round(by + Math.sin(a) * 4), "#2a2860"); } line(bx + 6, by, bx + 10, by - 6, "#2a2860"); line(bx + 10, by - 6, bx + 14, by, "#2a2860"); px_(bx + 8, by - 7, 4, 1, "#2a2860"); }
-  // little neon-heart sign hanging on the right building
-  const NEON_HEART = [".##...##.", "#..#.#..#", "#...#...#", "#.......#", ".#.....#.", "..#...#..", "...#.#...", "....#...."];
-  px_(398, 58, 6, 1, "#2c2970"); px_(385, 60, 15, 14, "#120f2a"); px_(385, 60, 15, 1, "#2c2970"); px_(385, 73, 15, 1, "#2c2970"); px_(385, 60, 1, 14, "#2c2970"); px_(399, 60, 1, 14, "#2c2970");
-  L = null;
-
-  function drawCover() {
-    const t = tvT, c = cx2; c.imageSmoothingEnabled = false;
-    c.drawImage(skyL, 0, 0);
-    CLOUDS.forEach(([img, x, y, sp], i) => c.drawImage(img, Math.round(x + Math.sin(t * 0.006 * sp + i) * 10), y));
-    c.drawImage(cityL, 0, 0);
-    // twinkling windows, neon sign, bulbs and lamp glow
-    lit.forEach(([x, y], i) => { if (tvHash(i + Math.floor(t / 30) * 0.37) > 0.93) { c.fillStyle = "#3c357e"; c.fillRect(x, y, 2, 2); } });
-    const neonOn = (t % 70) >= 3;
-    if (neonOn) { c.fillStyle = "rgba(255,77,122,0.10)"; c.fillRect(380, 55, 25, 24); c.fillStyle = "rgba(255,77,122,0.14)"; c.fillRect(383, 58, 19, 18); }
-    c.fillStyle = neonOn ? "#ff4d7a" : "#5a2440";
-    NEON_HEART.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === "#") c.fillRect(388 + x, 63 + y, 1, 1); }));
-    if (neonOn) { c.fillStyle = "#ffd0dc"; c.fillRect(389, 64, 1, 1); c.fillRect(394, 64, 1, 1); }
-    BULBS.forEach(([x, y, s], i) => { const on = (i + Math.floor(t / 4)) % 9 !== 0; c.fillStyle = on ? "rgba(255,210,120,0.22)" : "rgba(0,0,0,0)"; c.fillRect(x - s, y - s, s * 3, s * 3); c.fillStyle = on ? (i % 3 ? "#ffd36b" : "#ff9a6b") : "#5a4436"; c.fillRect(x, y, s, s); });
-    LAMPS.forEach(([x, base, top, w]) => { const d = x < VPX ? 1 : -1, lx = x + 6 * d; c.fillStyle = "rgba(255,226,170,0.09)"; c.beginPath(); c.moveTo(lx - 2, top + w + 1); c.lineTo(lx + 2, top + w + 1); c.lineTo(lx + (base - top) * 0.32, base); c.lineTo(lx - (base - top) * 0.32, base); c.fill(); });
-    if (t % 50 > 2) { c.fillStyle = "#ffd84a"; c.fillRect(156, 234, 1, 1); c.fillRect(158, 234, 1, 1); }
-    // many different people on the same avenue, each with their own pile, each losing what they love along the way
-    COVER_PEOPLE.forEach((pp, n) => {
-      const S = pp.S, f = Math.floor((t + n * 2) / 3) % 4, bob = f % 2;
-      c.fillStyle = "rgba(10,6,24,0.5)"; c.beginPath(); c.ellipse(pp.x, pp.feet, 7 * S, 1.5 * S, 0, 0, Math.PI * 2); c.fill();
-      drawPortrait(coverPv, null, f, pp.look);
-      c.save(); c.translate(pp.x, 0); c.scale(pp.dir, 1); c.drawImage(coverPv.canvas, -8 * S, pp.feet - 26 * S, 16 * S, 26 * S); c.restore();
-      let sy = pp.feet - 26 * S + 2 * S + (pp.look.wheel ? 0 : bob);
-      pp.stack.forEach((ty, i) => {
-        const im = blockImg(ty), sway = Math.round(Math.sin(t / 7 + i * 0.6 + n) * i * 0.35 * S);
-        sy -= im.height * S / 2 - 2 * S; c.drawImage(im, pp.x - im.width * S / 4 + sway, sy, im.width * S / 2, im.height * S / 2);
-      });
-      if ((t + n * 17) % 34 === 0) coverFall.push({ ty: GOOD[Math.floor((t + n * 5) / 34) % GOOD.length], x: pp.x - pp.dir * 2, y: pp.feet - 20 * S, vx: -pp.dir * (0.4 + tvHash(t + n) * 0.4) * S, vy: -1.5 * S, rest: 0, feet: pp.feet, S });
-    });
-    coverFall.forEach((h) => {
-      const S = h.S;
-      if (!h.rest) { h.vy += 0.25 * S; h.x += h.vx; h.y += h.vy; if (h.y >= h.feet - 1) { h.y = h.feet - 1; if (h.vy > 1.2 * S) { h.vy *= -0.35; h.vx *= 0.5; } else h.rest = 1; } }
-      else { h.rest++; h.x += h.vx * 0.3; }
-      const im = blockImg(h.ty), q = h.rest ? 0 : Math.floor(t / 3) % 4, w = im.width * S / 2, hh = im.height * S / 2;
-      c.save(); c.globalAlpha = Math.max(0, 1 - Math.max(0, h.rest - 14) / 10);
-      c.translate(Math.round(h.x), Math.round(h.y - hh / 2)); c.rotate(q * Math.PI / 2); c.drawImage(im, -w / 2, -hh / 2, w, hh); c.restore();
-    });
-    for (let i = coverFall.length - 1; i >= 0; i--) if (coverFall[i].rest > 24) coverFall.splice(i, 1);
-    blitCover();
-  }
-  setInterval(() => { if (!$("title").hidden) { tvT++; drawCover(); } }, 100);
   function renderSelect() {
     document.querySelectorAll(".seg").forEach((sg) => sg.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(sel[sg.dataset.key] === b.dataset.v))));
     const d = diffOf();
