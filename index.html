@@ -106,7 +106,22 @@ h1 em { font-style: normal; color: var(--good); }
 .diff-label { font-family: var(--pix); font-size: 14px; letter-spacing: .14em; }
 .diff-bar { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
 .diff-bar i { height: 6px; background: var(--edge); }
-.twist { font-family: var(--pix); font-size: clamp(16px, 4.4vw, 26px); letter-spacing: .12em; line-height: 1.5; color: var(--bad); margin: 0; text-wrap: balance; }
+.select-foot { width: 100%; display: flex; align-items: flex-end; gap: 18px; }
+.select-foot .diff { flex: 1 1 auto; min-width: 0; }
+.select-foot .cta { flex: none; }
+.h-sel { font-size: clamp(16px, 3.6vw, 26px); }
+/* short screens (phone lying down): compact the character screen so everything fits without scrolling */
+@media (max-height: 520px) {
+  #select .box { gap: 10px; }
+  #select .eyebrow { display: none; }
+  .h-sel { font-size: 16px; }
+  .select { gap: 12px; }
+  .opts { gap: 6px; }
+  .seg button { padding: 7px 6px; }
+  .portrait { padding: 8px 14px; gap: 6px; }
+  .portrait canvas { width: 56px; height: 91px; }
+  .select-foot .cta { padding: 10px 22px; }
+}
 @media (max-width: 560px) {
   .select { grid-template-columns: minmax(0, 1fr); }
   .portrait canvas { width: 56px; height: 91px; }
@@ -162,7 +177,7 @@ h1 em { font-style: normal; color: var(--good); }
 <div class="ov" id="select" hidden>
   <div class="box">
     <span class="eyebrow">antes de nascer</span>
-    <h1>QUEM VOCÊ VAI SER?</h1>
+    <h1 class="h-sel">QUEM VOCÊ VAI SER?</h1>
     <div class="select">
       <div class="portrait"><canvas id="pv" width="16" height="26"></canvas><span>você</span></div>
       <div class="opts">
@@ -173,18 +188,13 @@ h1 em { font-style: normal; color: var(--good); }
         <div class="opt-row"><span>deficiência</span><div class="seg" data-key="pcd"><button type="button" data-v="nao">não</button><button type="button" data-v="sim">cadeira de rodas</button></div></div>
       </div>
     </div>
-    <div class="diff">
-      <div class="diff-head"><span>dificuldade</span><span class="diff-label" id="diffLabel">FÁCIL</span></div>
-      <div class="diff-bar" id="diffBar"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="select-foot">
+      <div class="diff">
+        <div class="diff-head"><span>dificuldade</span><span class="diff-label" id="diffLabel">FÁCIL</span></div>
+        <div class="diff-bar" id="diffBar"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      </div>
+      <button class="cta" id="bornBtn" type="button">nascer</button>
     </div>
-    <button class="cta" id="bornBtn" type="button">nascer</button>
-  </div>
-</div>
-
-<div class="ov" id="twist" hidden>
-  <div class="box">
-    <p class="twist">NA VIDA REAL, NINGUÉM ESCOLHE.</p>
-    <p class="lead">A gente também é produzido pelo lugar e pelo corpo em que nasce.</p>
   </div>
 </div>
 
@@ -1341,9 +1351,9 @@ h1 em { font-style: normal; color: var(--good); }
     $("diffLabel").textContent = DIFF[d]; $("diffLabel").style.color = DIFF_COL[d];
   }
   document.querySelectorAll(".seg button").forEach((b) => b.addEventListener("click", () => { sel[b.parentElement.dataset.key] = b.dataset.v; renderSelect(); initAudio(); tone(440 + diffOf() * 80, 0.06, "square", 0.04); }));
-  function showSelect() { initAudio(); ["title", "end", "twist"].forEach((id) => ($(id).hidden = true)); $("select").hidden = false; renderSelect(); document.querySelector(".seg button").focus(); }
-  function start() { initAudio(); reset(); mode = "play"; ["title", "end", "twist", "select"].forEach((id) => ($(id).hidden = true)); }
-  $("bornBtn").addEventListener("click", () => { $("select").hidden = true; $("twist").hidden = false; sfx.nope(); setTimeout(start, 2600); });
+  function showSelect() { initAudio(); ["title", "end"].forEach((id) => ($(id).hidden = true)); $("select").hidden = false; renderSelect(); document.querySelector(".seg button").focus(); }
+  function start() { initAudio(); reset(); mode = "play"; ["title", "end", "select"].forEach((id) => ($(id).hidden = true)); }
+  $("bornBtn").addEventListener("click", start);
   function showEnd() {
     const f = sel.genero === "mulher";
     const names = [f ? "mulher" : "homem", sel.cor === "negra" ? (f ? "negra" : "negro") : (f ? "branca" : "branco")];
