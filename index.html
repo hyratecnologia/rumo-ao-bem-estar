@@ -135,6 +135,23 @@ h1 em { font-style: normal; color: var(--good); }
   .stats b { font-size: 14px; }
 }
 .select-foot { width: 100%; display: flex; align-items: flex-end; gap: 18px; }
+/* psychologist bonus screen */
+.ov.bonus { background: radial-gradient(ellipse at 30% 40%, rgba(95,209,138,.22), rgba(5,5,10,.94) 65%); }
+.bonus-box { gap: 14px; max-width: 680px; }
+.bonus-eyebrow { color: var(--good); animation: blink 1.1s steps(1) infinite; }
+.h-bonus { color: #c8ffd9; font-size: clamp(18px, 4.4vw, 32px); text-shadow: 0 3px 0 #1b5a37; }
+.bonus-main { display: flex; gap: 22px; align-items: center; justify-content: center; width: 100%; }
+.bonus-pv { border-color: var(--good); background: rgba(95,209,138,.08); box-shadow: 0 0 30px rgba(95,209,138,.35); }
+.bonus-pv canvas { width: 104px; height: 169px; }
+.bonus-pv span { color: var(--good); text-transform: uppercase; letter-spacing: .3em; }
+.perks { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; text-align: left; }
+.perks li { display: flex; align-items: center; gap: 10px; font-size: 12px; letter-spacing: .06em; color: var(--ink); opacity: 0; transform: translateX(-8px); transition: opacity .3s, transform .3s; }
+.perks li.on { opacity: 1; transform: none; }
+.perks b { flex: none; width: 52px; font-family: var(--pix); font-weight: 400; font-size: 11px; color: var(--good); text-align: center; border: 1px solid rgba(95,209,138,.5); padding: 3px 0; }
+.bonus-note { color: #8ff0b4; }
+.bonus-cta { border-color: var(--good); background: rgba(95,209,138,.14); }
+@media (max-height: 520px) { .bonus-box { gap: 8px; } .bonus-pv canvas { width: 60px; height: 98px; } .bonus-pv { padding: 8px 12px; } .perks { gap: 4px; } .perks li { font-size: 11px; } }
+@media (max-width: 560px) { .bonus-main { gap: 12px; } .bonus-pv canvas { width: 60px; height: 98px; } }
 /* birth lottery */
 .draw-pv canvas { width: 112px; height: 182px; }
 .draw-traits { margin: 0; min-height: 1.6em; font-size: 13px; letter-spacing: .14em; color: var(--ink); text-transform: lowercase; }
@@ -234,6 +251,19 @@ h1 em { font-style: normal; color: var(--good); }
     <p class="draw-traits" id="drawTraits">&nbsp;</p>
     <p class="draw-diff" id="drawDiff">&nbsp;</p>
     <p class="lead small" id="drawNote">ninguém escolhe cor, gênero, classe ou corpo ao nascer.</p>
+  </div>
+</div>
+
+<div class="ov bonus" id="bonus" hidden>
+  <div class="box bonus-box">
+    <span class="eyebrow bonus-eyebrow">★ bônus ★</span>
+    <h1 class="h-bonus" id="bonusTitle">A PSICÓLOGA CHEGOU</h1>
+    <div class="bonus-main">
+      <div class="portrait bonus-pv"><canvas id="bonusPv" width="16" height="26"></canvas><span id="bonusTag">psicóloga</span></div>
+      <ul class="perks" id="bonusPerks"></ul>
+    </div>
+    <p class="lead small bonus-note" id="bonusNote">Ela não carrega nada por você. Caminha junto.</p>
+    <button class="cta bonus-cta" id="bonusBtn" type="button">seguir juntos</button>
   </div>
 </div>
 
@@ -746,8 +776,7 @@ h1 em { font-style: normal; color: var(--good); }
         psi.mv = dd > 2 || Math.hypot(P.vx, P.vy) > 5; if (psi.mv) psi.walk += dt * 12;
         if (!psi.arrived && dd < 6) {
           psi.arrived = true; sfx.chime(); if (P.hearts < 5) P.hearts++;
-          warnMsg((PSI.fem ? "a psicóloga chegou. ela" : "o psicólogo chegou. ele") + " não carrega por você, mas caminha junto");
-          warnMsg((PSI.fem ? "perto dela" : "perto dele") + ", o que brilha dá pra soltar");
+          showBonus();
         }
         if (psi.arrived) psi.t += dt;
         if (psi.arrived && psi.t > 30) startEnding("fim");
@@ -1433,7 +1462,7 @@ h1 em { font-style: normal; color: var(--good); }
     const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
     if (!paused) {
       if (mode === "title") { time += dt; camX += dt * 30; }
-      else if (mode !== "over") update(dt);
+      else if (mode !== "over" && mode !== "bonus") update(dt);
       render();
     }
     requestAnimationFrame(frame);
@@ -1456,8 +1485,8 @@ h1 em { font-style: normal; color: var(--good); }
   $("mute").addEventListener("click", (e) => { e.stopPropagation(); toggleMute(); });
   $("mute").addEventListener("pointerdown", (e) => e.stopPropagation());
 
-  function drawPortrait(pvx, s, pvT) {
-    pvx.clearRect(0, 0, 16, 26); const lk = heroLook(s);
+  function drawPortrait(pvx, s, pvT, lookObj) {
+    pvx.clearRect(0, 0, 16, 26); const lk = lookObj || heroLook(s);
     if (lk.wheel) {
       pvx.drawImage(personImg(lk, "idle"), 0, -2);
       pvx.fillStyle = "#14121e"; pvx.fillRect(2, 12, 11, 2); pvx.fillRect(1, 6, 2, 8);
@@ -1467,7 +1496,22 @@ h1 em { font-style: normal; color: var(--good); }
     } else pvx.drawImage(personImg(lk, "r" + (pvT % 4)), 0, 0);
   }
   const pvx0 = $("pv").getContext("2d"), dpx = $("drawPv").getContext("2d"); let pvT = 0;
-  setInterval(() => { pvT++; drawPortrait(pvx0, sel, pvT); if (!$("draw").hidden) drawPortrait(dpx, sel, pvT); }, 130);
+  const bpx = $("bonusPv").getContext("2d");
+  setInterval(() => { pvT++; drawPortrait(pvx0, sel, pvT); if (!$("draw").hidden) drawPortrait(dpx, sel, pvT); if (!$("bonus").hidden) drawPortrait(bpx, sel, pvT, PSI); }, 130);
+  // reward screen when the psychologist arrives: the game pauses and the psychologist gets the spotlight
+  function showBonus() {
+    const f = PSI.fem, ela = f ? "dela" : "dele";
+    mode = "bonus"; keys.up = keys.down = keys.left = keys.right = false; joy.id = null; joy.dx = joy.dy = 0;
+    $("bonusTitle").textContent = f ? "A PSICÓLOGA CHEGOU" : "O PSICÓLOGO CHEGOU";
+    $("bonusTag").textContent = f ? "psicóloga" : "psicólogo";
+    $("bonusNote").textContent = (f ? "Ela" : "Ele") + " não carrega nada por você. Caminha junto.";
+    const perks = [["+1 ♥", "um coração de volta"], ["½", "perto " + ela + ", a pilha pesa a metade"], ["SOLTA", "culpa e armário dá pra largar: o que brilha, sai"], ["♪", "perto " + ela + ", você não perde o que ama"], ["CALMA", "as crises vêm mais fracas e mais espaçadas"]];
+    $("bonusPerks").innerHTML = perks.map(([a, b]) => "<li><b>" + a + "</b><span>" + b + "</span></li>").join("");
+    $("bonus").hidden = false;
+    [...$("bonusPerks").children].forEach((li, i) => setTimeout(() => { li.classList.add("on"); tone(660 + i * 110, 0.09, "triangle", 0.06); }, 500 + i * 380));
+    setTimeout(() => $("bonusBtn").focus(), 50);
+  }
+  $("bonusBtn").addEventListener("click", (e) => { e.stopPropagation(); $("bonus").hidden = true; mode = "play"; last = performance.now(); });
   // ===== cover art: original, detailed pixel scene of a city street at dusk (480x270), pre-rendered in layers =====
   const CW = 480, CH = 270, VPX = 240, VPY = 186;
   // the scene is drawn at 480x270 and blown up on screen by a whole number, so every pixel stays square and sharp
