@@ -4,6 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07070d">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Saúde Mental">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="description" content="Rumo à Saúde Mental: um joguinho sobre saúde mental feito para a Semana da Psicologia.">
 <meta property="og:title" content="Rumo à Saúde Mental">
 <meta property="og:description" content="Um joguinho sobre saúde mental e cobranças. Todo mundo parece chegar lá. Por que você não chega?">
@@ -38,12 +43,13 @@ button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 .wrap {
   box-sizing: border-box; height: 100%; height: 100dvh; position: relative;
   display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px);
 }
 #stage { flex: 1 1 auto; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; }
 .screen { position: relative; }
 canvas#c { display: block; width: 100%; height: 100%; image-rendering: pixelated; background: #000; touch-action: none; }
-.mute { position: absolute; top: max(8px, env(safe-area-inset-top, 0px)); right: max(8px, env(safe-area-inset-right, 0px)); width: 34px; height: 34px; border-radius: 50%; background: rgba(10,10,18,.7); border: 1px solid var(--edge); color: var(--ink); font-size: 9px; letter-spacing: .05em; }
-.tbtns { position: absolute; right: max(12px, env(safe-area-inset-right, 0px)); bottom: max(12px, env(safe-area-inset-bottom, 0px)); display: none; gap: 12px; }
+.mute { position: absolute; top: 8px; right: 8px; width: 34px; height: 34px; border-radius: 50%; background: rgba(10,10,18,.7); border: 1px solid var(--edge); color: var(--ink); font-size: 9px; letter-spacing: .05em; }
+.tbtns { position: absolute; right: 12px; bottom: 12px; display: none; gap: 12px; }
 .tbtns button { width: 64px; height: 64px; border-radius: 50%; border: 2px solid rgba(255,255,255,.25); background: rgba(10,10,18,.55); color: var(--ink); font-size: 10px; letter-spacing: .12em; touch-action: none; }
 .tbtns button.drop { border-color: rgba(95,209,138,.6); color: var(--good); }
 .tbtns button.on { background: rgba(255,255,255,.15); }
@@ -1356,11 +1362,14 @@ h1 em { font-style: normal; color: var(--good); }
   }
   function goFull() {
     const el = document.documentElement, rq = el.requestFullscreen || el.webkitRequestFullscreen;
-    if (!rq || document.fullscreenElement || document.webkitFullscreenElement || !matchMedia("(pointer: coarse)").matches) return;
+    if (!rq || document.fullscreenElement || document.webkitFullscreenElement) return;
     try { const r = rq.call(el, { navigationUI: "hide" }); if (r && r.then) r.then(() => { try { screen.orientation.lock("landscape").catch(() => {}); } catch (e) {} }).catch(() => {}); } catch (e) {}
   }
   addEventListener("orientationchange", () => setTimeout(fit, 250));
   if (window.visualViewport) visualViewport.addEventListener("resize", fit);
+  // browsers only allow fullscreen after a user gesture: enter it on the first touch, click or key
+  addEventListener("pointerdown", goFull, true);
+  addEventListener("keydown", (e) => { if (e.key !== "Escape") goFull(); }, true);
   $("startBtn").addEventListener("click", () => { goFull(); showSelect(); });
   $("againBtn").addEventListener("click", start);
   $("charBtn").addEventListener("click", showSelect);
