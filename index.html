@@ -1452,10 +1452,17 @@ h1 em { font-style: normal; color: var(--good); }
       blk(b.type, bx + 5.5, by + 11);
     });
   }
+  // pixel-art panel: notched corners, crisp half-unit border, a lighter inner line on top
+  function panel(x, y, w, h, bg, bd, hi) {
+    x = Math.round(x * 2) / 2; y = Math.round(y * 2) / 2; w = Math.round(w * 2) / 2; h = Math.round(h * 2) / 2;
+    g.fillStyle = bg; g.fillRect(x + 0.5, y + 0.5, w - 1, h - 1);
+    g.fillStyle = bd; g.fillRect(x + 1, y, w - 2, 0.5); g.fillRect(x + 1, y + h - 0.5, w - 2, 0.5); g.fillRect(x, y + 1, 0.5, h - 2); g.fillRect(x + w - 0.5, y + 1, 0.5, h - 2);
+    g.fillRect(x + 0.5, y + 0.5, 0.5, 0.5); g.fillRect(x + w - 1, y + 0.5, 0.5, 0.5); g.fillRect(x + 0.5, y + h - 1, 0.5, 0.5); g.fillRect(x + w - 1, y + h - 1, 0.5, 0.5);
+    if (hi) { g.fillStyle = hi; g.fillRect(x + 1, y + 1, w - 2, 0.5); }
+  }
   function tag(s, x, y, col) {
-    const w = measure(s, 5.5, PIX, 0.5) + 8;
-    g.fillStyle = "rgba(8,8,14,0.85)"; rrect(x - w / 2, y - 5, w, 10, 2); g.fill();
-    g.strokeStyle = col; g.lineWidth = 0.7; g.stroke();
+    const w = measure(s, 5.5, PIX, 0.5) + 9;
+    panel(x - w / 2, y - 5, w, 10, "rgba(8,8,14,0.9)", col, "rgba(255,255,255,0.08)");
     txt(s, x, y + 0.3, { size: 5.5, font: PIX, color: col, ls: 0.5, shadow: false });
   }
   const BSTYLE = {
@@ -1469,19 +1476,19 @@ h1 em { font-style: normal; color: var(--good); }
   function bubbleDraw(b) {
     const st = BSTYLE[b.style] || BSTYLE.light;
     const a = clamp(b.t < 0.15 ? b.t / 0.15 : b.t > b.life - 0.35 ? (b.life - b.t) / 0.35 : 1, 0, 1);
-    const fs = st.size || 7, w = measure(b.text, fs, MONO, 0.4, st.it ? "italic 600" : "600") + 12, h = fs + 6;
+    const fs = st.size || 7, w = Math.round(measure(b.text, fs, MONO, 0.4, st.it ? "italic 600" : "600") + 12), h = fs + 6;
     let bx = b.x, by = b.y;
     if (b.owner) { const [ax, ay] = anchorOf(b.owner); bx = ax; by = ay - b.k * (h + 3); }
-    const x = clamp(bx - camX, w / 2 + 4, LW - w / 2 - 4), y = Math.max(56, by);
+    const x = Math.round(clamp(bx - camX, w / 2 + 4, LW - w / 2 - 4) * 2) / 2, y = Math.round(Math.max(56, by) * 2) / 2;
     g.save(); g.globalAlpha = a;
-    g.fillStyle = st.bg; rrect(x - w / 2, y - h / 2, w, h, 3); g.fill();
-    g.beginPath(); g.moveTo(x - 3, y + h / 2 - 0.5); g.lineTo(x + 3, y + h / 2 - 0.5); g.lineTo(x, y + h / 2 + 4); g.closePath(); g.fill();
-    g.strokeStyle = st.bd; g.lineWidth = 0.7; rrect(x - w / 2, y - h / 2, w, h, 3); g.stroke();
+    panel(x - w / 2, y - h / 2, w, h, st.bg, st.bd, st.it ? null : "rgba(255,255,255,0.12)");
+    g.fillStyle = st.bd;
+    if (st.it) [[x - 4, y + h / 2 + 2, 2], [x - 7, y + h / 2 + 5.5, 1.5]].forEach(([cx, cy, r]) => { g.fillStyle = st.bd; g.fillRect(cx - r / 2 - 0.5, cy - r / 2 - 0.5, r + 1, r + 1); g.fillStyle = st.bg; g.fillRect(cx - r / 2, cy - r / 2, r, r); });
+    else { g.fillStyle = st.bg; g.fillRect(x - 2.5, y + h / 2 - 0.5, 5, 1); g.fillRect(x - 1.5, y + h / 2 + 0.5, 3, 1); g.fillRect(x - 0.5, y + h / 2 + 1.5, 1, 1);
+      g.fillStyle = st.bd; g.fillRect(x - 3, y + h / 2 - 0.5, 0.5, 1); g.fillRect(x + 2.5, y + h / 2 - 0.5, 0.5, 1); g.fillRect(x - 2, y + h / 2 + 0.5, 0.5, 1); g.fillRect(x + 1.5, y + h / 2 + 0.5, 0.5, 1); g.fillRect(x - 1, y + h / 2 + 1.5, 0.5, 1); g.fillRect(x + 0.5, y + h / 2 + 1.5, 0.5, 1); g.fillRect(x - 0.5, y + h / 2 + 2.5, 1, 0.5); }
     g.restore();
     txt(b.text, x, y + 0.3, { size: fs, color: st.fg, ls: 0.4, shadow: false, weight: st.it ? "italic 600" : "600", alpha: a });
-    if (st.it) { g.globalAlpha = a; g.fillStyle = st.bg; [[x - 4, y + h / 2 + 3, 1.8], [x - 7, y + h / 2 + 7, 1.2]].forEach(([cx, cy, r]) => { g.beginPath(); g.arc(cx, cy, r, 0, Math.PI * 2); g.fill(); }); g.globalAlpha = 1; }
   }
-
 
   function darkness() {
     if (mode === "title") return 0;
@@ -1663,7 +1670,7 @@ h1 em { font-style: normal; color: var(--good); }
     tiles(SC.road, 1, ROAD_T);
     // light pools on the asphalt, in hard bands
     g.globalCompositeOperation = "lighter";
-    lamps.forEach(([hx]) => { [[50, 14, 0.022], [34, 9, 0.026], [18, 5, 0.032]].forEach(([rx, ry, a]) => { g.fillStyle = "rgba(255,180,90," + a + ")"; g.beginPath(); g.ellipse(hx, 100, rx, ry, 0, 0, Math.PI * 2); g.fill(); }); });
+    lamps.forEach(([hx]) => { [[50, 14, 0.012], [34, 9, 0.014], [18, 5, 0.018]].forEach(([rx, ry, a]) => { g.fillStyle = "rgba(255,180,90," + a + ")"; g.beginPath(); g.ellipse(hx, 100, rx, ry, 0, 0, Math.PI * 2); g.fill(); }); });
     g.globalCompositeOperation = "source-over";
     // worn paint: edges, lane dashes, double yellow centre, arrows
     const ox = -(camX % 8);
@@ -2033,18 +2040,18 @@ h1 em { font-style: normal; color: var(--good); }
     if (mode === "play") tag("MERCADO DE TRABALHO", x, y + 8, "#ff6b7d");
   }
   function drawHUD() {
-    g.fillStyle = "rgba(5,5,10,0.55)"; g.fillRect(0, 0, LW, 24);
-    for (let i = 0; i < 5; i++) sprite(i < P.hearts ? HEART.full : HEART.empty, 8 + i * 11, 6, 10, 9);
-    txt("saúde mental", 8, 19, { size: 5, align: "left", color: "#8f8da6", ls: 1.2, shadow: false });
+    g.fillStyle = "rgba(6,5,14,0.72)"; g.fillRect(0, 0, LW, 24); g.fillStyle = "#2c2a40"; g.fillRect(0, 24, LW, 0.5); g.fillStyle = "rgba(0,0,0,0.35)"; g.fillRect(0, 24.5, LW, 1);
+    for (let i = 0; i < 5; i++) sprite(i < P.hearts ? HEART.full : HEART.empty, 8 + i * 11, 5 + (i < P.hearts && heartPulse > 0.5 && i === P.hearts - 1 ? -0.5 : 0), 10, 9);
+    txt("saúde mental", 8, 19.5, { size: 5, align: "left", color: "#8f8da6", ls: 1.2, shadow: false });
     const bx = 160, bw = 150, frac = clamp((P.x - 70) / Math.max(1, arch.x - 70), 0, 1);
     txt("CAMINHO DA SAÚDE MENTAL", bx + bw / 2, 6.5, { size: 5, color: "#8f8da6", ls: 1.6, shadow: false });
-    g.fillStyle = "#2c2b3d"; g.fillRect(bx, 12, bw, 2);
-    const gr = g.createLinearGradient(bx, 0, bx + bw, 0); gr.addColorStop(0, "#e0404f"); gr.addColorStop(1, "#e8b84a");
-    g.fillStyle = gr; g.fillRect(bx, 12, bw * frac, 2);
-    g.fillStyle = "#5fd18a"; g.fillRect(bx + bw - 1, 9, 1.5, 8);
-    txt("saúde mental", bx + bw + 4, 13, { size: 5, align: "left", color: "#5fd18a", ls: 0.8, shadow: false });
-    g.fillStyle = "#e8b84a"; g.beginPath(); g.arc(bx + bw * frac, 13, 3, 0, Math.PI * 2); g.fill();
-    g.strokeStyle = "#14121e"; g.lineWidth = 1; g.stroke();
+    panel(bx - 1.5, 10.5, bw + 3, 5, "#14121e", "#3a3850");
+    const n = Math.floor(frac * 37);
+    for (let k = 0; k < n; k++) { g.fillStyle = mix("#e0404f", "#e8b84a", k / 36); g.fillRect(bx + k * 4.05, 12, 3.5, 2); g.fillStyle = "rgba(255,255,255,0.25)"; g.fillRect(bx + k * 4.05, 12, 3.5, 0.5); }
+    g.fillStyle = "#5fd18a"; g.fillRect(bx + bw + 1, 8.5, 1, 9);
+    txt("saúde mental", bx + bw + 5, 13, { size: 5, align: "left", color: "#5fd18a", ls: 0.8, shadow: false });
+    const mx = Math.round((bx + bw * frac) * 2) / 2;
+    g.fillStyle = "#14121e"; g.fillRect(mx - 2.5, 9.5, 5, 7); g.fillStyle = "#e8b84a"; g.fillRect(mx - 2, 10, 4, 6); g.fillStyle = "#fff1a8"; g.fillRect(mx - 2, 10, 4, 1); g.fillStyle = "#a8801e"; g.fillRect(mx - 2, 15, 4, 1);
     txt("dificuldade", LW - 50, 7, { size: 5, align: "right", color: "#8f8da6", ls: 1.2, shadow: false });
     txt(DIFF[D], LW - 50, 16, { size: 7, align: "right", font: PIX, color: DIFF_COL[D], ls: 0.6, shadow: false });
   }
@@ -2054,8 +2061,8 @@ h1 em { font-style: normal; color: var(--good); }
     const s = "⚠  " + warn.text;
     const w = Math.min(LW - 20, measure(s, 6.5, MONO, 1) + 22);
     g.save(); g.globalAlpha = a;
-    g.fillStyle = "rgba(24,6,10,0.9)"; g.fillRect(LW / 2 - w / 2, 240, w, 18);
-    g.strokeStyle = "#e0404f"; g.lineWidth = 0.8; g.strokeRect(LW / 2 - w / 2 + 0.5, 240.5, w - 1, 17);
+    panel(LW / 2 - w / 2, 240, w, 18, "rgba(24,6,10,0.92)", "#e0404f", "rgba(255,120,130,0.18)");
+    g.fillStyle = "#e0404f"; g.fillRect(LW / 2 - w / 2 + 3, 243, 0.5, 12); g.fillRect(LW / 2 + w / 2 - 3.5, 243, 0.5, 12);
     g.restore();
     txt(s, LW / 2, 249.5, { size: 6.5, color: "#ff9aa2", ls: 1, shadow: false, alpha: a });
   }
@@ -2070,13 +2077,14 @@ h1 em { font-style: normal; color: var(--good); }
     if (!dialog) return;
     const a = clamp(dialog.t / 0.4, 0, 1);
     g.save(); g.globalAlpha = a;
-    g.fillStyle = "rgba(6,6,12,0.92)"; g.fillRect(LW / 2 - 190, 196, 380, 62);
-    g.strokeStyle = "#e8b84a"; g.lineWidth = 0.7; g.strokeRect(LW / 2 - 189.5, 196.5, 379, 61);
+    panel(LW / 2 - 190, 196, 380, 62, "rgba(6,6,12,0.94)", "#e8b84a", "rgba(232,184,74,0.18)");
+    g.fillStyle = "#e8b84a"; [[-186, 200], [184, 200], [-186, 252], [184, 252]].forEach(([dx, yy]) => g.fillRect(LW / 2 + dx, yy, 1.5, 1.5));
     g.restore();
     const t1 = dialog.lines[0], n1 = Math.floor(clamp((dialog.t - 0.4) * 28, 0, t1.length));
     txt(t1.slice(0, n1), LW / 2, 216, { size: 9, color: "#ecebf2", ls: 0.6, shadow: false, alpha: a });
     const t2 = dialog.lines[1], n2 = Math.floor(clamp((dialog.t - 3) * 24, 0, t2.length));
     if (n2 > 0) txt(t2.slice(0, n2), LW / 2, 236, { size: 9, color: "#8ff0b4", ls: 0.6, shadow: false, alpha: a });
+    if (n2 >= t2.length && Math.floor(time * 2) % 2) { g.fillStyle = "#8ff0b4"; g.fillRect(LW / 2 + 176, 248, 3, 2); g.fillRect(LW / 2 + 177, 250, 1, 1); }
   }
 
   function render() {
