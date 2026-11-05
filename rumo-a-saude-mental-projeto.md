@@ -102,6 +102,7 @@ Ao clicar em **nascer**, a escolha feita **não vale**:
 - O retrato e os traços giram rápido, como numa roleta (com "tic-tic"), e vão desacelerando por cerca de 3 s até parar num **personagem sorteado**. A legenda muda de "sorteando..." para **"você"**.
 - Aparecem os traços sorteados (ex.: *"mulher · negra · hétero · pobre"*) e a **dificuldade** em cor.
 - Frase: **"ninguém escolhe cor, gênero, classe ou corpo ao nascer."**
+- **Chances do sorteio:** cor, gênero, orientação e classe são cara ou coroa (50%). Deficiência sai **1 vez em 5 (20%)**: com 50% a cadeira de rodas aparecia em metade dos sorteios.
 - Depois de cerca de 3 s (ou com um toque na tela), a partida começa com o personagem sorteado. "Jogar de novo" repete o mesmo personagem; "trocar personagem" volta à escolha (que abre aleatória de novo).
 
 **Aparência da personagem conforme as escolhas:**
@@ -232,18 +233,21 @@ Começam depois de 4 s. Existem dois tipos, com regras diferentes.
 - **Não dá para pular nem desviar.** Se o jogador tenta pular, o pulo bate no muro e a personagem volta ao chão. Não existe jeito de escapar: a barreira não depende da habilidade de quem passa.
 - Ao encostar no muro, a personagem **fica presa por um instante** (é empurrada levemente para trás e não avança), **perde um item que ama** e aparece o nome da barreira. Depois disso ela atravessa devagar e segue o caminho.
 - **Não tira coração.** O custo é tempo e o que você ama, não uma "falha" do jogador.
-- Aparecem em 60% das vezes quando a personagem tem algum desses traços:
+- Quando a personagem tem algum desses traços, aparecem **no máximo uma a cada ~10 s** (9 a 13 s).
+- **Não repetem:** saem de um "saquinho embaralhado" com as barreiras de todos os traços da personagem. Todas aparecem uma vez antes de qualquer uma repetir, e nunca a mesma duas vezes seguidas.
+
+Barreiras por traço:
 
 | Traço | Barreiras |
 |---|---|
-| negra | RACISMO · "SEM PERFIL" · SEGUIDA NA LOJA |
-| mulher | MACHISMO · ASSÉDIO · SALÁRIO MENOR |
-| lgbt+ | LGBTFOBIA · "É SÓ UMA FASE" · PIADINHA |
-| pobre | SEM GRANA · ÔNIBUS LOTADO · SEM INTERNET |
-| com deficiência (peso dobrado) | SEM RAMPA · ESCADA · CALÇADA QUEBRADA · CAPACITISMO |
+| negra | RACISMO · "SEM PERFIL" · SEGUIDA NA LOJA · "CABELO RUIM" · ABORDAGEM · SEM REPRESENTAÇÃO |
+| mulher | MACHISMO · ASSÉDIO · SALÁRIO MENOR · DUPLA JORNADA · "SORRIA MAIS" · INTERROMPIDA |
+| lgbt+ | LGBTFOBIA · "É SÓ UMA FASE" · PIADINHA · OLHARES · "NÃO PARECE" · EXPULSÃO DE CASA |
+| pobre | SEM GRANA · ÔNIBUS LOTADO · SEM INTERNET · MORA LONGE · SEM SANEAMENTO · SÓ BICO |
+| com deficiência | SEM RAMPA · ESCADA · CALÇADA QUEBRADA · CAPACITISMO · SEM ELEVADOR · VAGA OCUPADA |
 | filhos (desligado) | SEM CRECHE · REUNIÃO NA ESCOLA |
 
-A dificuldade também deixa as barreiras mais frequentes.
+A dificuldade deixa as barreiras comuns (prazo, meta etc.) mais frequentes.
 
 ### 6.6 As pessoas de máscara (quem "chega lá")
 - Depois de 3 s, a cada 4,5–7 s passa alguém **mais rápido que você**. São **9 pessoas diferentes** (brancas, negras, pardas; homens e mulheres; uma com broche LGBT+), todas com a mesma **máscara branca sorridente**.
@@ -314,14 +318,15 @@ Ao longo da avenida aparecem outdoors. Os que vendem algo piscam **"COMPRE AGORA
 - **Aparência sorteada a cada partida:** tom de pele, cabelo (incluindo grisalho, roxo e azul), roupa, chance de ser cadeirante (15%), chance de ter broche LGBT+ (20%) e 50% de chance de ser psicóloga ou psicólogo.
 - **Ao chegar:** toca um sininho, você **recupera 1 coração** e o jogo **pausa numa tela de bônus**:
   - Sobretítulo piscando: **★ bônus ★**
-  - Título: **A PSICÓLOGA CHEGOU** / **O PSICÓLOGO CHEGOU**
+  - Título: **Você encontrou uma psicóloga pelo caminho** / **Você encontrou um psicólogo pelo caminho**
   - Retrato grande do(a) psicólogo(a), com brilho verde e a legenda PSICÓLOGA/PSICÓLOGO
-  - Lista de benefícios, que entram um por um com um som:
-    - **+1 ♥** um coração de volta
-    - **½** perto dela/dele, a pilha pesa a metade
-    - **SOLTA** culpa e armário dá pra largar: o que brilha, sai
-    - **♪** perto dela/dele, você não perde o que ama
-    - **CALMA** as crises vêm mais fracas e mais espaçadas
+  - Lista do que esse encontro oferece (sem falar em vidas ou pontos), que entra item por item com um som, cada um com um ♥:
+    - **pode falar** o que sente, do jeito que sair
+    - **ser você mesma/mesmo** sem máscara, sem fingir que está tudo bem
+    - **não ser julgada/julgado** aqui ninguém mede a sua dor
+    - **ser escutada/escutado** alguém presta atenção de verdade
+    - **no seu tempo** sem pressa e sem cobrança
+  - (o feminino/masculino segue o gênero da personagem sorteada)
   - Frase: **"Ela/Ele não carrega nada por você. Caminha junto."**
   - Botão: **seguir juntos** (volta ao jogo)
 - **O que muda com ele(a) por perto (até 60 px de distância):**
