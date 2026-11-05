@@ -773,30 +773,60 @@ h1 em { font-style: normal; color: var(--good); }
     };
     return { full: mk(true), empty: mk(false) };
   })();
+  // ===== v6 boss: MERCADO DE TRABALHO, a suit with a monitor for a head (200x240 art = 100x120 world) =====
   function makeBoss(open) {
-    const c = document.createElement("canvas"); c.width = 48; c.height = 58; const x = c.getContext("2d");
-    const px = (a, b, w, h, col) => { x.fillStyle = col; x.fillRect(a, b, w, h); };
-    [[4, 47, 40, 10], [0, 51, 48, 7], [8, 44, 32, 5]].forEach((r) => px(...r, "#2b2e3e"));
-    [[6, 48, 36, 6], [2, 52, 44, 4], [12, 45, 10, 2]].forEach((r) => px(...r, "#40445a"));
-    px(10, 24, 28, 23, "#232741"); px(10, 24, 28, 2, "#30365a");
-    px(16, 24, 5, 15, "#30365a"); px(27, 24, 5, 15, "#30365a");
-    px(21, 24, 6, 13, "#e9e6dc"); px(23, 25, 2, 2, "#8e1d26"); px(22, 27, 4, 8, "#c8323a"); px(23, 35, 2, 2, "#c8323a");
-    px(24, 40, 1, 1, "#8a8fa8"); px(24, 43, 1, 1, "#8a8fa8");
-    const ay = open ? -4 : 0;
-    px(3, 25 + ay, 8, 14, "#232741"); px(37, 25, 8, 15, "#232741");
-    px(3, 39 + ay, 8, 4, "#e9e6dc"); px(37, 40, 8, 4, "#e9e6dc");
-    px(38, 44, 9, 7, "#5e3b1a"); px(40, 42, 5, 2, "#3e2610"); px(38, 46, 9, 1, "#e8c04a");
-    px(20, 21, 8, 3, "#1a1c28");
-    px(8, 2, 32, 20, "#0e0f17"); px(9, 3, 30, 18, "#1f2130"); px(10, 4, 28, 16, open ? "#3d0c14" : "#2a0a10");
-    for (let yy = 5; yy < 20; yy += 2) px(10, yy, 28, 1, "rgba(0,0,0,0.3)");
-    [[11, 18], [13, 17], [15, 17], [17, 16], [19, 17], [21, 15], [23, 16], [25, 13], [27, 14], [29, 11], [31, 12], [33, 8], [35, 6], [36, 5]].forEach(([a, b]) => px(a, b, 2, 1, "#3fe08a"));
-    px(34, 5, 3, 1, "#3fe08a"); px(36, 6, 1, 2, "#3fe08a");
-    px(12, 8, 4, 1, "#ff8a8a"); px(15, 9, 3, 1, "#ff8a8a"); px(32, 8, 4, 1, "#ff8a8a"); px(30, 9, 3, 1, "#ff8a8a");
-    px(13, 10, 6, 3, "#ff2d3d"); px(29, 10, 6, 3, "#ff2d3d"); px(14, 10, 2, 1, "#ffd0d0"); px(30, 10, 2, 1, "#ffd0d0");
-    if (open) { px(18, 14, 12, 5, "#ff2d3d"); for (let i = 0; i < 6; i++) px(18 + i * 2, 14, 1, 1, "#ffe0e0"); px(19, 17, 10, 2, "#600"); }
-    else { px(18, 16, 12, 1, "#ff2d3d"); px(17, 15, 1, 1, "#ff2d3d"); px(30, 15, 1, 1, "#ff2d3d"); }
-    px(22, 0, 4, 2, "#0e0f17"); px(23, 0, 2, 1, "#ff2d3d");
-    return outlinedFlat(c, 48, 58, "#05050a");
+    const c = mkCanvas(200, 240), q = pen(c);
+    const SU = rampOf("#262a48"), SH = ["#ffffff", "#e9e6dc", "#c4c0b4", "#8a8678"], TIE = rampOf("#c8323a"), SK = rampOf("#b8b0a8"), MON = ["#4a4e62", "#2a2d3e", "#1a1c28", "#0e0f17"];
+    // legs and polished shoes
+    [[62, 0], [110, 1]].forEach(([lx, far]) => { const L = far ? [SU[2], SU[2], SU[3], SU[3]] : SU;
+      q.r(lx, 168, 28, 58, L[1]); q.r(lx, 168, 4, 58, L[0]); q.r(lx + 22, 170, 6, 56, L[2]); q.r(lx + 12, 176, 1, 48, L[2]);
+      q.r(lx - 4, 224, 36, 10, "#14121e"); q.r(lx - 6, 230, 40, 5, "#0a0910"); q.r(lx + 18, 225, 10, 2, "#5a5878"); q.r(lx + 22, 226, 4, 1, "#c4c8d4"); });
+    // the arm that holds the briefcase (behind the body)
+    q.r(150, 104, 24, 64, SU[2]); q.r(150, 104, 3, 64, SU[1]); q.r(152, 166, 20, 8, SH[1]); q.r(154, 172, 18, 10, SK[1]); q.r(154, 172, 18, 2, SK[0]);
+    const BR = rampOf("#5e3b1a");
+    q.r(146, 182, 52, 38, BR[1]); q.r(146, 182, 52, 3, BR[0]); q.r(146, 182, 3, 38, BR[0]); q.r(192, 185, 6, 35, BR[2]); q.r(146, 216, 52, 4, BR[3]);
+    q.r(160, 176, 24, 6, BR[3]); q.r(164, 178, 16, 2, "#2a1a0a"); q.r(146, 196, 52, 2, BR[3]); q.r(166, 192, 12, 8, GOLD[1]); q.r(166, 192, 12, 2, GOLD[0]); q.r(170, 196, 4, 2, GOLD[2]);
+    // torso: jacket, shirt, long red tie, lapels, pocket square, gold buttons
+    q.r(44, 100, 112, 74, SU[1]); q.r(50, 96, 100, 6, SU[1]); q.r(50, 96, 100, 2, SU[0]); q.r(44, 100, 5, 74, SU[0]); q.r(148, 100, 8, 74, SU[2]); q.r(44, 170, 112, 4, SU[3]);
+    for (let y = 0; y < 50; y++) { const wv = Math.max(2, 24 - Math.floor(y * 0.45)); q.r(100 - wv, 98 + y, wv * 2, 1, SH[1]); }
+    q.r(88, 98, 24, 4, SH[0]); q.r(96, 100, 8, 8, TIE[2]); q.r(97, 101, 6, 6, TIE[1]);
+    for (let y = 108; y < 160; y++) { const wv = y < 150 ? 5 + Math.floor((y - 108) * 0.06) : 8 - (y - 150); if (wv > 0) { q.r(100 - wv, y, wv * 2, 1, TIE[1]); q.p(100 - wv, y, TIE[0]); q.p(100 + wv - 1, y, TIE[2]); } }
+    for (let y = 116; y < 156; y += 8) q.r(96, y, 8, 2, TIE[2]);
+    for (let y = 0; y < 52; y++) { const lx = 76 + Math.floor(y * 0.42), rx = 124 - Math.floor(y * 0.42); q.r(lx - 8, 100 + y, 8, 1, SU[2]); q.p(lx - 1, 100 + y, SU[3]); q.r(rx, 100 + y, 8, 1, SU[2]); q.p(rx, 100 + y, SU[3]); }
+    q.r(126, 118, 14, 4, SH[0]); q.r(128, 116, 4, 2, "#e8c04a"); q.r(133, 115, 4, 3, "#e8c04a");
+    [140, 154].forEach((y) => { q.disc(118, y, 2.2, GOLD[1]); q.p(117, y - 1, GOLD[0]); });
+    q.r(52, 140, 22, 3, SU[3]); q.r(126, 140, 22, 3, SU[3]);
+    // near arm: hangs, or rises when he shouts
+    if (open) { // fist raised beside the screen
+      q.r(22, 58, 24, 46, SU[1]); q.r(22, 58, 4, 46, SU[0]); q.r(40, 60, 6, 44, SU[2]);
+      q.r(22, 50, 24, 8, SH[1]); q.r(22, 50, 24, 2, SH[0]);
+      q.r(24, 32, 20, 18, SK[1]); q.r(24, 32, 20, 3, SK[0]); q.r(24, 32, 3, 18, SK[0]); q.r(40, 34, 4, 16, SK[2]);
+      q.r(27, 38, 14, 1, SK[2]); q.r(27, 42, 14, 1, SK[2]); q.r(27, 46, 14, 1, SK[2]); q.r(20, 40, 5, 8, SK[1]);
+    } else {
+      q.r(22, 102, 26, 60, SU[1]); q.r(22, 102, 4, 60, SU[0]); q.r(42, 104, 6, 58, SU[2]); q.r(22, 156, 26, 4, SU[3]);
+      q.r(24, 160, 22, 8, SH[1]); q.r(26, 168, 20, 14, SK[1]); q.r(26, 168, 20, 3, SK[0]); q.r(42, 170, 4, 12, SK[2]);
+    }
+    // monitor neck and head
+    q.r(88, 84, 24, 14, MON[2]); q.r(88, 84, 24, 2, MON[1]); q.r(76, 92, 48, 6, MON[1]); q.r(76, 92, 48, 1, MON[0]);
+    q.r(36, 6, 128, 82, MON[3]); q.r(38, 4, 124, 82, MON[1]); q.r(38, 4, 124, 3, MON[0]); q.r(38, 4, 3, 82, MON[0]); q.r(156, 8, 6, 78, MON[2]); q.r(38, 80, 124, 6, MON[2]);
+    q.r(46, 12, 108, 64, open ? "#3d0c14" : "#2a0a10");
+    for (let y = 12; y < 76; y += 3) q.r(46, y, 108, 1, open ? "#33090f" : "#22070c");
+    q.r(46, 12, 108, 2, "#4a1820"); q.r(48, 14, 30, 2, "#5a2028");
+    // rising chart across the screen
+    const pts = [[50, 70], [62, 66], [72, 68], [84, 60], [94, 63], [106, 52], [116, 56], [128, 40], [138, 44], [148, 22]];
+    for (let i = 0; i < pts.length - 1; i++) q.thick(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1], 2, "#3fe08a");
+    q.r(144, 18, 8, 2, "#3fe08a"); q.r(150, 18, 2, 8, "#3fe08a"); pts.forEach(([x, y]) => q.p(x, y - 2, "#9affc8"));
+    // red eyes with angry brows, and the mouth
+    [[64, 30], [122, 30]].forEach(([ex, ey], i) => {
+      q.r(ex, ey, 16, 10, "#ff2d3d"); q.r(ex + 2, ey + 2, 12, 6, "#ff6070"); q.r(ex + 3, ey + 2, 4, 2, "#ffd0d0");
+      for (let k = 0; k < 16; k++) q.r(ex + k, ey - 6 + Math.floor((i ? 15 - k : k) * 0.35), 1, 2, "#ff8a8a");
+    });
+    if (open) { q.r(78, 52, 44, 18, "#ff2d3d"); q.r(80, 54, 40, 14, "#600010"); for (let k = 0; k < 10; k++) { q.r(81 + k * 4, 54, 3, 4, "#ffe0e0"); q.r(81 + k * 4, 64, 3, 4, "#ffe0e0"); } }
+    else { q.r(80, 60, 40, 3, "#ff2d3d"); q.r(76, 57, 4, 3, "#ff2d3d"); q.r(120, 57, 4, 3, "#ff2d3d"); }
+    // antenna with a red light
+    q.r(98, 0, 4, 4, MON[1]); q.r(99, 0, 2, 2, "#ff2d3d");
+    q.r(150, 80, 4, 3, "#3fe08a");
+    return outline(c, null);
   }
   const BOSS_IMG = { closed: makeBoss(false), open: makeBoss(true) };
 
@@ -1714,142 +1744,6 @@ h1 em { font-style: normal; color: var(--good); }
   }
   function stackDrawAt(stack, x, y) { stack.forEach((b, i) => blk(b.type, x - camX, y - 23 - i * 10)); }
   function blk(t, cx, bottom) { const im = blockImg(t), w = im.width / 2, h = im.height / 2; sprite(im, cx - w / 2, bottom - h, w, h); }
-  function drawObstacle(o) {
-    const x = o.x - camX, y = o.y;
-    if (x < -40 || x > LW + 40) return;
-    g.fillStyle = "rgba(0,0,0,0.4)"; g.fillRect(x - o.w / 2, y + o.d / 2 - 1, o.w + 2, 3);
-    if (o.moving) {
-      o.roll += 0.2;
-      g.fillStyle = "#14121e"; rrect(x - 8, y - 15, 16, 15, 2); g.fill();
-      g.fillStyle = "#c8323a"; rrect(x - 7, y - 14, 14, 13, 2); g.fill();
-      g.fillStyle = "#ff6b6b"; g.fillRect(x - 7, y - 14, 14, 2);
-      g.fillStyle = "#ffe0e0"; g.fillRect(x - 5 + Math.sin(o.roll) * 2, y - 9, 10, 1);
-      txt(o.label, x, y - 22, { size: 6, font: PIX, color: "#ffb4ba", ls: 0.5 });
-      return;
-    }
-    if (o.kind && o.kind !== "wall" && drawCreative(o, x, y)) return;
-    if (o.kind === "buraco") {
-      g.fillStyle = "#0c0b12"; g.beginPath(); g.ellipse(x, y, o.w / 2, o.d / 2, 0, 0, Math.PI * 2); g.fill();
-      g.strokeStyle = "#3a3950"; g.lineWidth = 1; g.stroke();
-      txt(o.label, x, y - o.d / 2 - 7, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
-      return;
-    }
-    if (o.kind === "cone") {
-      g.fillStyle = "#14121e"; g.beginPath(); g.moveTo(x, y - 13); g.lineTo(x + 6, y); g.lineTo(x - 6, y); g.closePath(); g.fill();
-      g.fillStyle = "#ff7a2f"; g.beginPath(); g.moveTo(x, y - 12); g.lineTo(x + 5, y - 1); g.lineTo(x - 5, y - 1); g.closePath(); g.fill();
-      g.fillStyle = "#f4f1e8"; g.fillRect(x - 3, y - 7, 6, 2);
-      txt(o.label, x, y - 19, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
-      return;
-    }
-    if (o.kind === "caixas") {
-      [[-8, -7], [0, -7], [-4, -14]].forEach(([dx, dy]) => { g.fillStyle = "#14121e"; g.fillRect(x + dx - 0.5, y + dy - 0.5, 9, 8); g.fillStyle = "#b07a40"; g.fillRect(x + dx, y + dy, 8, 7); g.fillStyle = "#8a5a2b"; g.fillRect(x + dx + 3, y + dy, 2, 7); });
-      txt(o.label, x, y - 20, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
-      return;
-    }
-    if (!o.trait) {
-      const top = y - o.h;
-      g.fillStyle = "#14121e"; g.fillRect(x - o.w / 2 - 1, top - 1, o.w + 2, 7); g.fillRect(x - o.w / 2, top + 5, 2, o.h - 5); g.fillRect(x + o.w / 2 - 2, top + 5, 2, o.h - 5);
-      for (let i = 0; i < o.w; i += 4) { g.fillStyle = (i / 4) % 2 ? "#f4f1e8" : "#ff7a2f"; g.fillRect(x - o.w / 2 + i, top, Math.min(4, o.w - i), 5); }
-      txt(o.label, x, top - 7, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
-    } else {
-      const top = y - o.d / 2 - o.h;
-      g.fillStyle = "rgba(155,92,207,0.18)"; g.fillRect(x - o.w / 2 - 3, y - o.d / 2 - 3, o.w + 6, o.d + 6);
-      g.fillStyle = "#14121e"; g.fillRect(x - o.w / 2 - 1, top - 1, o.w + 2, o.d + o.h + 1);
-      g.fillStyle = "#3a2050"; g.fillRect(x - o.w / 2, top + o.h, o.w, o.d - 1);
-      g.fillStyle = "#5a3478"; g.fillRect(x - o.w / 2, top, o.w, o.h);
-      g.fillStyle = "#7a4a9e"; g.fillRect(x - o.w / 2, top, o.w, 1.5);
-      g.fillStyle = "#2a1638"; for (let yy = top + 4; yy < top + o.h; yy += 4) g.fillRect(x - o.w / 2, yy, o.w, 0.7);
-      const w = measure(o.label, 6, PIX, 0.5) + 10;
-      g.fillStyle = "rgba(24,10,34,0.92)"; rrect(x - w / 2, top - 14, w, 10, 2); g.fill(); g.strokeStyle = "#9b5ccf"; g.lineWidth = 0.7; g.stroke();
-      txt(o.label, x, top - 8.7, { size: 6, font: PIX, color: "#e1a8ff", ls: 0.5, shadow: false });
-    }
-  }
-  function drawCreative(o, x, y) {
-    const t = o.t || 0, lab = (yy) => txt(o.label, x, yy, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
-    const px = (a, b, w, h, c) => { g.fillStyle = c; g.fillRect(a, b, w, h); };
-    if (o.kind === "fila") {
-      [-12, 0, 12].forEach((dy, i) => { const sh = Math.sin(t * 3 + i * 1.7) > 0.7 ? 1 : 0; person(QUEUE[i], o.x + sh, y + dy, 0, "idle"); });
-      lab(y - 12 - 32); return true;
-    }
-    if (o.kind === "transito") {
-      shadow(x, y, 18);
-      g.fillStyle = "#14121e"; rrect(x - 15, y - 13, 30, 12, 3); g.fill(); rrect(x - 8, y - 20, 16, 9, 3); g.fill();
-      g.fillStyle = "#5a6a8a"; rrect(x - 14, y - 12, 28, 10, 3); g.fill(); g.fillStyle = "#9fd4f0"; rrect(x - 7, y - 19, 14, 7, 2); g.fill();
-      g.fillStyle = "#ffe9a0"; g.fillRect(x + 12, y - 10, 2, 2); g.fillStyle = "#ff3a4a"; g.fillRect(x - 14, y - 10, 2, 2);
-      [-9, 9].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 2, 3.2, 0, Math.PI * 2); g.fill(); });
-      if (Math.sin(t * 5) > 0.85) txt("BI-BI!", x + 20, y - 22, { size: 5, font: PIX, color: "#ffffff", ls: 0.4 });
-      lab(y - 28); return true;
-    }
-    if (o.kind === "maca") {
-      shadow(x, y, 16);
-      px(x - 13, y - 9, 26, 1, "#14121e"); px(x - 12, y - 8, 1, 6, "#14121e"); px(x + 11, y - 8, 1, 6, "#14121e");
-      g.fillStyle = "#14121e"; rrect(x - 13, y - 14, 26, 6, 2); g.fill(); g.fillStyle = "#f4f1e8"; rrect(x - 12, y - 13, 24, 4, 2); g.fill();
-      px(x - 2, y - 14, 4, 1, "#e2354c"); px(x - 0.5, y - 15.5, 1, 4, "#e2354c");
-      [-11, 11].forEach((dx) => { g.fillStyle = "#0c0b12"; g.beginPath(); g.arc(x + dx, y - 1.5, 1.6, 0, Math.PI * 2); g.fill(); });
-      if (Math.sin(t * 8) > 0) { glow(x - 10, y - 18, 10, "rgba(255,60,80,A)", 0.5); px(x - 11, y - 19, 2, 2, "#ff3a4a"); } else { glow(x - 10, y - 18, 10, "rgba(80,140,255,A)", 0.5); px(x - 11, y - 19, 2, 2, "#5a8aff"); }
-      lab(y - 26); return true;
-    }
-    if (o.kind === "relogio") {
-      const ring = Math.sin(t * 30) * (Math.sin(t * 2) > 0 ? 1 : 0), cx = x + ring * 0.8, cy = y - 7;
-      shadow(x, y, 6);
-      g.fillStyle = "#14121e"; [-4, 4].forEach((dx) => { g.beginPath(); g.arc(cx + dx, cy - 6, 2.6, 0, Math.PI * 2); g.fill(); });
-      g.fillStyle = "#e8c04a"; [-4, 4].forEach((dx) => { g.beginPath(); g.arc(cx + dx, cy - 6, 1.6, 0, Math.PI * 2); g.fill(); });
-      g.fillStyle = "#14121e"; g.beginPath(); g.arc(cx, cy, 6.5, 0, Math.PI * 2); g.fill(); g.fillStyle = "#c8323a"; g.beginPath(); g.arc(cx, cy, 5.5, 0, Math.PI * 2); g.fill();
-      g.fillStyle = "#f4f1e8"; g.beginPath(); g.arc(cx, cy, 4.2, 0, Math.PI * 2); g.fill();
-      g.strokeStyle = "#14121e"; g.lineWidth = 0.8; g.beginPath(); g.moveTo(cx, cy); g.lineTo(cx + Math.cos(t * 6) * 3.4, cy + Math.sin(t * 6) * 3.4); g.moveTo(cx, cy); g.lineTo(cx, cy - 2.5); g.stroke();
-      if (ring) txt("TRIIIM", x, y - 24, { size: 5, font: PIX, color: "#ffffff", ls: 0.4 });
-      lab(y - 31); return true;
-    }
-    if (o.kind === "ponto") {
-      shadow(x, y, 7);
-      g.fillStyle = "#14121e"; rrect(x - 6.5, y - 17, 13, 17, 2); g.fill(); g.fillStyle = "#4a4a5e"; rrect(x - 5.5, y - 16, 11, 15, 2); g.fill();
-      px(x - 4.5, y - 14, 9, 5, "#14121e"); if (Math.sin(t * 4) > -0.3) txt("23:47", x, y - 11.3, { size: 3.6, font: PIX, color: "#ff4d5e", ls: 0.2, shadow: false });
-      px(x - 3, y - 6, 6, 1, "#14121e"); px(x - 2, y - 4, 4, 2, "#e8c04a");
-      lab(y - 23); return true;
-    }
-    if (o.kind === "envelopes") {
-      shadow(x, y, 8);
-      [[-6, -14, 0], [4, -18, 1.3], [-1, -9, 2.6]].forEach(([dx, dy, ph]) => {
-        const fy = y + dy + Math.sin(t * 6 + ph) * 2, fx = x + dx;
-        px(fx - 4.5, fy - 3.5, 9, 7, "#14121e"); px(fx - 4, fy - 3, 8, 6, "#f4f1e8");
-        g.strokeStyle = "#8a8fa8"; g.lineWidth = 0.6; g.beginPath(); g.moveTo(fx - 4, fy - 3); g.lineTo(fx, fy); g.lineTo(fx + 4, fy - 3); g.stroke(); px(fx + 1.5, fy + 0.5, 2, 2, "#e2354c");
-      });
-      lab(y - 30); return true;
-    }
-    if (o.kind === "livros") {
-      const cols = ["#3c6fd1", "#e2354c", "#4caf6a", "#e8c04a", "#7a5cd6"];
-      shadow(x, y, 7);
-      cols.forEach((c, i) => { const sw = Math.sin(t * 2.2) * i * 0.45, bw = 12 - (i % 2) * 2; px(x - bw / 2 - 0.5 + sw, y - 4 - i * 3.6 - 0.5, bw + 1, 4.2, "#14121e"); px(x - bw / 2 + sw, y - 4 - i * 3.6, bw, 3.2, c); px(x + bw / 2 - 2 + sw, y - 4 - i * 3.6 + 0.6, 1.4, 2, "#f4f1e8"); });
-      lab(y - 28); return true;
-    }
-    if (o.kind === "mala") {
-      shadow(x, y, 9);
-      g.fillStyle = "#14121e"; rrect(x - 8.5, y - 12, 17, 12, 2); g.fill(); g.fillStyle = "#a8662e"; rrect(x - 7.5, y - 11, 15, 10, 2); g.fill();
-      px(x - 3, y - 14, 6, 2, "#14121e"); px(x - 7.5, y - 7, 15, 1, "#7a4520");
-      for (let k = -7; k <= 7; k += 2) px(x + k, y - 7 + Math.abs(k) * 0.25, 1.4, 1.4, "#b0b4c0");
-      g.fillStyle = "#e8c04a"; rrect(x - 2, y - 7, 4, 4, 1); g.fill(); px(x - 0.5, y - 6, 1, 1.5, "#14121e");
-      g.strokeStyle = "#14121e"; g.lineWidth = 0.9; g.beginPath(); g.moveTo(x + 11, y); g.lineTo(x + 11, y - 18); g.stroke(); g.fillStyle = "#e2354c"; g.beginPath(); g.moveTo(x + 11, y - 18); g.lineTo(x + 13, y - 11); g.lineTo(x + 9, y - 11); g.closePath(); g.fill();
-      lab(y - 25); return true;
-    }
-    if (o.kind === "porta") {
-      const open = o.h === 0, fx = x, top = y - o.d / 2 - 18;
-      px(fx - 4.5, top, 9, o.d + 18, "rgba(0,0,0,0.25)");
-      px(fx - 1, top - 2, 2, o.d + 20, "#14121e");
-      const panel = open ? 6 : o.d + 16;
-      px(fx - 3.5, top + 1, 7, panel, "#14121e"); px(fx - 2.5, top + 2, 5, panel - 2, open ? "#3a3a48" : "#8a5a2b");
-      g.fillStyle = "#14121e"; rrect(fx - 18, top - 13, 36, 9, 2); g.fill(); g.fillStyle = open ? "#2f6a46" : "#c8323a"; rrect(fx - 17, top - 12, 34, 7, 2); g.fill();
-      txt(open ? "ABERTA?" : "VAGA PREENCHIDA", fx, top - 8.4, { size: 3.6, font: PIX, color: "#ffffff", ls: 0.2, shadow: false });
-      lab(top - 20); return true;
-    }
-    if (o.kind === "grafico") {
-      shadow(x, y, 9);
-      const hs = [o.h * 0.45, o.h * 0.7, o.h];
-      hs.forEach((h, i) => { px(x - 8.5 + i * 6, y - h - 0.5, 5, h + 0.5, "#14121e"); px(x - 8 + i * 6, y - h, 4, h, i === 2 ? "#ff5a6e" : "#c8323a"); });
-      g.strokeStyle = "#3fe08a"; g.lineWidth = 1; g.beginPath(); g.moveTo(x - 9, y - hs[0] - 3); g.lineTo(x - 3, y - hs[1] - 3); g.lineTo(x + 4, y - hs[2] - 4); g.stroke();
-      lab(y - 30); return true;
-    }
-    return false;
-  }
   // ===== v6 vehicles and props of the masked ones (2x art, cached) =====
   const vcache = new Map();
   const cached = (key, fn) => { if (!vcache.has(key)) vcache.set(key, fn()); return vcache.get(key); };
@@ -1959,6 +1853,170 @@ h1 em { font-style: normal; color: var(--good); }
     }
     if (r.flash > 0) glow(x + 4, y - 22, 30, "rgba(255,255,255,A)", Math.min(0.9, r.flash * 4));
   }
+  // ===== v6 obstacles: each everyday barrier is a small detailed scene (2x art, cached by animation frame) =====
+  const RED = rampOf("#c8323a");
+  const clockImg = (hand, ring) => cached("clock" + hand + ring, () => { const c = mkCanvas(30, 34), q = pen(c);
+    q.line(9, 2, 21, 2, "#5a5878"); q.r(14, 1, 2, 3, "#5a5878");
+    [[7, 7], [23, 7]].forEach(([x, y]) => { q.disc(x, y, 4.5, GOLD[1]); q.disc(x - 1, y - 1, 2, GOLD[0]); q.r(x - 3, y + 2, 6, 1, GOLD[2]); });
+    q.disc(15, 19, 12.5, RED[1]); q.disc(13, 16, 7, RED[0]); q.ring(15, 19, 12.5, 2, RED[2]);
+    q.disc(15, 19, 9, "#f4f1e8"); q.ring(15, 19, 9, 1, "#cfc8b8");
+    [[15, 11.5], [22.5, 19], [15, 26.5], [7.5, 19]].forEach(([x, y]) => q.r(x - 0.5, y - 0.5, 1, 1, DARK));
+    q.thick(15, 19, 15, 14, 2, DARK);
+    const a = hand * Math.PI / 4; q.line(15, 19, 15 + Math.sin(a) * 7, 19 - Math.cos(a) * 7, "#c8323a");
+    q.r(14, 18, 2, 2, DARK); q.r(8, 30, 3, 3, DARK); q.r(19, 30, 3, 3, DARK);
+    if (ring) { q.p(1, 1, "#ffffff"); q.p(28, 1, "#ffffff"); q.p(0, 4, "#ffffff"); q.p(29, 4, "#ffffff"); }
+    return outline(c); });
+  const chartImg = (hp) => cached("chart" + hp, () => { const c = mkCanvas(40, hp + 14), q = pen(c), H = c.height;
+    q.r(0, H - 3, 40, 3, "#3a3850"); q.r(0, H - 3, 40, 1, "#5a5878");
+    [0.45, 0.7, 1].forEach((f, i) => { const h = Math.max(3, Math.round(hp * f)), x = 3 + i * 12, B = i === 2 ? rampOf("#ff5a6e") : RED;
+      q.r(x, H - 3 - h, 9, h, B[1]); q.r(x, H - 3 - h, 2, h, B[0]); q.r(x + 7, H - 3 - h, 2, h, B[2]); q.r(x, H - 3 - h, 9, 1, B[0]); });
+    const y0 = H - 3 - Math.round(hp * 0.45) - 5, y2 = H - 3 - hp - 7;
+    q.thick(4, y0, 18, H - 3 - Math.round(hp * 0.7) - 6, 2, "#3fe08a"); q.thick(18, H - 3 - Math.round(hp * 0.7) - 6, 32, y2, 2, "#3fe08a");
+    q.r(31, y2 - 3, 4, 2, "#3fe08a"); q.r(33, y2 - 1, 2, 3, "#3fe08a");
+    return outline(c); });
+  const pontoImg = () => cached("ponto", () => { const c = mkCanvas(28, 36), q = pen(c), M = rampOf("#5a5a70");
+    q.r(1, 2, 26, 33, M[1]); q.r(1, 2, 26, 2, M[0]); q.r(1, 2, 2, 33, M[0]); q.r(24, 4, 3, 31, M[2]); q.r(1, 33, 26, 2, M[3]);
+    q.r(4, 6, 20, 10, "#14121e"); q.r(4, 6, 20, 1, "#2a2838");
+    q.r(7, 20, 14, 2, "#14121e"); q.r(10, 0, 8, 4, "#f2d36b"); q.r(10, 0, 8, 1, "#fff2a8"); q.r(11, 2, 6, 1, "#c89a3a");
+    q.r(10, 25, 8, 4, GOLD[1]); q.r(10, 25, 8, 1, GOLD[0]); q.p(5, 28, "#3fe08a");
+    return outline(c); });
+  const envImg = () => cached("env", () => { const c = mkCanvas(18, 14), q = pen(c);
+    q.r(0, 0, 18, 14, PAPER[1]); q.r(0, 13, 18, 1, PAPER[2]); q.r(17, 0, 1, 14, PAPER[2]);
+    q.line(0, 0, 9, 7, PAPER[3]); q.line(17, 0, 9, 7, PAPER[3]); q.line(0, 13, 6, 8, PAPER[2]); q.line(17, 13, 12, 8, PAPER[2]);
+    q.r(12, 8, 4, 4, "#e2354c"); q.p(13, 9, "#ffffff"); q.p(13, 10, "#ffffff");
+    return outline(c); });
+  const bookImg = (col) => cached("book" + col, () => { const c = mkCanvas(24, 8), q = pen(c), B = rampOf(col);
+    q.r(0, 0, 24, 8, B[1]); q.r(0, 0, 24, 1, B[0]); q.r(0, 7, 24, 1, B[2]); q.r(19, 1, 4, 6, PAPER[1]); q.r(19, 2, 4, 1, PAPER[2]); q.r(19, 4, 4, 1, PAPER[2]);
+    q.r(3, 3, 8, 2, mix(col, "#ffffff", 0.45));
+    return outline(c); });
+  const malaImg = () => cached("mala", () => { const c = mkCanvas(48, 40), q = pen(c), Br = rampOf("#a8662e");
+    q.r(13, 10, 8, 3, DARK); q.r(14, 11, 6, 1, "#3a3846");
+    q.r(2, 14, 32, 24, Br[1]); q.r(2, 14, 32, 2, Br[0]); q.r(2, 14, 2, 24, Br[0]); q.r(31, 16, 3, 22, Br[2]); q.r(2, 36, 32, 2, Br[3]);
+    q.r(2, 25, 32, 2, Br[3]); q.r(9, 14, 2, 24, Br[2]); q.r(25, 14, 2, 24, Br[2]);
+    for (let k = 0; k < 32; k += 3) { const yy = 24 + Math.abs(k - 16) * 0.12; q.ring(3 + k, yy, 2, 1, "#b0b4c0"); }
+    q.r(14, 24, 8, 7, GOLD[1]); q.r(14, 24, 8, 1, GOLD[0]); q.ring(18, 23, 3, 1, "#b0b4c0"); q.r(17, 26, 2, 3, DARK);
+    q.r(41, 2, 1, 36, DARK); q.r(42, 2, 1, 36, "#5a5878");
+    for (let y = 0; y < 16; y++) q.r(41 - Math.floor(y / 4), 6 + y, 3 + Math.floor(y / 2), 1, y < 3 ? "#ff6a7a" : "#e2354c");
+    q.r(40, 38, 4, 2, DARK);
+    return outline(c); });
+  const doorImg = (open, tall) => cached("door" + open + tall, () => { const c = mkCanvas(24, tall), q = pen(c), W = rampOf("#8a5a2b");
+    q.r(0, 0, 24, tall, "#24212f"); q.r(0, 0, 2, tall, "#3a3850"); q.r(22, 0, 2, tall, "#14121e"); q.r(0, 0, 24, 2, "#3a3850");
+    if (open) { q.r(3, 3, 18, tall - 3, "#0c0a14"); q.r(3, tall - 14, 18, 14, "#1a1826"); q.r(3, 3, 3, tall - 3, W[1]); q.r(3, 3, 1, tall - 3, W[0]); for (let k = 0; k < 6; k++) q.p(8 + k * 2, tall - 4 - k, "#3a3850"); }
+    else { q.r(3, 3, 18, tall - 3, W[1]); q.r(3, 3, 18, 1, W[0]); q.r(3, 3, 1, tall - 3, W[0]); q.r(19, 4, 2, tall - 4, W[2]);
+      [[6, 7], [6, Math.floor(tall / 2) + 2]].forEach(([x, y]) => { q.r(x, y, 12, Math.floor(tall / 2) - 10, W[2]); q.r(x + 1, y + 1, 10, Math.floor(tall / 2) - 12, W[1]); q.r(x + 1, y + 1, 10, 1, W[0]); });
+      q.r(16, Math.floor(tall / 2), 3, 3, GOLD[1]); q.p(16, Math.floor(tall / 2), GOLD[0]); }
+    return outline(c); });
+  const sedanImg = () => cached("sedan", () => { const c = mkCanvas(64, 40), q = pen(c), B = rampOf("#5a6a8a");
+    q.r(16, 6, 28, 12, B[1]); q.r(18, 4, 24, 3, B[1]); q.r(18, 4, 24, 1, B[0]);
+    q.r(20, 7, 9, 9, "#9fd4f0"); q.r(31, 7, 10, 9, "#9fd4f0"); q.r(20, 7, 9, 2, "#d0ecff"); q.r(31, 7, 10, 2, "#d0ecff"); q.r(29, 6, 2, 12, B[2]);
+    q.r(2, 17, 60, 14, B[1]); q.r(2, 17, 60, 2, B[0]); q.r(2, 28, 60, 3, B[2]); q.r(2, 30, 60, 1, B[3]); q.r(31, 19, 1, 9, B[2]); q.r(24, 21, 4, 1, B[0]); q.r(36, 21, 4, 1, B[0]);
+    q.r(58, 20, 4, 3, "#ffe9a0"); q.r(2, 20, 3, 3, "#ff3a4a");
+    [[14, 31], [50, 31]].forEach(([x, y]) => q.disc(x, y, 8.5, "#0e0c14")); wheelArt(q, 14, 32, 6.5, ["#d0d4dc", "#a0a6b4", "#5a5f70"]); wheelArt(q, 50, 32, 6.5, ["#d0d4dc", "#a0a6b4", "#5a5f70"]);
+    return outline(c); });
+  const macaImg = (red) => cached("maca" + red, () => { const c = mkCanvas(56, 42), q = pen(c);
+    q.r(3, 6, 2, 30, "#5a5878"); q.r(1, 2, 6, 5, red ? "#ff3a4a" : "#5a8aff"); q.r(2, 3, 2, 2, "#ffffff");
+    q.r(4, 22, 50, 3, "#8a8fa0"); q.r(4, 22, 50, 1, "#c4c8d4"); q.r(8, 25, 2, 10, "#5a5878"); q.r(46, 25, 2, 10, "#5a5878"); q.line(10, 27, 46, 33, "#5a5878");
+    q.r(6, 14, 46, 8, "#f4f1e8"); q.r(6, 14, 46, 2, "#ffffff"); q.r(6, 21, 46, 1, "#cfc8b8"); q.r(42, 10, 10, 6, "#e8f0ff"); q.r(42, 10, 10, 1, "#ffffff");
+    q.r(22, 15, 6, 6, "#e2354c"); q.r(20, 17, 10, 2, "#e2354c");
+    [[9, 37], [47, 37]].forEach(([x, y]) => { q.disc(x, y, 2.8, DARK); q.p(x, y, "#8a8fa0"); });
+    return outline(c); });
+  const metaImg = (k) => cached("meta" + k, () => { const c = mkCanvas(32, 30), q = pen(c);
+    q.r(1, 1, 30, 28, RED[1]); q.r(1, 1, 30, 3, "#ff6b6b"); q.r(1, 1, 2, 28, RED[0]); q.r(28, 3, 3, 26, RED[2]); q.r(1, 27, 30, 2, RED[3]);
+    q.r(4, 6 + k * 5, 24, 2, "#ffe0e0"); q.r(4, 7 + k * 5, 24, 1, "#ffb0b0");
+    return outline(c); });
+  // the social wall: purple bricks, edge to edge
+  const brickTile = (() => { const c = mkCanvas(24, 16), q = pen(c), B = rampOf("#5a3478");
+    q.r(0, 0, 24, 16, "#2a1638");
+    [[0, 0], [12, 0], [-6, 8], [6, 8], [18, 8]].forEach(([x, y]) => { q.r(x + 1, y + 1, 10, 6, B[1]); q.r(x + 1, y + 1, 10, 1, B[0]); q.r(x + 1, y + 6, 10, 1, B[2]); q.p(x + 3, y + 3, B[2]); });
+    return c; })();
+  function drawObstacle(o) {
+    const x = o.x - camX, y = o.y;
+    if (x < -40 || x > LW + 40) return;
+    const lab = (yy, col) => txt(o.label, x, yy, { size: 6, font: PIX, color: col || "#ffd27a", ls: 0.5 });
+    if (o.moving) {
+      o.roll += 0.2;
+      shadow(x, y, 9); spr(metaImg(Math.floor(o.roll * 2) % 4), x - 8, y - 15);
+      lab(y - 22, "#ffb4ba"); return;
+    }
+    if (o.kind && o.kind !== "wall" && drawCreative(o, x, y)) return;
+    if (!o.trait) {
+      const top = y - o.h;
+      g.fillStyle = "#14121e"; g.fillRect(x - o.w / 2 - 1, top - 1, o.w + 2, 7); g.fillRect(x - o.w / 2, top + 5, 2, o.h - 5); g.fillRect(x + o.w / 2 - 2, top + 5, 2, o.h - 5);
+      for (let i = 0; i < o.w; i += 4) { g.fillStyle = (i / 4) % 2 ? "#f4f1e8" : "#ff7a2f"; g.fillRect(x - o.w / 2 + i, top, Math.min(4, o.w - i), 5); }
+      lab(top - 7); return;
+    }
+    // social wall across the whole street: brick body, lit cap, a shadow on the road
+    const top = y - o.d / 2 - o.h, bot = y + o.d / 2, x0 = Math.round((x - o.w / 2) * 2) / 2;
+    g.fillStyle = "rgba(10,4,20,0.35)"; g.fillRect(x0 + o.w, top + 6, 5, bot - top - 6);
+    g.save(); g.beginPath(); g.rect(x0, top, o.w, bot - top); g.clip();
+    for (let yy = top; yy < bot; yy += 8) g.drawImage(brickTile, x0, yy, 12, 8);
+    g.restore();
+    g.fillStyle = "#14121e"; g.fillRect(x0 - 0.5, top - 0.5, o.w + 1, 0.5); g.fillRect(x0 - 0.5, top, 0.5, bot - top); g.fillRect(x0 + o.w, top, 0.5, bot - top);
+    g.fillStyle = "#9a6ac0"; g.fillRect(x0, top, o.w, 1.5); g.fillStyle = "#7a4a9e"; g.fillRect(x0, top + 1.5, o.w, 0.5);
+    g.fillStyle = "rgba(155,92,207,0.10)"; g.fillRect(x0 - 3, top, 3, bot - top);
+    const w = measure(o.label, 6, PIX, 0.5) + 10;
+    g.fillStyle = "#14121e"; g.fillRect(x - w / 2 - 0.5, top - 14.5, w + 1, 11); g.fillStyle = "#1e1030"; g.fillRect(x - w / 2, top - 14, w, 10);
+    g.fillStyle = "#9b5ccf"; g.fillRect(x - w / 2, top - 14, w, 0.5); g.fillRect(x - w / 2, top - 4.5, w, 0.5); g.fillRect(x - w / 2, top - 14, 0.5, 10); g.fillRect(x + w / 2 - 0.5, top - 14, 0.5, 10);
+    txt(o.label, x, top - 8.7, { size: 6, font: PIX, color: "#e1a8ff", ls: 0.5, shadow: false });
+  }
+  function drawCreative(o, x, y) {
+    const t = o.t || 0, lab = (yy) => txt(o.label, x, yy, { size: 6, font: PIX, color: "#ffd27a", ls: 0.5 });
+    if (o.kind === "fila") {
+      [-12, 0, 12].forEach((dy, i) => { const sh = Math.sin(t * 3 + i * 1.7) > 0.7 ? 1 : 0; person(QUEUE[i], o.x + sh, y + dy, 0, "idle"); });
+      lab(y - 12 - 32); return true;
+    }
+    if (o.kind === "transito") {
+      shadow(x, y, 17); spr(sedanImg(), x - 16, y - 20);
+      if (Math.sin(t * 5) > 0.85) txt("BI-BI!", x + 20, y - 22, { size: 5, font: PIX, color: "#ffffff", ls: 0.4 });
+      lab(y - 28); return true;
+    }
+    if (o.kind === "maca") {
+      const red = Math.sin(t * 8) > 0;
+      shadow(x, y, 15); spr(macaImg(red), x - 14, y - 20);
+      glow(x - 12, y - 18, 10, red ? "rgba(255,60,80,A)" : "rgba(80,140,255,A)", 0.45);
+      lab(y - 27); return true;
+    }
+    if (o.kind === "relogio") {
+      const ring = Math.sin(t * 30) * (Math.sin(t * 2) > 0 ? 1 : 0);
+      shadow(x, y, 6); spr(clockImg(Math.floor(t * 6) % 8, ring ? 1 : 0), x - 7.5 + ring * 0.5, y - 17);
+      if (ring) txt("TRIIIM", x, y - 24, { size: 5, font: PIX, color: "#ffffff", ls: 0.4 });
+      lab(y - 31); return true;
+    }
+    if (o.kind === "ponto") {
+      shadow(x, y, 7); spr(pontoImg(), x - 7, y - 18);
+      if (Math.sin(t * 4) > -0.3) txt("23:47", x, y - 12.2, { size: 3.6, font: PIX, color: "#ff4d5e", ls: 0.2, shadow: false });
+      lab(y - 24); return true;
+    }
+    if (o.kind === "envelopes") {
+      shadow(x, y, 8);
+      [[-6, -14, 0], [4, -18, 1.3], [-1, -9, 2.6]].forEach(([dx, dy, ph]) => spr(envImg(), x + dx - 4.5, y + dy + Math.sin(t * 6 + ph) * 2 - 3.5));
+      lab(y - 30); return true;
+    }
+    if (o.kind === "livros") {
+      const cols = ["#3c6fd1", "#e2354c", "#4caf6a", "#e8c04a", "#7a5cd6"];
+      shadow(x, y, 7);
+      cols.forEach((c, i) => { const sw = Math.sin(t * 2.2) * i * 0.45; spr(bookImg(c), x - 6.5 + sw + (i % 2) * 0.5, y - 5 - i * 3.6); });
+      lab(y - 28); return true;
+    }
+    if (o.kind === "mala") {
+      shadow(x, y, 10); spr(malaImg(), x - 9.5, y - 20);
+      lab(y - 25); return true;
+    }
+    if (o.kind === "porta") {
+      const open = o.h === 0, top = y - o.d / 2 - 18, tall = (o.d + 20) * 2;
+      g.fillStyle = "rgba(0,0,0,0.25)"; g.fillRect(x - 4.5, top, 9, o.d + 18);
+      spr(doorImg(open, tall), x - 6.5, top - 2);
+      g.fillStyle = "#14121e"; g.fillRect(x - 18.5, top - 13.5, 37, 10); g.fillStyle = open ? "#2f6a46" : "#c8323a"; g.fillRect(x - 18, top - 13, 36, 9);
+      g.fillStyle = open ? "#4a9a6a" : "#e8545c"; g.fillRect(x - 18, top - 13, 36, 0.5); g.fillStyle = "#14121e"; g.fillRect(x - 12, top - 17, 0.5, 4); g.fillRect(x + 12, top - 17, 0.5, 4);
+      txt(open ? "ABERTA?" : "VAGA PREENCHIDA", x, top - 8.4, { size: 3.6, font: PIX, color: "#ffffff", ls: 0.2, shadow: false });
+      lab(top - 22); return true;
+    }
+    if (o.kind === "grafico") {
+      shadow(x, y, 10); const hp = Math.max(6, Math.round(o.h * 2)); spr(chartImg(hp), x - 10, y - (hp + 14) / 2 + 1);
+      lab(y - 30); return true;
+    }
+    return false;
+  }
   function drawBoss() {
     const x = boss.sx, y = boss.sy;
     glow(x, y - 50, 110, "rgba(224,64,79,A)", 0.16);
@@ -1971,7 +2029,7 @@ h1 em { font-style: normal; color: var(--good); }
     }
     shadow(x, y, 34);
     const img = boss.mouth > 0 ? BOSS_IMG.open : BOSS_IMG.closed;
-    sprite(img, x - 50, y - 118 + Math.sin(boss.t * 2) * 2, 100, 120);
+    sprite(img, x - 50.5, y - 119 + Math.round(Math.sin(boss.t * 2) * 4) / 2, 101, 121);
     if (mode === "play") tag("MERCADO DE TRABALHO", x, y + 8, "#ff6b7d");
   }
   function drawHUD() {
