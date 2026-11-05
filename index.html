@@ -112,7 +112,7 @@ h1 em { font-style: normal; color: var(--good); }
 .ov.retro { background: rgba(5,5,10,.82) repeating-linear-gradient(0deg, rgba(0,0,0,.28) 0 1px, transparent 1px 3px); }
 .logo { font-size: clamp(24px, 6vw, 52px); line-height: 1.15; color: #ecebf2; text-shadow: 3px 3px 0 #e0404f, 6px 6px 0 rgba(0,0,0,.6); }
 .logo em { text-shadow: 3px 3px 0 #1f6b45, 6px 6px 0 rgba(0,0,0,.6); }
-#tv { width: 168px; height: 90px; image-rendering: pixelated; }
+#tv { width: min(480px, 86vw); aspect-ratio: 160 / 72; height: auto; image-rendering: pixelated; border: 2px solid #2c2b3d; box-shadow: 0 0 0 2px #07070d, 0 0 24px rgba(111,216,255,.12); }
 .cta.press { font-family: var(--pix); letter-spacing: .3em; animation: blink 1.1s steps(1) infinite; }
 @keyframes blink { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { .cta.press { animation: none; } }
@@ -121,7 +121,7 @@ h1 em { font-style: normal; color: var(--good); }
 @media (max-height: 520px) {
   #title .box, #end .box { gap: 10px; }
   .logo { font-size: 26px; }
-  #tv { width: 112px; height: 60px; }
+  #tv { width: auto; height: 42vh; }
   .h-end { font-size: 16px; }
   .stats div { padding: 5px 10px; }
   .stats b { font-size: 14px; }
@@ -179,9 +179,9 @@ h1 em { font-style: normal; color: var(--good); }
 <div class="ov retro" id="title">
   <div class="box">
     <h1 class="logo">RUMO À<br><em>SAÚDE MENTAL</em></h1>
-    <canvas id="tv" width="56" height="30" aria-hidden="true"></canvas>
+    <canvas id="tv" width="160" height="72" aria-hidden="true"></canvas>
     <button class="cta press" id="startBtn" type="button">▶ começar</button>
-    <p class="credits">criado por <b>Hubyratan</b> · semana da psicologia</p>
+    <p class="credits">semana da psicologia</p>
   </div>
 </div>
 
@@ -1347,18 +1347,75 @@ h1 em { font-style: normal; color: var(--good); }
       pvx.strokeStyle = "#9aa3b8"; pvx.lineWidth = 0.8; pvx.beginPath(); pvx.arc(6, 19.5, 5, 0, Math.PI * 2); pvx.stroke();
       pvx.fillStyle = "#14121e"; pvx.fillRect(13, 22, 2, 2);
     } else pvx.drawImage(personImg(lk, "r" + (pvT % 4)), 0, 0);
-    if (!$("title").hidden) drawTV();
   }, 130);
-  // little retro scene on the start screen: someone walking toward a heart
-  const tv = $("tv"), tvx = tv.getContext("2d");
-  function drawTV() {
-    tvx.clearRect(0, 0, 56, 30);
-    tvx.fillStyle = "#2c2b3d"; tvx.fillRect(0, 27, 56, 1);
-    tvx.fillStyle = "#e8b84a"; for (let x = -(pvT * 2 % 8); x < 56; x += 8) tvx.fillRect(x, 29, 4, 1);
-    tvx.drawImage(personImg(heroLook({ cor: "branca", genero: "mulher", orient: "hetero", classe: "rica", pcd: "nao" }), "r" + (pvT % 4)), 8, 1);
-    const bob = pvT % 6 < 3 ? 0 : 1;
-    tvx.drawImage(HEART.full, 38, 10 + bob, 7, 6);
+  // detailed pixel-art opening scene: night city, someone and a psychologist walking together toward the arch
+  const tv = $("tv"), tvx = tv.getContext("2d"), TW = 160, TH = 72;
+  const tvHash = (n) => { const x = Math.sin(n * 127.1) * 43758.5453; return x - Math.floor(x); };
+  const TV_HERO = heroLook({ cor: "negra", genero: "mulher", orient: "hetero", classe: "pobre", pcd: "nao" });
+  const TV_PSI = { skin: "#f2c7a5", hair: "#3a2414", hairStyle: "short", shirt: "#5fd18a", pants: "#2e3a4a", blazer: false, pin: false, wheel: false };
+  let tvT = 0;
+  // pre-built skyline strips that tile seamlessly while scrolling
+  function tvStrip(seed, minH, maxH) {
+    const list = []; let x = 0, i = 0;
+    while (x < 320) { const k = seed + i, w = 10 + Math.floor(tvHash(k) * 14), h = minH + Math.floor(tvHash(k + 0.5) * (maxH - minH)); list.push({ x, w, h, k, ant: tvHash(k + 0.3) > 0.6 }); x += w + 1 + Math.floor(tvHash(k + 0.9) * 4); i++; }
+    return { list, len: x };
   }
+  const TV_FAR = tvStrip(3, 8, 22), TV_NEAR = tvStrip(71, 6, 18);
+  function tvSkyline(strip, off, base, col, win) {
+    const o = off % strip.len;
+    for (let rep = 0; rep < 2; rep++) strip.list.forEach((bd) => {
+      const x = Math.floor(bd.x - o + rep * strip.len); if (x > TW || x + bd.w < 0) return;
+      tvx.fillStyle = col; tvx.fillRect(x, base - bd.h, bd.w, bd.h);
+      if (bd.ant) tvx.fillRect(x + Math.floor(bd.w / 2), base - bd.h - 4, 1, 4);
+      if (win) for (let wy = 3; wy < bd.h - 3; wy += 4) for (let wx = 2; wx < bd.w - 2; wx += 3) {
+        const r = tvHash(bd.k * 13 + wx * 0.7 + wy * 1.3);
+        if (r > 0.62) { tvx.fillStyle = r > 0.93 ? "#ffe9b0" : r > 0.8 ? "#e8b84a" : "#6fd8ff55"; tvx.fillRect(x + wx, base - bd.h + wy, 1, 2); }
+      }
+    });
+  }
+  function drawTV() {
+    const t = tvT, g2 = tvx;
+    // sky in retro bands
+    ["#07071a", "#0b0b24", "#10102e", "#161536", "#1d1a3e", "#26204a"].forEach((c, i) => { g2.fillStyle = c; g2.fillRect(0, i * 7, TW, 7); });
+    for (let i = 0; i < 40; i++) { const sx = Math.floor(tvHash(i) * TW), sy = Math.floor(tvHash(i + 0.4) * 30); if ((i + Math.floor(t / 4)) % 9 === 0) continue; g2.fillStyle = (i + Math.floor(t / 6)) % 5 === 0 ? "#ffffff" : "#8f8da6"; g2.fillRect(sx, sy, 1, 1); }
+    // moon
+    g2.fillStyle = "#f3e9c6"; g2.fillRect(130, 5, 6, 8); g2.fillRect(129, 6, 8, 6); g2.fillStyle = "#d8cc9f"; g2.fillRect(131, 7, 2, 2); g2.fillRect(134, 10, 1, 1);
+    // far and near skyline (parallax)
+    tvSkyline(TV_FAR, t * 0.25, 44, "#15142a", false);
+    tvSkyline(TV_NEAR, t * 0.5, 46, "#1f1d36", true);
+    // finish arch in the distance
+    const ax = 136;
+    g2.fillStyle = "#0e0e16"; g2.fillRect(ax - 12, 32, 2, 15); g2.fillRect(ax + 10, 32, 2, 15);
+    g2.fillStyle = "#123b26"; g2.fillRect(ax - 14, 27, 28, 6); g2.fillStyle = (t % 10 < 5) ? "#5fd18a" : "#3fae6c";
+    g2.fillRect(ax - 14, 27, 28, 1); g2.fillRect(ax - 14, 32, 28, 1); g2.fillRect(ax - 14, 27, 1, 6); g2.fillRect(ax + 13, 27, 1, 6);
+    for (let i = 0; i < 5; i++) { g2.fillStyle = "#c8ffd9"; g2.fillRect(ax - 10 + i * 5, 29, 3, 2); }
+    // sidewalk
+    g2.fillStyle = "#2b2a3a"; g2.fillRect(0, 46, TW, 4); g2.fillStyle = "#363548"; g2.fillRect(0, 46, TW, 1);
+    g2.fillStyle = "#24232f"; for (let x = -(t % 6); x < TW; x += 6) g2.fillRect(x, 47, 1, 3);
+    // road
+    g2.fillStyle = "#16151f"; g2.fillRect(0, 50, TW, 22); g2.fillStyle = "#0c0c12"; g2.fillRect(0, 50, TW, 1);
+    g2.fillStyle = "#e8b84a"; for (let x = -(t * 2 % 12); x < TW; x += 12) g2.fillRect(x, 66, 6, 1);
+    g2.fillStyle = "#8f8da633"; for (let x = -(t * 2 % 12); x < TW; x += 12) g2.fillRect(x + 3, 57, 4, 1);
+    // street lamps with light cones
+    for (let x = -(t * 2 % 64) + 20; x < TW + 10; x += 64) {
+      g2.fillStyle = "#ffe9b015"; g2.beginPath(); g2.moveTo(x + 2, 25); g2.lineTo(x - 10, 64); g2.lineTo(x + 16, 64); g2.fill();
+      g2.fillStyle = "#3a3950"; g2.fillRect(x, 24, 1, 23); g2.fillRect(x, 24, 4, 1);
+      g2.fillStyle = "#ffe9b0"; g2.fillRect(x + 3, 25, 2, 1);
+    }
+    // the two walkers: person and psychologist side by side
+    const f = Math.floor(t / 2) % 4;
+    g2.drawImage(personImg(TV_PSI, "r" + ((f + 2) % 4)), 30, 36);
+    g2.drawImage(personImg(TV_HERO, "r" + f), 46, 40);
+    // floating hearts ahead
+    for (let i = 0; i < 3; i++) {
+      const hx = 76 + i * 16, hy = 36 + Math.round(Math.sin((t + i * 6) / 5) * 2);
+      g2.drawImage(HEART.full, hx, hy, 7, 6);
+      if ((t + i * 4) % 14 < 2) { g2.fillStyle = "#ffffff"; g2.fillRect(hx + 8, hy - 2, 1, 1); g2.fillRect(hx - 2, hy + 5, 1, 1); }
+    }
+    // shooting star every so often
+    const sp = t % 90; if (sp < 8) { g2.fillStyle = "#ffffff"; g2.fillRect(20 + sp * 6, 4 + sp, 2, 1); g2.fillStyle = "#ffffff55"; g2.fillRect(14 + sp * 6, 3 + sp, 6, 1); }
+  }
+  setInterval(() => { if (!$("title").hidden) { tvT++; drawTV(); } }, 90);
   function renderSelect() {
     document.querySelectorAll(".seg").forEach((sg) => sg.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(sel[sg.dataset.key] === b.dataset.v))));
     const d = diffOf();
