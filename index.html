@@ -189,6 +189,24 @@ h1 em { font-style: normal; color: var(--good); }
 .lines p { margin: 0; font-size: 13px; line-height: 1.6; color: #c9c7d6; padding-left: 12px; border-left: 2px solid var(--edge); }
 .help { margin: 0; font-size: 12px; line-height: 1.6; color: var(--muted); letter-spacing: .05em; }
 .help b { color: var(--good); }
+.help-box { width: 100%; max-width: 560px; border: 1px solid rgba(95,209,138,.45); background: rgba(95,209,138,.06); padding: 10px 14px; box-sizing: border-box; text-align: left; }
+.help-title { margin: 0 0 6px; font-size: 10px; letter-spacing: .2em; color: var(--good); text-transform: uppercase; }
+.help-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; font-size: 12px; line-height: 1.5; color: #c9c7d6; }
+.help-list b { color: #fff; font-weight: 600; margin-right: 6px; }
+.help-list a { color: #8ff0b4; }
+.disclaimer { margin: 0; max-width: 62ch; font-size: 10.5px; line-height: 1.6; color: var(--muted); font-style: italic; }
+#end .box { gap: 12px; }
+@media (max-height: 640px) and (min-width: 700px) {
+  #end .box { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-auto-flow: row dense; max-width: 940px; column-gap: 30px; row-gap: 10px; align-items: center; justify-items: center; }
+  #end .box > :nth-child(-n+5) { grid-column: 1; }
+  #end .box > :nth-child(n+6) { grid-column: 2; }
+  #end .box > .help-box { grid-row: 1 / span 3; align-self: end; }
+  #end .box > .row-btns { grid-row: 4; }
+  #end .box > .disclaimer { grid-row: 5; }
+  .stats div { padding: 5px 8px; min-width: 74px; }
+  .stats span { font-size: 8px; letter-spacing: .14em; }
+}
+@media (max-height: 520px) { #end .box { gap: 8px; } .help-box { padding: 6px 12px; } .help-list { font-size: 11px; gap: 2px; } .disclaimer { font-size: 9.5px; } #end .lead { font-size: 12px; } }
 </style>
 
 </head>
@@ -274,11 +292,19 @@ h1 em { font-style: normal; color: var(--good); }
     <p class="lead" style="color:var(--good)">E ninguém caminha sozinho.</p>
     <div class="stats" id="stats"></div>
     <p class="lead small" id="psiLine">O psicólogo não carregou nada por você. Caminhou junto.</p>
-    <p class="help"><b>CVV 188</b> · grátis, 24 horas</p>
+    <div class="help-box">
+      <p class="help-title">precisa conversar? existe ajuda gratuita e perto de você</p>
+      <ul class="help-list">
+        <li><b>CVV 188</b> ligação grátis, 24 horas · chat em <a href="https://cvv.org.br" target="_blank" rel="noopener">cvv.org.br</a></li>
+        <li><b>CAPS e UBS</b> atendimento pelo SUS, perto da sua casa</li>
+        <li><b>serviço-escola</b> de psicologia da sua faculdade, se houver: atendimento gratuito ou de baixo custo</li>
+      </ul>
+    </div>
     <div class="row-btns">
       <button class="cta" id="againBtn" type="button">jogar de novo</button>
       <button class="cta alt" id="charBtn" type="button">trocar personagem</button>
     </div>
+    <p class="disclaimer">Isto é um joguinho. As situações aqui são representações simplificadas e gamificadas de experiências reais, feitas para abrir conversa na Semana da Psicologia. A intenção não é medir, comparar nem diminuir a dor de ninguém: cada história é única e bem mais complexa do que qualquer jogo consegue mostrar.</p>
   </div>
 </div>
 
@@ -592,9 +618,9 @@ h1 em { font-style: normal; color: var(--good); }
     psi = { on: false, x: 0, y: 150, walk: 0, arrived: false, t: 0, mv: false };
     arch = { x: 340, tx: 340 };
     camX = 0; time = 0; endT = 0; spawnT = 2; obstT = 4; crowdT = 2; crowdX = 0; trafT = 3; specialT = 6; goodT = 3;
-    stats = { dropped: 0, max: 0, hits: 0, walls: 0, lost: [] }; said = {}; heartT = 0; heartPulse = 0; banner = null; lastNope = -9; endReason = "fim";
+    stats = { dropped: 0, max: 0, hits: 0, walls: 0, carried: 0, lost: [] }; said = {}; heartT = 0; heartPulse = 0; banner = null; lastNope = -9; endReason = "fim";
     crisis = { t: 0, dur: 0, cd: 5 }; warnQ = []; warn = null; dialog = null;
-    if (sel.classe === "pobre") { P.stack.push({ type: "boleto" }); stats.max = 1; }
+    if (sel.classe === "pobre") { P.stack.push({ type: "boleto" }); stats.max = 1; stats.carried = 1; }
     if (sel.filhos === "sim") { P.stack.push({ type: "filhos" }); stats.max = P.stack.length; kid = { x: P.x - 14, y: P.y + 10, walk: 0, t: 6 }; } else kid = null;
     thinkT = 8; music.i = 0;
   }
@@ -658,7 +684,7 @@ h1 em { font-style: normal; color: var(--good); }
   function attach(type) {
     if (P.stack.length >= 16) return false;
     P.stack.push({ type });
-    stats.max = Math.max(stats.max, load());
+    stats.max = Math.max(stats.max, load()); if (!TYPES[type].good) stats.carried++;
     say(TYPES[type].label, P.x, P.y, TYPES[type].stuck ? "red" : "gold", 1.1, false, P);
     if (type === "curso") say("SÓ 12X DE R$ 97!", P.x, P.y, "gold", 1.4, false, P);
     sfx.land();
@@ -1911,7 +1937,7 @@ h1 em { font-style: normal; color: var(--good); }
     names.push(sel.classe === "pobre" ? "pobre" : (f ? "rica" : "rico"));
     if ($("profile")) $("profile").innerHTML = "você jogou como <b>" + names.join(", ") + "</b> · dificuldade <b style=\"color:" + DIFF_COL[D] + "\">" + DIFF[D].toLowerCase() + "</b>";
     $("endEyebrow").textContent = "fim do caminho (por enquanto)";
-    $("stats").innerHTML = "<div><b>" + stats.hits + "</b><span>tropeços</span></div><div><b>" + stats.dropped + "</b><span>cargas largadas</span></div><div><b>" + stats.lost.length + "</b><span>coisas que você ama perdidas</span></div>" + (stats.walls ? "<div><b>" + stats.walls + "</b><span>barreiras sociais no caminho</span></div>" : "");
+    $("stats").innerHTML = "<div><b>" + stats.carried + "</b><span>cargas carregadas</span></div><div><b>" + stats.dropped + "</b><span>cargas largadas</span></div><div><b>" + stats.hits + "</b><span>tropeços</span></div><div><b>" + stats.lost.length + "</b><span>coisas que você ama perdidas</span></div>" + (stats.walls ? "<div><b>" + stats.walls + "</b><span>barreiras sociais no caminho</span></div>" : "");
     const uniq = [...new Set(stats.lost)];
     if ($("lostLine")) $("lostLine").hidden = !uniq.length;
     if (uniq.length && $("lostLine")) $("lostLine").textContent = "Pelo caminho, a pressão tirou de você: " + uniq.join(", ") + ".";
