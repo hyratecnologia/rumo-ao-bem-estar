@@ -206,12 +206,12 @@ h1 em { font-style: normal; color: var(--good); }
         <div class="opt-row"><span>gênero</span><div class="seg" data-key="genero"><button type="button" data-v="homem">homem</button><button type="button" data-v="mulher">mulher</button></div></div>
         <div class="opt-row"><span>orientação</span><div class="seg" data-key="orient"><button type="button" data-v="hetero">hétero</button><button type="button" data-v="lgbt">lgbt+</button></div></div>
         <div class="opt-row"><span>classe</span><div class="seg" data-key="classe"><button type="button" data-v="rica">rica</button><button type="button" data-v="pobre">pobre</button></div></div>
-        <div class="opt-row"><span>deficiência</span><div class="seg" data-key="pcd"><button type="button" data-v="nao">não</button><button type="button" data-v="sim">cadeira de rodas</button></div></div>
+        <div class="opt-row"><span>deficiência</span><div class="seg" data-key="pcd"><button type="button" data-v="nao">não</button><button type="button" data-v="sim">sim</button></div></div>
       </div>
     </div>
     <div class="select-foot">
       <div class="diff">
-        <div class="diff-head"><span>dificuldade</span><span class="diff-label" id="diffLabel">FÁCIL</span></div>
+        <div class="diff-head"><span>barreiras sociais</span><span class="diff-label" id="diffLabel">POUCAS</span></div>
         <div class="diff-bar" id="diffBar"><i></i><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <button class="cta" id="bornBtn" type="button">nascer</button>
@@ -421,7 +421,7 @@ h1 em { font-style: normal; color: var(--good); }
   const BILLS = ["CARRO DO ANO: SEJA FELIZ", "CURSO: FELICIDADE JÁ", "CELULAR NOVO, VIDA NOVA", "LIVRO: AUTOCUIDADO", "ROUPA DE MARCA = SUCESSO", "FELICIDADE EM 12X", "MÉTODO MENTE SÃ 3.0", "MENTORIA: SEJA FELIZ", "SEJA MAIS", "#SUCESSO"];
   const OBST_BASE = ["PRAZO", "META", "HORA EXTRA", "CONTA ATRASADA", "PROVA AMANHÃ", "SEM FÉRIAS", "FILA", "DESEMPREGO", "TRÂNSITO", "PLANTÃO"];
   const OBST_TRAIT = { negra: ["RACISMO", "“SEM PERFIL”", "SEGUIDA NA LOJA"], mulher: ["MACHISMO", "ASSÉDIO", "SALÁRIO MENOR"], lgbt: ["LGBTFOBIA", "“É SÓ UMA FASE”", "PIADINHA"], pobre: ["SEM GRANA", "ÔNIBUS LOTADO", "SEM INTERNET"], pcd: ["SEM RAMPA", "ESCADA", "CALÇADA QUEBRADA", "CAPACITISMO"], filhos: ["SEM CRECHE", "REUNIÃO NA ESCOLA"] };
-  const DIFF = ["FÁCIL", "NORMAL", "DIFÍCIL", "MUITO DIFÍCIL", "EXTREMA", "EXTREMA+"];
+  const DIFF = ["POUCAS", "ALGUMAS", "VÁRIAS", "MUITAS", "MUITÍSSIMAS", "TODAS"];
   const DIFF_COL = ["#5fd18a", "#b8e05a", "#e8b84a", "#ff8a3d", "#e0404f", "#b01a6a"];
 
   // ================= audio =================
@@ -533,7 +533,7 @@ h1 em { font-style: normal; color: var(--good); }
     psi = { on: false, x: 0, y: 150, walk: 0, arrived: false, t: 0, mv: false };
     arch = { x: 340, tx: 340 };
     camX = 0; time = 0; endT = 0; spawnT = 2; obstT = 4; crowdT = 2; crowdX = 0; trafT = 3; specialT = 6; goodT = 3;
-    stats = { dropped: 0, max: 0, hits: 0, lost: [] }; said = {}; heartT = 0; heartPulse = 0; banner = null; lastNope = -9; endReason = "fim";
+    stats = { dropped: 0, max: 0, hits: 0, walls: 0, lost: [] }; said = {}; heartT = 0; heartPulse = 0; banner = null; lastNope = -9; endReason = "fim";
     crisis = { t: 0, dur: 0, cd: 5 }; warnQ = []; warn = null; dialog = null;
     if (sel.classe === "pobre") { P.stack.push({ type: "boleto" }); stats.max = 1; }
     if (sel.filhos === "sim") { P.stack.push({ type: "filhos" }); stats.max = P.stack.length; kid = { x: P.x - 14, y: P.y + 10, walk: 0, t: 6 }; } else kid = null;
@@ -627,7 +627,6 @@ h1 em { font-style: normal; color: var(--good); }
     if (!psi.on) { psi.on = true; psi.x = camX - 30; psi.y = P.y + 18; }
     const offs = [[-34, -18], [-30, 20], [30, -20], [36, 18]];
     helpers = offs.map(([ox, oy], i) => ({ look: HELPERS[i], ox, oy, x: ox < 0 ? camX - 30 - i * 16 : camX + LW + 30 + i * 16, y: P.y + oy, stack: [], walk: 0, cd: 0.25 + i * 0.15, arrived: false, target: null }));
-    if (reason === "colapso") say("NÃO DÁ MAIS", P.x, P.y - stackTopZ() - 14, "red", 2.4, true);
   }
 
   // ================= update =================
@@ -644,7 +643,8 @@ h1 em { font-style: normal; color: var(--good); }
       let dx = (keys.right ? 1 : 0) - (keys.left ? 1 : 0) + gx + joy.dx;
       let dy = (keys.down ? 1 : 0) - (keys.up ? 1 : 0) + gy + joy.dy;
       const m = Math.hypot(dx, dy); if (m > 1) { dx /= m; dy /= m; }
-      const vmax = 92 * Math.max(0.45, 1 - L * 0.035) * (P.inv > 0.9 ? 0.6 : 1) * (1 - ({ "FALTA DE AR": 0.7, SONO: 0.6, TAQUICARDIA: 0.4 }[crisis.kind] || 0.45) * crisisEnv());
+      const crossing = obstacles.some((o) => o.trait && o.hit && Math.abs(P.x - o.x) < o.w / 2 + 6);
+      const vmax = 92 * (crossing ? 0.3 : 1) * Math.max(0.45, 1 - L * 0.035) * (P.inv > 0.9 ? 0.6 : 1) * (1 - ({ "FALTA DE AR": 0.7, SONO: 0.6, TAQUICARDIA: 0.4 }[crisis.kind] || 0.45) * crisisEnv());
       P.vx += (dx * vmax - P.vx) * Math.min(1, dt * 10);
       P.vy += (dy * vmax * 0.8 - P.vy) * Math.min(1, dt * 10);
       P.x = Math.max(P.x + P.vx * dt, camX + 10); P.y = clamp(P.y + P.vy * dt, YMIN, YMAX);
@@ -671,12 +671,13 @@ h1 em { font-style: normal; color: var(--good); }
       const lastOx = obstacles.filter((o) => !o.moving).reduce((mm, o) => Math.max(mm, o.x), 0);
       if (time > 4 && obstT <= 0 && lastOx < camX + LW - 60) {
         const tp = obstPool(), trait = tp.length > 0 && rand() < 0.6;
-        const y = trait ? pick([116, 148, 180]) : pick(LANES);
+        // social barriers are a wall across the whole street, sidewalk to sidewalk: no jumping over, no going around
+        const y = trait ? (YMIN + YMAX) / 2 : pick(LANES);
         const kind = trait ? "wall" : pick(["barreira", "cone", "caixas", "buraco", "barreira"]);
-        const dims = { wall: [12, 62, 15], barreira: [16, 12, 11], cone: [10, 10, 12], caixas: [16, 12, 14], buraco: [22, 14, 5] }[kind];
-        obstacles.push({ x: Math.max(camX + LW + 30, lastOx + 110), y, w: dims[0], d: dims[1], h: dims[2], kind, label: trait ? pick(tp) : pick(OBST_BASE), trait, hit: false });
+        const dims = { wall: [12, YMAX - YMIN + 12, 15], barreira: [16, 12, 11], cone: [10, 10, 12], caixas: [16, 12, 14], buraco: [22, 14, 5] }[kind];
+        obstacles.push({ x: Math.max(camX + LW + 30, lastOx + 110), y, w: dims[0], d: dims[1], h: dims[2], kind, label: trait ? pick(tp) : pick(OBST_BASE), trait, hit: false, stuck: 0 });
         obstT = Math.max(2.2, 4.0 - D * 0.38) * (0.75 + rand() * 0.5);
-        if (!said.jumpHint) { said.jumpHint = true; warnMsg(isTouch ? "pule as barreiras: toque rápido na tela ou PULAR" : "pule as barreiras com espaço, ou desvie"); }
+        if (!trait && !said.jumpHint) { said.jumpHint = true; warnMsg(isTouch ? "pule as barreiras: toque rápido na tela ou PULAR" : "pule as barreiras com espaço, ou desvie"); }
         if (trait && !said.traitHint) { said.traitHint = true; warnMsg("algumas barreiras não dependem de quem passa"); }
       }
 
@@ -737,9 +738,21 @@ h1 em { font-style: normal; color: var(--good); }
       // the gate always moves away
       if (arch.x - P.x < 150) { arch.tx = P.x + 250 + Math.min(40, L * 3); sfx.whoosh(); }
 
-      // barrier collisions
+      // social walls: you always run into them. Held back a moment, something you love is lost, no heart is taken; then you cross slowly
       obstacles.forEach((o) => {
-        if (o.hit || P.inv > 0 || mode !== "play") return;
+        if (!o.trait || mode !== "play") return;
+        const face = o.x - o.w / 2 - 5;
+        if (!o.hit && P.x >= face) {
+          o.hit = true; o.stuck = 0.9; stats.walls++;
+          P.x = face - 4; P.vx = -70; P.vz = Math.min(P.vz, 0); P.shake = 0.35;
+          sfx.nope(); tone(60, 0.25, "square", 0.08, 40); loseGood();
+          say(o.label, P.x, P.y - stackTopZ() - 30, "purple", 2, true);
+        }
+        if (o.stuck > 0) { o.stuck -= dt; if (P.x > face) { P.x = face; P.vx = Math.min(P.vx, 0); } P.vz = Math.min(P.vz, 0); }
+      });
+      // common barrier collisions
+      obstacles.forEach((o) => {
+        if (o.trait || o.hit || P.inv > 0 || mode !== "play") return;
         if (Math.abs(P.x - o.x) < o.w / 2 + 4 && Math.abs(P.y - o.y) < o.d / 2 + 3 && P.z < o.h) {
           o.hit = true; P.hearts--; P.inv = 1.3; stats.hits++; sfx.hit(); heartPulse = 1; loseGood();
           say(o.label, P.x, P.y - stackTopZ() - 12, o.trait ? "purple" : "red", 1.6, true);
@@ -1060,7 +1073,7 @@ h1 em { font-style: normal; color: var(--good); }
 
   function drawEntities() {
     const list = [];
-    obstacles.forEach((o) => list.push({ y: o.y + o.d / 2, f: () => drawObstacle(o) }));
+    obstacles.forEach((o) => list.push({ y: o.trait ? YMIN - 1 : o.y + o.d / 2, f: () => drawObstacle(o) }));
     crowd.forEach((c) => list.push({ y: c.y, f: () => {
       person(CROWD, c.x, c.y, 0, "idle");
       c.bub += 1 / 60;
@@ -1197,7 +1210,7 @@ h1 em { font-style: normal; color: var(--good); }
     txt("saúde mental", bx + bw + 4, 13, { size: 5, align: "left", color: "#5fd18a", ls: 0.8, shadow: false });
     g.fillStyle = "#e8b84a"; g.beginPath(); g.arc(bx + bw * frac, 13, 3, 0, Math.PI * 2); g.fill();
     g.strokeStyle = "#14121e"; g.lineWidth = 1; g.stroke();
-    txt("dificuldade", LW - 50, 7, { size: 5, align: "right", color: "#8f8da6", ls: 1.2, shadow: false });
+    txt("barreiras sociais", LW - 50, 7, { size: 5, align: "right", color: "#8f8da6", ls: 1.2, shadow: false });
     txt(DIFF[D], LW - 50, 16, { size: 7, align: "right", font: PIX, color: DIFF_COL[D], ls: 0.6, shadow: false });
   }
   function drawWarn() {
@@ -1621,12 +1634,12 @@ h1 em { font-style: normal; color: var(--good); }
     const f = sel.genero === "mulher";
     const names = [f ? "mulher" : "homem", sel.cor === "negra" ? (f ? "negra" : "negro") : (f ? "branca" : "branco")];
     if (sel.orient === "lgbt") names.push("LGBT+");
-    if (sel.pcd === "sim") names.push("cadeirante");
+    if (sel.pcd === "sim") names.push("com deficiência");
     if (sel.filhos === "sim") names.push("com filhos");
     names.push(sel.classe === "pobre" ? "pobre" : (f ? "rica" : "rico"));
-    if ($("profile")) $("profile").innerHTML = "você jogou como <b>" + names.join(", ") + "</b> · dificuldade <b style=\"color:" + DIFF_COL[D] + "\">" + DIFF[D].toLowerCase() + "</b>";
-    $("endEyebrow").textContent = endReason === "colapso" ? "a saúde mental chegou ao limite" : "fim do caminho (por enquanto)";
-    $("stats").innerHTML = "<div><b>" + stats.hits + "</b><span>tropeços</span></div><div><b>" + stats.dropped + "</b><span>cargas largadas</span></div><div><b>" + stats.lost.length + "</b><span>coisas que você ama perdidas</span></div>";
+    if ($("profile")) $("profile").innerHTML = "você jogou como <b>" + names.join(", ") + "</b> · barreiras sociais: <b style=\"color:" + DIFF_COL[D] + "\">" + DIFF[D].toLowerCase() + "</b>";
+    $("endEyebrow").textContent = "fim do caminho (por enquanto)";
+    $("stats").innerHTML = "<div><b>" + stats.hits + "</b><span>tropeços</span></div><div><b>" + stats.dropped + "</b><span>cargas largadas</span></div><div><b>" + stats.lost.length + "</b><span>coisas que você ama perdidas</span></div>" + (stats.walls ? "<div><b>" + stats.walls + "</b><span>barreiras sociais no caminho</span></div>" : "");
     const uniq = [...new Set(stats.lost)];
     if ($("lostLine")) $("lostLine").hidden = !uniq.length;
     if (uniq.length && $("lostLine")) $("lostLine").textContent = "Pelo caminho, a pressão tirou de você: " + uniq.join(", ") + ".";
