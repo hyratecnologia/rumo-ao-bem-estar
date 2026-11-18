@@ -51,7 +51,7 @@ A jogabilidade, as falas, as regras e os tempos são **os mesmos da v5**. Mudou 
 | 6 | **Tela de bônus** quando o(a) psicólogo(a) chega |
 | 7 | **Final**: o chefão sai de cena e só ficam as pessoas que ajudam. **No máximo 8 cargas** no chão e **2 por ajudante**. O(a) psicólogo(a) fica **visível**, ao lado da personagem |
 | 8 | **Obstáculos criativos e animados** para cada barreira comum |
-| 9 | **Tela de fim**: cargas carregadas, recursos de ajuda (CVV 188 e chat, CAPS/UBS, serviço-escola) e aviso de que é um joguinho representativo |
+| 9 | **Tela de fim**: cargas carregadas, recursos de ajuda (núcleo de apoio da faculdade, CAPS/UBS, CVV 188) e aviso de que é um joguinho representativo |
 | 10 | **Capa com várias pessoas diferentes**, cada uma com sua pilha |
 | 11 | **Balões de fala acompanham quem fala**, ficam acima das plaquinhas e mostram no máximo 2 por pessoa |
 | — | As crises (taquicardia etc.) continuam como estavam |
@@ -419,9 +419,9 @@ O psicólogo continua sem carregar nada no final. **Quem divide o peso é a rede
   - **[n] coisas que você ama perdidas** (tiradas pela pressão ou largadas por escolha)
   - **[n] barreiras sociais no caminho** (muros de identidade, que não dependem do jogador; aparece só se for maior que zero)
 - **Quadro de ajuda** (em verde): **"PRECISA CONVERSAR? EXISTE AJUDA GRATUITA E PERTO DE VOCÊ"**
-  - **CVV 188**: ligação grátis, 24 horas · chat em **cvv.org.br** (link)
+  - **Na sua faculdade**: procure o núcleo de apoio ao estudante, professores e a coordenação; muitas têm atendimento psicológico gratuito
   - **CAPS e UBS**: atendimento pelo SUS, perto da sua casa
-  - **serviço-escola** de psicologia da sua faculdade, se houver: atendimento gratuito ou de baixo custo
+  - **CVV 188**: para conversar a qualquer hora: ligação grátis, 24 horas · **cvv.org.br** (link)
 - Botões: **jogar de novo** · **trocar personagem**
 - **Aviso** (em itálico, no rodapé): *"Isto é um joguinho. As situações aqui são representações simplificadas e gamificadas de experiências reais, feitas para abrir conversa na Semana da Psicologia. A intenção não é medir, comparar nem diminuir a dor de ninguém: cada história é única e bem mais complexa do que qualquer jogo consegue mostrar."*
 - Em telas baixas (celular deitado, notebook), a tela se divide em duas colunas para caber sem rolar.
@@ -522,5 +522,5 @@ Pulo, aterrissagem, batida (perde coração), largar (som leve e brilhante), "n�
 | Psicólogo(a) que não carrega | a terapia não resolve por você, mas acompanha |
 | Pessoas que dividem a carga no final | rede de apoio: ninguém deveria caminhar sozinho |
 | Tela de bônus do psicólogo | buscar ajuda muda as regras do jogo, sem tirar o peso por você |
-| CVV 188, CAPS/UBS, serviço-escola | ajuda real, gratuita e próxima |
+| Núcleo de apoio da faculdade, CAPS/UBS, CVV 188 | ajuda real, gratuita e próxima |
 | Aviso "isto é um joguinho" | o jogo simplifica; não mede nem compara a dor de ninguém |

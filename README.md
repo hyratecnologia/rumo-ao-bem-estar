@@ -20,9 +20,9 @@ Antes de começar, você escolhe quem vai ser (cor, gênero, orientação, class
 
 ## Precisa de ajuda?
 
-- **CVV:** ligue **188** (gratuito, 24 horas) ou use o chat em https://cvv.org.br
+- **Na sua faculdade:** procure o núcleo de apoio ao estudante, professores e a coordenação; muitas têm atendimento psicológico gratuito
 - **CAPS e UBS:** atendimento pelo SUS, perto da sua casa
-- **Serviço-escola de psicologia** da sua faculdade, se houver: atendimento gratuito ou de baixo custo
+- **CVV:** para conversar a qualquer hora, ligue **188** (gratuito, 24 horas) ou use https://cvv.org.br
 
 ## Versões
 
