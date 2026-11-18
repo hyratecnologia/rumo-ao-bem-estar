@@ -79,7 +79,7 @@ A jogabilidade, as falas, as regras e os tempos são **os mesmos da v5**. Mudou 
 - **Formato:** um único arquivo HTML, sem instalação. Funciona no computador, no celular (de preferência deitado) e com controle de videogame. Pode ser instalado na tela inicial do celular, onde aparece com o nome "Saúde Mental".
 - **Duração:** uma partida leva cerca de 3 minutos (no máximo 180 segundos de jogo, mais o final).
 - **Visual:** pixel art detalhado (desde a v6). Uma avenida noturna vista de cima em 3/4, rolando para a direita, com céu, prédios em camadas, calçadas e a orla. A personagem anda com uma pilha de "cargas" na cabeça.
-- **Mensagem central:** *"Saúde mental não é linha de chegada. E ninguém caminha sozinho."*
+- **Mensagem central:** *"Saúde mental não é linha de chegada. E ninguém deveria caminhar sozinho."*
 - **Descrição para compartilhar (link):** "Um joguinho sobre saúde mental e cobranças. Todo mundo parece chegar lá. Por que você não chega?"
 
 ### Fluxo de telas
@@ -103,6 +103,8 @@ Na corda, **quatro pessoas diferentes se equilibram**, cada uma com sua pilha ba
 - um homem branco rico: trabalho, doença, cuidar dos pais, trabalho
 
 Embaixo, na calçada, **quatro pessoas seguram uma rede**, entre elas a **psicóloga** (com plaquinha). De tempos em tempos, **uma das coisas que alguém ama escorrega do alto de uma pilha e cai na rede**, que afunda e amortece a queda. A ideia: ninguém atravessa sozinho, e quem cai tem onde cair.
+
+**Dia ou noite, por sorteio:** ao abrir o jogo, sorteia-se dia ou noite (50% cada). De dia, a capa tem céu azul, sol, nuvens e passarinhos, e os prédios ficam claros; de noite, lua, estrelas e janelas acesas. **A avenida da partida acompanha**: de dia, céu azul com sol, prédios coloridos com janelas de vidro, calçada e asfalto claros, poças refletindo o céu, mar azul e postes apagados. Cada pessoa nova (ao tocar em "nascer") ganha um novo sorteio. Um botãozinho no canto da capa ("dia"/"noite") troca na hora. Para forçar um dos dois, use o endereço com `?tema=dia` ou `?tema=noite`.
 
 Com "reduzir movimento" ligado no aparelho, a cena fica parada. No celular, os botões PULAR e LARGAR só aparecem durante a partida, para não tampar a capa.
 
@@ -398,7 +400,7 @@ A placa verde "SAÚDE MENTAL" do portal também ficou mais apagada, para não ro
 6. Todos **caminham juntos** para a direita: a personagem (com seus hobbies), o(a) psicólogo(a) ao lado e os quatro ajudantes carregando as cargas.
 7. Uma caixa de texto digita, letra por letra:
    - **"Saúde mental não é linha de chegada."**
-   - **"E ninguém caminha sozinho."** (em verde)
+   - **"E ninguém deveria caminhar sozinho."** (em verde)
 8. Toca um acorde, a tela escurece e aparece a tela de fim.
 
 O psicólogo continua sem carregar nada no final. **Quem divide o peso é a rede de pessoas**, e ele(a) caminha junto.
@@ -409,7 +411,7 @@ O psicólogo continua sem carregar nada no final. **Quem divide o peso é a rede
 
 - Sobretítulo: **"fim do caminho (por enquanto)"**, igual nos dois casos (o sobretítulo do colapso, "a saúde mental chegou ao limite", saiu junto com a frase "NÃO DÁ MAIS")
 - Título: **SAÚDE MENTAL NÃO É LINHA DE CHEGADA.**
-- Subtítulo (verde): **E ninguém caminha sozinho.**
+- Subtítulo (verde): **E ninguém deveria caminhar sozinho.**
 - Números da partida:
   - **[n] cargas carregadas** (todas as cargas que caíram na pilha, contando o boleto inicial)
   - **[n] cargas largadas**
@@ -518,7 +520,7 @@ Pulo, aterrissagem, batida (perde coração), largar (som leve e brilhante), "n�
 | Crises (taquicardia, falta de ar…) | sintomas reais de ansiedade/pânico vividos na pele |
 | Colapso sem frase | a personagem simplesmente para; o jogo não narra o esgotamento como fim |
 | Psicólogo(a) que não carrega | a terapia não resolve por você, mas acompanha |
-| Pessoas que dividem a carga no final | rede de apoio: ninguém caminha sozinho |
+| Pessoas que dividem a carga no final | rede de apoio: ninguém deveria caminhar sozinho |
 | Tela de bônus do psicólogo | buscar ajuda muda as regras do jogo, sem tirar o peso por você |
 | CVV 188, CAPS/UBS, serviço-escola | ajuda real, gratuita e próxima |
 | Aviso "isto é um joguinho" | o jogo simplifica; não mede nem compara a dor de ninguém |
