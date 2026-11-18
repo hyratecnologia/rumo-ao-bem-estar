@@ -306,8 +306,8 @@ O jogo calcula uma **"pressão"**:
 `peso da pilha (pela metade com o psi por perto) + 1,2 × corações perdidos − 1,5 × itens que você ama`
 
 - **Pressão ≥ 3:** começa a soar um **batimento cardíaco** e a tela escurece nas bordas.
-- **Pressão maior ainda:** a tela treme, fica levemente esverdeada e aparece uma imagem dupla.
-- **Pressão ≥ 6: CRISES** (de tempos em tempos: a primeira não vem antes de 12 s de partida, depois há uma pausa de 22 a 28 s entre uma e outra, ou de 32 a 38 s com o psi por perto, e são **no máximo 4 por partida**). Duram cerca de 4,6 s, cada uma com um título grande, uma legenda e um efeito próprio:
+- **Pressão maior ainda:** a tela fica levemente esverdeada e aparece uma imagem dupla. **Fora das crises a tela não treme**: só dá um tranco curto (0,6 s) quando o chefão chega.
+- **Pressão ≥ 6: CRISES** (de tempos em tempos: a primeira não vem antes de 12 s de partida, depois há uma pausa de 22 a 28 s entre uma e outra, ou de 32 a 38 s com o psi por perto, e são **no máximo 2 por partida**). Duram cerca de 2,6 s, cada uma com um título grande, uma legenda e um efeito próprio:
 
 | Crise | Legenda | Efeito |
 |---|---|---|
@@ -335,7 +335,7 @@ Enquanto o chefão está em cena, a multidão **fica quieta** e não joga nada.
 
 ### 6.10 Chefão: MERCADO DE TRABALHO (a partir de 60 s)
 - **A cena abre espaço para ele:** os mascarados saem correndo e não aparecem mais; a multidão fica quieta; os pensamentos ficam mais espaçados. Ele é desenhado **na frente** de buracos, barreiras e figurantes, e as falas dele aparecem em **balões maiores**.
-- **Apresentação:** quando ele chega, o jogo **pausa** numa janela vermelha: "⚠ CHEFÃO ⚠", "Um chefão bloqueia o caminho", **MERCADO DE TRABALHO** em letras grandes, o chefão abrindo e fechando a boca e os golpes dele um a um (metas e prazos, a culpa, a luz da vigilância, frases prontas). Embaixo: "Ele não para de cobrar. Você não precisa carregar tudo o que ele joga." Ao tocar em **encarar**, o jogo continua.
+- **Apresentação:** quando ele chega, o jogo **pausa** numa janela vermelha: "⚠ CHEFÃO ⚠", "Um chefão bloqueia o caminho", **MERCADO DE TRABALHO** em letras grandes, o chefão abrindo e fechando a boca e os golpes dele um a um (metas e prazos, a culpa, a luz da vigilância, frases prontas). Embaixo: "Ele não para de cobrar. Você não precisa carregar tudo o que ele joga." Ao tocar em **encarar**, o jogo continua com um tranco curto na tela, e depois ela fica parada.
 - Entra com um flash, uma faixa grande **"MERCADO DE TRABALHO"** e a legenda **"o chefão que cobra de todo mundo, e diz que a culpa é sua"**.
 - O visual: um executivo de terno e gravata vermelha, com um **monitor no lugar da cabeça** mostrando um gráfico subindo e olhos vermelhos. Carrega uma maleta.
 - **Ataques:**
