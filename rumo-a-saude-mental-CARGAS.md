@@ -56,13 +56,13 @@ Hobbies e diversão: o que dá prazer e sustenta a saúde mental. Brilham de lev
 
 | Ícone | Nome no jogo | O que o desenho mostra |
 |---|---|---|
-| Guitarra vermelha | **TOCAR GUITARRA** | Música |
+| Guitarra vermelha | **APRENDER UM INSTRUMENTO** | Música: aprender a tocar |
 | Paleta de tintas com pincel | **PINTAR** | Arte |
 | Livro aberto com marcador vermelho | **LER** | Leitura |
-| Bola de futebol | **JOGAR BOLA** | Esporte |
+| Bola de futebol | **ESPORTE** | Esporte, qualquer um |
 | Controle de videogame roxo | **VIDEOGAME** | Jogos |
 | Fone de ouvido rosa com nota musical | **OUVIR MÚSICA** | Música |
-| Skate azul-claro | **ANDAR DE SKATE** | Lazer ao ar livre |
+| Globo espelhado de festa | **DANÇAR** | Dança |
 | Balde de pipoca listrado | **IR AO CINEMA** | Passeio, cultura |
 
 **Como funcionam:**

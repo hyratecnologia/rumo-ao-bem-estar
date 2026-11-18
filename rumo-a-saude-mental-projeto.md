@@ -227,13 +227,13 @@ Itens com brilho azul que também caem e entram na pilha:
 
 | Item | Texto |
 |---|---|
-| guitarra | TOCAR GUITARRA |
+| guitarra | APRENDER UM INSTRUMENTO |
 | paleta | PINTAR |
 | livro | LER |
-| bola | JOGAR BOLA |
+| bola | ESPORTE |
 | controle | VIDEOGAME |
 | fone | OUVIR MÚSICA |
-| skate | ANDAR DE SKATE |
+| danca | DANÇAR |
 | pipoca | IR AO CINEMA |
 
 - Eles **aliviam**: cada um reduz a "pressão" interna (ver 6.7).
