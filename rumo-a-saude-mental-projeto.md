@@ -151,9 +151,10 @@ Ao clicar em **nascer**, a escolha feita **não vale**:
 ## 4. Controles
 
 - **Teclado:** setas ou WASD para andar; espaço (também Z/K) para pular; E (também X/J/Shift) para largar carga; M para ligar/desligar o som
-- **Celular:** arrastar na tela vira um joystick para andar; toque rápido ou botão **PULAR** para pular; botão **LARGAR** para soltar uma carga; botão **SOM/MUDO** no canto
+- **Celular:** um **joystick fica sempre à mostra** no canto inferior esquerdo (com a palavra MOVER); arrastar a partir dele anda. Arrastar em qualquer outro ponto da tela também funciona, como antes. Toque rápido fora do joystick ou botão **PULAR** para pular; botão **LARGAR** para soltar uma carga; botão **SOM/MUDO** no canto
 - **Controle de videogame:** analógico ou direcional para andar; A para pular; B/X para largar
-- No celular, o jogo entra em tela cheia no primeiro toque e tenta travar a tela deitada. Se o celular estiver em pé, aparece a dica: **"gire o celular para jogar maior"**.
+- No celular, o jogo entra em tela cheia no primeiro toque e tenta travar a tela deitada. **Se o celular estiver em pé, a página inteira já aparece deitada** (girada 90°): é só virar o celular, mesmo com a rotação automática travada.
+- **Tutorial "como jogar":** quando uma pessoa nova começa (depois do sorteio; não aparece em "jogar de novo"), o jogo abre parado com uma janela curta: "Siga a avenida rumo à saúde mental. As cargas caem na sua pilha e pesam. Desvie das barreiras e cuide dos seus 5 corações." No celular, balões verdes apontam para o **joystick (MOVER)**, o botão **PULAR** e o botão **LARGAR**, que piscam; no computador, aparecem as teclas. O botão **entendi, começar** solta o jogo.
 - Dica fixa abaixo do jogo (no computador): **"setas / wasd andar · espaço pular · e largar carga · m som"**
 
 ---
