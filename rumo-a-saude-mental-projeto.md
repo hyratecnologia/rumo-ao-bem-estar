@@ -94,13 +94,17 @@ A jogabilidade, as falas, as regras e os tempos são **os mesmos da v5**. Mudou 
 - Botão: **▶ começar** (piscando)
 - Rodapé: **semana da psicologia**
 
-**Cena animada:** a própria avenida noturna do jogo, rolando devagar atrás do logo (desde a v6). **Várias pessoas diferentes** andam pela avenida, cada uma com sua pilha, para a capa não ficar enviesada numa identidade só:
-- um homem branco rico: trabalho, doença, cuidar dos pais
-- uma mulher negra pobre: boleto, aluguel, faculdade, dupla jornada
-- mais ao fundo, um homem negro LGBT+: boleto, trabalho, provar o dobro
-- uma mulher cadeirante LGBT+: dupla jornada, trabalho
+**Cena animada: a corda bamba.** Uma cena própria em pixel art, desenhada ao vivo: céu noturno com lua e estrelas piscando, a cidade ao fundo e uma **corda esticada entre dois prédios**. O logo **RUMO À / SAÚDE MENTAL** faz parte do desenho, com letras em relevo e um brilho que passa de tempos em tempos. No prédio da direita fica a placa acesa **SAÚDE MENTAL**, a mesma da chegada.
 
-Enquanto andam, cada uma **vai deixando cair, de vez em quando, as coisas que ama** (guitarra, pintura, livro, bola, videogame, música, skate, cinema).
+Na corda, **quatro pessoas diferentes se equilibram**, cada uma com sua pilha balançando para um lado enquanto a vara de equilíbrio pende para o outro:
+- uma mulher negra pobre: boleto, aluguel, faculdade, casa, trabalho
+- um homem negro LGBT+ pobre: boleto, trabalho, provar o dobro
+- uma mulher branca cadeirante LGBT+ rica: casa, trabalho, faculdade
+- um homem branco rico: trabalho, doença, cuidar dos pais, trabalho
+
+Embaixo, na calçada, **quatro pessoas seguram uma rede**, entre elas a **psicóloga** (com plaquinha). De tempos em tempos, **uma das coisas que alguém ama escorrega do alto de uma pilha e cai na rede**, que afunda e amortece a queda. A ideia: ninguém atravessa sozinho, e quem cai tem onde cair.
+
+Com "reduzir movimento" ligado no aparelho, a cena fica parada. No celular, os botões PULAR e LARGAR só aparecem durante a partida, para não tampar a capa.
 
 ---
 
