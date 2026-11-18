@@ -1831,10 +1831,17 @@ h1 em { font-style: normal; color: var(--good); }
       for (let y = ROAD_T + 3; y < ROAD_B - 3; y += 3) { const odd = Math.floor(y / 3) % 2; g.fillStyle = odd ? "rgba(236,235,242,0.42)" : "rgba(20,20,30,0.5)"; g.fillRect(ax - 3, y, 3, 3); g.fillStyle = odd ? "rgba(20,20,30,0.5)" : "rgba(236,235,242,0.42)"; g.fillRect(ax, y, 3, 3); }
       g.fillStyle = "#14121e"; g.fillRect(ax - 2, 44, 4, 38); g.fillRect(ax - 2, ROAD_B, 4, 16);
       g.fillStyle = "#2e3a34"; g.fillRect(ax - 2, 44, 1, 38); g.fillRect(ax - 2, ROAD_B, 1, 16);
-      g.fillStyle = "#0e1612"; g.fillRect(ax - 51, 27, 102, 18); g.fillStyle = "#14261d"; g.fillRect(ax - 50, 28, 100, 16);
-      g.fillStyle = "#24503a"; g.fillRect(ax - 50, 28, 100, 0.5); g.fillRect(ax - 50, 43.5, 100, 0.5);
-      for (let k = -46; k <= 46; k += 6) { g.fillStyle = (Math.floor(time * 2) + k / 6) % 2 ? "#3a6a4e" : "#24503a"; g.fillRect(ax + k, 29, 1, 1); g.fillRect(ax + k, 42, 1, 1); }
-      txt("SAÚDE MENTAL", ax, 36.5, { size: 7, font: PIX, color: "#58866b", ls: 1, shadow: false });
+      // the finish sign stands out from the street signs: lit, bright green, gold frame, blinking bulbs and a soft halo
+      const glow = 0.5 + 0.5 * Math.sin(time * 2.2);
+      const halo = g.createRadialGradient(ax, 36, 8, ax, 36, 78);
+      halo.addColorStop(0, "rgba(120,255,170," + (0.32 + glow * 0.12).toFixed(2) + ")"); halo.addColorStop(1, "rgba(120,255,170,0)");
+      g.fillStyle = halo; g.fillRect(ax - 80, 0, 160, 90);
+      g.fillStyle = "#07050f"; g.fillRect(ax - 54, 24, 108, 24);
+      g.fillStyle = "#e8b84a"; g.fillRect(ax - 53, 25, 106, 22); g.fillStyle = "#fff1a8"; g.fillRect(ax - 53, 25, 106, 1);
+      g.fillStyle = "#1f8a55"; g.fillRect(ax - 51, 27, 102, 18); g.fillStyle = "#2fb070"; g.fillRect(ax - 51, 27, 102, 9);
+      for (let k = -48; k <= 48; k += 6) { const on = (Math.floor(time * 3) + k / 6) % 2 === 0; g.fillStyle = on ? "#fffbe0" : "#a8801e"; g.fillRect(ax + k - 0.5, 25.5, 1.5, 1.5); g.fillRect(ax + k - 0.5, 45, 1.5, 1.5); }
+      txt("SAÚDE MENTAL", ax + 0.8, 37.3, { size: 8, font: PIX, color: "#0e3a24", ls: 1, shadow: false });
+      txt("SAÚDE MENTAL", ax, 36.5, { size: 8, font: PIX, color: "#ffffff", ls: 1, shadow: false });
     }
   }
 
