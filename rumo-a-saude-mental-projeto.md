@@ -261,7 +261,7 @@ Começam depois de 4 s. Existem dois tipos, com regras diferentes.
 | CONTA ATRASADA | envelopes de conta **voando**, subindo e descendo na pista | desviar no tempo certo |
 | PROVA AMANHÃ | pilha alta de livros balançando | desviar (alta para pular) |
 | SEM FÉRIAS | mala acorrentada com cadeado e guarda-sol fechado | pular ou desviar |
-| FILA | três pessoas numa fila atravessada na pista | desviar |
+| NOTIFICAÇÕES | celular gigante na pista, **vibrando** ("BZZ") com selo vermelho **+99** e notificações pulando para fora: estar sempre conectado, nunca desligar | pular ou desviar |
 | DESEMPREGO | porta com placa **"VAGA PREENCHIDA"** que às vezes abre ("ABERTA?") | passar quando abre |
 | TRÂNSITO | carro **cruzando a avenida** de um lado ao outro, buzinando "BI-BI!" | esperar ou pular |
 | PLANTÃO | maca de hospital com sirene **atravessando a rua** | esperar ou pular |
